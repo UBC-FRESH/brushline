@@ -1,0 +1,62 @@
+{
+  "data_contracts": [
+    "femic.lidar.product.v1",
+    "femic.lidar.bundle.v1",
+    "femic.inventory.als.v1",
+    "femic.inventory.als.model.v1",
+    "femic.climate.v1",
+    "femic.disturbance.v1",
+    "femic.efi.model.v1"
+  ],
+  "femic_cli_commands": [
+    "femic instance init",
+    "femic instance rebuild",
+    "femic instance validate-spec",
+    "femic instance config show",
+    "femic freshforge workflows list",
+    "femic data bcdc-resolve",
+    "femic data bcdc-fetch",
+    "femic data bcdc-order",
+    "femic prep validate-case",
+    "femic prep geospatial-preflight"
+  ],
+  "femic_specifier": "==0.2.0a1",
+  "femic_version": "0.2.0a1",
+  "freshforge_cli_commands": [
+    "freshforge validate",
+    "freshforge inspect",
+    "freshforge plan",
+    "freshforge run",
+    "freshforge providers"
+  ],
+  "freshforge_version": "0.1.0a5",
+  "materialization_node_ids": [
+    "check_toolchain",
+    "check_python_environment",
+    "install_packages",
+    "init_submodules",
+    "init_annex",
+    "enable_special_remote",
+    "materialize_paths",
+    "audit_annex_availability",
+    "write_materialization_report"
+  ],
+  "node_ids": [
+    "validate_case",
+    "geospatial_preflight",
+    "compile_upstream",
+    "accepted_btc_handoff",
+    "btc_post_tipsy",
+    "export_patchworks",
+    "patchworks_preflight",
+    "matrix_build",
+    "export_woodstock",
+    "ws3_bridge",
+    "ws4_quality"
+  ],
+  "provider_ids": [
+    "femic",
+    "femic.materialization"
+  ],
+  "schema_version": "brushline.femic-boundary.v1"
+}

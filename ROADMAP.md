@@ -130,8 +130,8 @@ Status: active
 Goal: extend FEMIC's instance, rebuild-spec, FreshForge, catalogue, DataLad, and preflight surfaces to
 build Brushline instances from a map-selected AOI. Do not create a second instance-builder package.
 
-- [ ] P2.1 Record and pin the FEMIC extension boundary and provider API
-  - [ ] Version pin, entry points, compatibility policy, and a failing test if the API drifts
+- [x] P2.1 Record and pin the FEMIC extension boundary and provider API
+  - [x] Version pin, entry points, compatibility policy, and a failing test if the API drifts
 - [ ] P2.2 Add the Brushline instance template and rebuild spec
   - [ ] Config, scenario, targets, data pointers, tests, runbooks, docs, evidence, and demo manifest
 - [ ] P2.3 Add the Brushline provider nodes

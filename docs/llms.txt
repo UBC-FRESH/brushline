@@ -7,6 +7,7 @@
 - [Home](index.html): the documentation home for the project.
 - [Design record](design/index.html): the scope, architecture, optimization, UI, LiDAR, instance-builder, demo-portal, and literature review decisions.
 - [Contract index](reference/contract-index.html): every schema, validator, error prefix, and test layer.
+- [FEMIC extension boundary](reference/femic-boundary.html): exact pins, providers, nodes, commands, contracts, and drift policy.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -20,3 +21,4 @@
 - [state schema](api/state.html): the vegetation state, treatment, transition, and observation models.
 - [artifact schemas](api/artifacts.html): the plan, run, Pareto archive, timeline, demo, and validation models.
 - [prototype API](api/prototype.html): the compiler, simulator, schedule, and run writer.
+- [FEMIC boundary API](api/femic.html): the boundary constants, compatibility report, and pin validator.
