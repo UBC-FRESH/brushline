@@ -37,4 +37,5 @@ whenever you add a module to the project.
    vegetation-validation
    model-card
    optimization-formulation
+   optimization-evaluator
    instance

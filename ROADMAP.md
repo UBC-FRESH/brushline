@@ -190,7 +190,7 @@ Acceptance criteria:
 
 Parent issue: #41
 Branch: `feature/p4-vegetation`
-Status: pr-open
+Status: complete
 
 Goal: implement the low-vegetation state-transition model and the treatment transitions, calibrate them,
 and publish a model card.
@@ -229,8 +229,8 @@ small-instance validation.
 
 - [x] P5.1 Formulate the decision variables, constraints, and objective vector (#51)
   - [x] Treatment and monitoring actions, budget, capacity, access, service levels, risk, uncertainty
-- [ ] P5.2 Implement the exact evaluator and the incremental path
-  - [ ] Simulator-backed evaluation, delta accounting, and batch fallback
+- [x] P5.2 Implement the exact evaluator and the incremental path (#52)
+  - [x] Simulator-backed evaluation, full-recompute fallback, and batch evaluation
 - [ ] P5.3 Implement the move operators
   - [ ] Toggle, shift, swap, block/segment moves, monitoring moves, and repair
 - [ ] P5.4 Integrate Fresh Solutions and exact replay

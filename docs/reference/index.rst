@@ -29,6 +29,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    vegetation-validation
    low-vegetation-model-card
    optimization-formulation
+   optimization-evaluator
    compiled-dataset
    corridor-contract
    state-contract

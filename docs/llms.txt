@@ -28,6 +28,7 @@
 - [Held-out vegetation validation](reference/vegetation-validation.html): spatial holdout, group error, interval coverage, time-lag sensitivity, and candidate benchmark.
 - [Low-vegetation model card](reference/low-vegetation-model-card.html): predictors, evidence, metrics, uncertainty, applicability domain, and out-of-domain rejection.
 - [Optimization formulation](reference/optimization-formulation.html): variables, treatment/monitoring options, constraints, and the four-objective vector.
+- [Optimization evaluator](reference/optimization-evaluator.html): exact replay, objectives, costs, violations, and the full-evaluation fallback.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -62,3 +63,4 @@
 - [Vegetation validation API](api/vegetation-validation.html): the dataset, metrics, lag and candidate summaries, and validator.
 - [Model card API](api/model-card.html): the card, domain check, evidence, uncertainty, and validator.
 - [Optimization formulation API](api/optimization-formulation.html): the formulation models, builder, and validator.
+- [Optimization evaluator API](api/optimization-evaluator.html): the exact evaluator, result, context, and incremental wrapper.

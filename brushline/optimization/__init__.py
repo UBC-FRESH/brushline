@@ -2,6 +2,16 @@
 
 from __future__ import annotations
 
+from brushline.optimization.evaluator import (
+    AssignmentChange,
+    EvaluationConfig,
+    EvaluationResult,
+    EvaluationViolation,
+    EvaluatorError,
+    IncrementalEvaluator,
+    ScheduleEvaluator,
+    SegmentContext,
+)
 from brushline.optimization.formulation import (
     DEFAULT_OBJECTIVES,
     FORMULATION_SCHEMA_VERSION,
@@ -23,11 +33,19 @@ __all__ = [
     "DEFAULT_OBJECTIVES",
     "FORMULATION_SCHEMA_VERSION",
     "OBJECTIVE_NAMES",
+    "AssignmentChange",
     "ConstraintSpec",
+    "EvaluationConfig",
+    "EvaluationResult",
+    "EvaluationViolation",
+    "EvaluatorError",
     "Formulation",
     "FormulationError",
+    "IncrementalEvaluator",
     "MonitoringOption",
     "PeriodSpec",
+    "ScheduleEvaluator",
+    "SegmentContext",
     "SegmentSpec",
     "SpanSpec",
     "TreatmentOption",

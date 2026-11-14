@@ -125,6 +125,10 @@ test suite. This page is the map.
      - ``brushline.optimization-formulation.v1``
      - ``validate_formulation``
      - Stable variables, options, periods, targets, hard/soft constraints, and four objectives
+   * - Optimization evaluation
+     - ``brushline.optimization-evaluation.v1``
+     - ``EvaluationResult``
+     - Exact four-objective result, costs, feasibility, named violations, and period trail
 
 Error prefixes
 --------------
@@ -187,6 +191,8 @@ Error prefixes
      - Low-vegetation model card
    * - ``FORMULATION-*``
      - Optimization formulation
+   * - ``EVALUATION-*``
+     - Optimization evaluation
 
 Test layers
 -----------
@@ -230,6 +236,8 @@ Test layers
   out-of-domain rejection, and card validation.
 - Formulation tests for stable indices, options, allowed methods, access constraints, objectives,
   validation, and build reproduction.
+- Evaluator tests for exact growth/treatment replay, costs, budgets, capacity, access, service,
+  monitoring allocation, discounting, batch equality, scalarization, and apply/undo.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
