@@ -231,8 +231,8 @@ small-instance validation.
   - [x] Treatment and monitoring actions, budget, capacity, access, service levels, risk, uncertainty
 - [x] P5.2 Implement the exact evaluator and the incremental path (#52)
   - [x] Simulator-backed evaluation, full-recompute fallback, and batch evaluation
-- [ ] P5.3 Implement the move operators
-  - [ ] Toggle, shift, swap, block/segment moves, monitoring moves, and repair
+- [x] P5.3 Implement the move operators (#53)
+  - [x] Toggle, shift, swap, block/segment moves, monitoring moves, and repair
 - [ ] P5.4 Integrate Fresh Solutions and exact replay
   - [ ] Adapter, local search, population, hybrid, checkpoints, seeds, telemetry, and evidence
 - [ ] P5.5 Implement the multi-objective archive and `pareto.json`

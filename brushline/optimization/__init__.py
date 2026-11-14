@@ -28,6 +28,18 @@ from brushline.optimization.formulation import (
     build_formulation,
     validate_formulation,
 )
+from brushline.optimization.operators import (
+    Move,
+    OperatorConfig,
+    OperatorError,
+    OperatorState,
+    RepairResult,
+    apply_move,
+    default_operators,
+    repair_assignment,
+    undo_move,
+    validate_move,
+)
 
 __all__ = [
     "DEFAULT_OBJECTIVES",
@@ -43,13 +55,23 @@ __all__ = [
     "FormulationError",
     "IncrementalEvaluator",
     "MonitoringOption",
+    "Move",
+    "OperatorConfig",
+    "OperatorError",
+    "OperatorState",
     "PeriodSpec",
+    "RepairResult",
     "ScheduleEvaluator",
     "SegmentContext",
     "SegmentSpec",
     "SpanSpec",
     "TreatmentOption",
     "Variable",
+    "apply_move",
     "build_formulation",
+    "default_operators",
+    "repair_assignment",
+    "undo_move",
     "validate_formulation",
+    "validate_move",
 ]

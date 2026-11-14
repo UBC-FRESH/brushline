@@ -193,6 +193,8 @@ Error prefixes
      - Optimization formulation
    * - ``EVALUATION-*``
      - Optimization evaluation
+   * - ``MOVE-*``
+     - Optimization move validation
 
 Test layers
 -----------
@@ -238,6 +240,8 @@ Test layers
   validation, and build reproduction.
 - Evaluator tests for exact growth/treatment replay, costs, budgets, capacity, access, service,
   monitoring allocation, discounting, batch equality, scalarization, and apply/undo.
+- Operator tests for seeded determinism, every move kind, access and locks, move validation,
+  apply/undo, budget/capacity/monitoring/access/service repair, and non-repairable blocked models.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

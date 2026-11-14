@@ -38,4 +38,5 @@ whenever you add a module to the project.
    model-card
    optimization-formulation
    optimization-evaluator
+   optimization-operators
    instance

@@ -30,6 +30,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    low-vegetation-model-card
    optimization-formulation
    optimization-evaluator
+   optimization-operators
    compiled-dataset
    corridor-contract
    state-contract
