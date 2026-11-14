@@ -66,17 +66,17 @@ and phase map, and queue a reviewable close-out.
   - [x] `notes/design/brushline-architecture.md` and ADRs 0001 to 0012
 - [x] P0.5 Define the phase map and the success criteria (#6)
   - [x] This roadmap, the lifecycle map, and the detailed next steps
-- [ ] P0.6 Make the dashboard green and queue the close-out (#7)
-- [ ] P0.7 Record the interactive planning studio and solution-explorer design (#8)
-  - [ ] `notes/design/brushline-ui.md` and the UI ADR references
-- [ ] P0.8 Record the optimization framework and multi-objective search design (#9)
-  - [ ] `notes/design/brushline-optimization.md` and the optimization ADR references
-- [ ] P0.9 Record the open LiDAR, terrain, canopy, and reuse design (#10)
-  - [ ] `notes/design/brushline-lidar-and-open-data.md` and the LiDAR ADR references
-- [ ] P0.10 Record the FEMIC-extended instance builder and open-data onboarding design (#11)
-  - [ ] `notes/design/brushline-instance-builder.md` and the instance-builder ADR references
-- [ ] P0.11 Record the demo portal and partner-onboarding design (#12)
-  - [ ] `notes/design/brushline-demo-portal.md` and the demo ADR references
+- [x] P0.6 Make the dashboard green and queue the close-out (#7)
+- [x] P0.7 Record the interactive planning studio and solution-explorer design (#8)
+  - [x] `notes/design/brushline-ui.md` and the UI ADR references
+- [x] P0.8 Record the optimization framework and multi-objective search design (#9)
+  - [x] `notes/design/brushline-optimization.md` and the optimization ADR references
+- [x] P0.9 Record the open LiDAR, terrain, canopy, and reuse design (#10)
+  - [x] `notes/design/brushline-lidar-and-open-data.md` and the LiDAR ADR references
+- [x] P0.10 Record the FEMIC-extended instance builder and open-data onboarding design (#11)
+  - [x] `notes/design/brushline-instance-builder.md` and the instance-builder ADR references
+- [x] P0.11 Record the demo portal and partner-onboarding design (#12)
+  - [x] `notes/design/brushline-demo-portal.md` and the demo ADR references
 - [x] P0.12 Review open shrub and young-tree growth models (#13)
   - [x] `notes/reference/shrub-young-tree-growth-models.md` and `notes/reference/codex-library-search-prompt.md`
 

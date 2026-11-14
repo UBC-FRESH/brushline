@@ -34,3 +34,9 @@ outputs/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Editable install metadata
+*.egg-info/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
