@@ -17,7 +17,7 @@ exists and the maintainer approves it.
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
 | P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
 | P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | complete |
-| P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | active |
+| P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | pr-open |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
 | P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
 | P9 Plan and bid exchange | TBD | `feature/p9-plan-exchange` | planned |
@@ -256,7 +256,7 @@ Acceptance criteria:
 
 Parent issue: #60
 Branch: `feature/p6-strategic`
-Status: active
+Status: pr-open
 
 Goal: implement the 10-to-30-year strategic plan: budget, service levels, risk appetite, monitoring
 policy, and the business-as-usual comparison.
