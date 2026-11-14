@@ -21,6 +21,7 @@
 - [LiDAR coverage and applicability](reference/lidar-coverage.html): acquisition recency, usable coverage, domain checks, missing observation gaps, and the stop/continue decision.
 - [LiDAR benchmark](reference/lidar-benchmark.html): the offline FEMIC/WS4/FHOPS comparison, shared measurement contract, tolerances, missing-value rules, and report statuses.
 - [Low-vegetation state space](reference/state-space.html): functional groups, variables, discretization, class probabilities, uncertainty, and projection to the state contract.
+- [Growth model](reference/growth-model.html): saturating group-specific growth, site/climate/competition modifiers, uncertainty, and the out-of-domain rule.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -48,3 +49,4 @@
 - [LiDAR coverage API](api/lidar-coverage.html): the evidence/coverage models, assessment, and validator.
 - [LiDAR benchmark API](api/lidar-benchmark.html): the benchmark request, cases, runner, and validator.
 - [State space API](api/state-space.html): the profiles, distributions, observation projection, and validator.
+- [Growth API](api/growth.html): the parameters, request/result models, growth step, and validator.

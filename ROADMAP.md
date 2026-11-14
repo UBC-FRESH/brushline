@@ -197,8 +197,8 @@ and publish a model card.
 
 - [x] P4.1 Define functional groups and state discretization
   - [x] Shrub, deciduous sprout, conifer, grass/herb; height, cover, density, age, and uncertainty
-- [ ] P4.2 Implement the growth model
-  - [ ] Saturating height/cover curves, site and climate modifiers, competition, and functional groups
+- [x] P4.2 Implement the growth model
+  - [x] Saturating height/cover curves, site and climate modifiers, competition, and functional groups
 - [ ] P4.3 Implement the treatment transitions
   - [ ] Method, season, efficacy, selectivity, resprouting, regrowth delay, and cost hooks
 - [ ] P4.4 Calibrate the treatment efficacy and resprouting

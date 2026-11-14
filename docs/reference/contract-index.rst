@@ -97,6 +97,10 @@ test suite. This page is the map.
      - ``brushline.state-space.v1``
      - ``validate_state_projection``
      - Functional groups, variables, thresholds, coverage states, class probabilities, uncertainty, and state-contract conversion
+   * - Growth
+     - ``brushline.growth.v1``
+     - ``validate_growth_result``
+     - Group curves, site/climate/competition modifiers, monotonicity, asymptotes, age, uncertainty, and domain
 
 Error prefixes
 --------------
@@ -145,6 +149,8 @@ Error prefixes
      - LiDAR benchmark
    * - ``STATE-SPACE-*``
      - Low-vegetation state space
+   * - ``GROWTH-*``
+     - Growth model
 
 Test layers
 -----------
@@ -174,6 +180,8 @@ Test layers
   required/optional/unexplained missing values, duplicate keys, and report consistency.
 - State-space tests for every class, coverage state, strata, probabilities, config validation, unknown
   and partial projection, and state-contract conversion.
+- Growth tests for monotonicity, asymptotes, all functional groups, site/climate/competition modifiers,
+  domain blocking, uncertainty, conversion, and validator errors.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

@@ -30,4 +30,5 @@ whenever you add a module to the project.
    lidar-coverage
    lidar-benchmark
    state-space
+   growth
    instance

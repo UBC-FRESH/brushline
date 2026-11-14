@@ -560,27 +560,61 @@ def _single_state_contract(state: VegetationState) -> StateContract:
     return StateContract(states=[state])
 
 
-def _classify(observation: StateObservation, config: StateSpaceConfig) -> StateClass:
-    height = observation.height_m
-    cover = observation.cover_pct
-    assert height is not None
-    assert cover is not None
-    strata = observation.strata
+def classify_state(
+    height_m: float | None,
+    cover_pct: float | None,
+    functional_group: FunctionalGroup,
+    config: StateSpaceConfig | None = None,
+    strata: list[StateStratum] | None = None,
+) -> StateClass:
+    """Classify one height/cover observation deterministically.
+
+    Parameters
+    ----------
+    height_m : float or None
+        Observed height.
+    cover_pct : float or None
+        Observed cover.
+    functional_group : str
+        Functional group.
+    config : StateSpaceConfig, optional
+        Discretization rules.
+    strata : list of StateStratum, optional
+        Vertical strata for a mixed class.
+
+    Returns
+    -------
+    str
+        The selected state class, or ``unknown`` when the input is incomplete.
+    """
+    rules = config or StateSpaceConfig()
+    if functional_group == "unknown" or height_m is None or cover_pct is None:
+        return "unknown"
     if (
         strata
-        and sum(1 for stratum in strata if stratum.cover_pct >= config.cover_min_pct)
-        >= config.mixed_min_strata
+        and sum(1 for stratum in strata if stratum.cover_pct >= rules.cover_min_pct)
+        >= rules.mixed_min_strata
     ):
         return "mixed"
-    if height >= config.mature_height_m and cover >= config.cover_min_pct:
+    if height_m >= rules.mature_height_m and cover_pct >= rules.cover_min_pct:
         return "mature_edge"
-    if height <= config.grass_max_height_m and cover < config.cover_min_pct:
+    if height_m <= rules.grass_max_height_m and cover_pct < rules.cover_min_pct:
         return "grass_herb"
-    if height <= config.shrub_max_height_m and cover >= config.cover_min_pct:
+    if height_m <= rules.shrub_max_height_m and cover_pct >= rules.cover_min_pct:
         return "shrub"
-    if height <= config.young_tree_max_height_m and cover >= config.cover_min_pct:
+    if height_m <= rules.young_tree_max_height_m and cover_pct >= rules.cover_min_pct:
         return "young_tree"
     return "unknown"
+
+
+def _classify(observation: StateObservation, config: StateSpaceConfig) -> StateClass:
+    return classify_state(
+        observation.height_m,
+        observation.cover_pct,
+        observation.functional_group,
+        config,
+        observation.strata,
+    )
 
 
 def _unknown_projection(
