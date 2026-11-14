@@ -85,6 +85,10 @@ test suite. This page is the map.
      - ``brushline.state-initialization.v1``
      - ``validate_state_initialization``
      - Field/CHM rules, evidence coverage, class probabilities, audit decisions, model card, and state-contract validity
+   * - LiDAR coverage and applicability
+     - ``brushline.lidar-coverage.v1``
+     - ``validate_lidar_coverage``
+     - Acquisition recency, usable coverage, valid pixels, domain, six coverage states, next action, and stop/continue
 
 Error prefixes
 --------------
@@ -127,6 +131,8 @@ Error prefixes
      - Terrain support
    * - ``CANOPY-*``
      - Canopy support
+   * - ``LIDAR-COVERAGE-*``
+     - LiDAR coverage and applicability
 
 Test layers
 -----------
@@ -150,6 +156,8 @@ Test layers
   partial/missing/out-of-domain states, and applicability.
 - State-initialization tests for field-first selection, every prototype class, unknown/partial states,
   species fallback, audit decisions, probabilities, and contract validity.
+- LiDAR coverage tests for observed, stale, partial, missing, out-of-domain, excluded, optional gaps,
+  domain reasons, next actions, and stop/continue.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

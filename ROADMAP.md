@@ -172,8 +172,8 @@ with coverage and applicability made explicit.
   - [x] CHM, canopy structure, tree counts, crown radius, and VRI comparison evidence
 - [x] P3.4 Initialize the vegetation state
   - [x] Link LiDAR metrics, inventory, field plots, and treatment history to state classes
-- [ ] P3.5 Report coverage, applicability, and observation gaps
-  - [ ] No point cloud, no contemporary DEM, out-of-domain model, and missing plot data
+- [x] P3.5 Report coverage, applicability, and observation gaps
+  - [x] No point cloud, no contemporary DEM, out-of-domain model, and missing plot data
 - [ ] P3.6 Benchmark the adapter against the FEMIC/WS4/FHOPS consumer values
   - [ ] Same bundle, same polygons, same aggregation; record the differences
 

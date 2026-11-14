@@ -18,6 +18,7 @@
 - [Terrain and slope support](reference/terrain-support.html): buffered segment aggregation, slope, aspect, terrain classes, the access proxy, and coverage states.
 - [Canopy and cover support](reference/canopy-support.html): CHM height and cover statistics, optional structure and tree products, VRI comparison, and applicability states.
 - [Initial vegetation state](reference/state-initialization.html): field-first rules, conservative CHM thresholds, explicit unknown/partial states, class probabilities, and audit decisions.
+- [LiDAR coverage and applicability](reference/lidar-coverage.html): acquisition recency, usable coverage, domain checks, missing observation gaps, and the stop/continue decision.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -42,3 +43,4 @@
 - [Terrain support API](api/terrain.html): the raster contract, segment buffer, aggregation, and validator.
 - [Canopy support API](api/canopy.html): the CHM contract, aggregation, tree and VRI models, and validator.
 - [State initialization API](api/state-init.html): the evidence models, initializer, decisions, and validator.
+- [LiDAR coverage API](api/lidar-coverage.html): the evidence/coverage models, assessment, and validator.
