@@ -13,6 +13,14 @@ from brushline.tactical.access import (
     RoadLink,
     build_access_plan,
 )
+from brushline.tactical.operations import (
+    OPERATIONS_SCHEMA_VERSION,
+    OperationsConfig,
+    OperationsPlan,
+    OperationsViolation,
+    WorkOrder,
+    build_operations_plan,
+)
 from brushline.tactical.program import (
     PROGRAM_SCHEMA_VERSION,
     TacticalAction,
@@ -37,6 +45,7 @@ from brushline.tactical.resources import (
 
 __all__ = [
     "ACCESS_SCHEMA_VERSION",
+    "OPERATIONS_SCHEMA_VERSION",
     "PROGRAM_SCHEMA_VERSION",
     "RESOURCE_SCHEMA_VERSION",
     "ROAD_STATUSES",
@@ -46,6 +55,9 @@ __all__ = [
     "AccessWindow",
     "ContractorProfile",
     "CostLine",
+    "OperationsConfig",
+    "OperationsPlan",
+    "OperationsViolation",
     "ResourceError",
     "ResourcePlan",
     "ResourceRequest",
@@ -57,7 +69,9 @@ __all__ = [
     "TacticalProgram",
     "TacticalViolation",
     "TreatmentUnit",
+    "WorkOrder",
     "build_access_plan",
+    "build_operations_plan",
     "build_resource_plan",
     "build_tactical_program",
     "validate_tactical_inputs",

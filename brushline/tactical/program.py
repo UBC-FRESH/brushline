@@ -67,6 +67,8 @@ class TacticalAction(BaseModel):
         Cost.
     capacity_units : float
         Crew/machine units.
+    access_window_id : str or None, optional
+        Access window reference.
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -79,6 +81,7 @@ class TacticalAction(BaseModel):
     contractor_id: str = Field(min_length=1)
     cost: float = Field(ge=0)
     capacity_units: float = Field(gt=0)
+    access_window_id: str | None = None
 
 
 class TacticalConfig(BaseModel):

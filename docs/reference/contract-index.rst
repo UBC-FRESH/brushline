@@ -209,6 +209,10 @@ test suite. This page is the map.
      - ``brushline.tactical-access.v1``
      - ``AccessPlan``
      - Road status/source, windows, route length, allowed/blocked decisions, and caveats
+   * - Operational plan
+     - ``brushline.tactical-operations.v1``
+     - ``OperationsPlan``
+     - Work orders, source action, crew/day, cost, access gates, and violations
 
 Error prefixes
 --------------
@@ -297,6 +301,8 @@ Error prefixes
      - Tactical resources
    * - ``ACCESS-*``
      - Tactical access
+   * - ``OPERATIONS-*``
+     - Operational plan
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -376,6 +382,7 @@ Test layers
   duplicate profiles, and model guards.
 - Access tests for open/restricted/closed/unknown status, source preservation, route totals, missing
   links, duplicates, and model guards.
+- Operations tests for work-order traceability, crew/day assignment, blocked/missing access, and totals.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

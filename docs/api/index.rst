@@ -54,4 +54,5 @@ whenever you add a module to the project.
    tactical-program
    tactical-resources
    tactical-access
+   tactical-operations
    instance
