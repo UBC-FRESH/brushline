@@ -20,6 +20,13 @@ from brushline.vegetation.growth import (
     grow,
     validate_growth_result,
 )
+from brushline.vegetation.hazards import (
+    HazardConfig,
+    HazardReport,
+    HazardRequest,
+    assess_hazards,
+    validate_hazard_report,
+)
 from brushline.vegetation.state_space import (
     FUNCTIONAL_GROUP_PROFILES,
     STATE_SPACE_CLASSES,
@@ -61,6 +68,9 @@ __all__ = [
     "GrowthError",
     "GrowthRequest",
     "GrowthResult",
+    "HazardConfig",
+    "HazardReport",
+    "HazardRequest",
     "StateDistribution",
     "StateObservation",
     "StateProjection",
@@ -76,11 +86,13 @@ __all__ = [
     "TreatmentRequest",
     "TreatmentResult",
     "apply_treatment",
+    "assess_hazards",
     "calibrate_treatment",
     "classify_state",
     "grow",
     "project_state",
     "validate_growth_result",
+    "validate_hazard_report",
     "validate_state_projection",
     "validate_treatment_calibration",
     "validate_treatment_result",

@@ -25,6 +25,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    growth-model
    treatment-transitions
    treatment-calibration
+   hazard-indicators
    compiled-dataset
    corridor-contract
    state-contract

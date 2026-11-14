@@ -109,6 +109,10 @@ test suite. This page is the map.
      - ``brushline.treatment-calibration.v1``
      - ``validate_treatment_calibration``
      - Evidence, pooling, shrinkage, intervals, sample sizes, source ids, and leave-one-out checks
+   * - Hazard and service indicators
+     - ``brushline.hazards.v1``
+     - ``validate_hazard_report``
+     - Clearance, fall-in, fuel, access, reliability components and weights, unknown states, and caveats
 
 Error prefixes
 --------------
@@ -163,6 +167,8 @@ Error prefixes
      - Treatment transitions
    * - ``CALIBRATION-*``
      - Treatment calibration
+   * - ``HAZARD-*``
+     - Hazard and service indicators
 
 Test layers
 -----------
@@ -198,6 +204,8 @@ Test layers
   cost, conversion, and validator errors.
 - Calibration tests for exact/pooled/prior levels, shrinkage, intervals, holdout checks, model validation,
   and parameter application.
+- Hazard tests for clearance statuses, fall-in risk, fuel connectivity, access, reliability weighting,
+  missing components, caveats, and validator errors.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

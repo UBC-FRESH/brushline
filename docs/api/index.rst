@@ -33,4 +33,5 @@ whenever you add a module to the project.
    growth
    treatment
    treatment-calibration
+   hazards
    instance
