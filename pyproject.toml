@@ -73,6 +73,7 @@ include = ["brushline*"]
 
 [tool.setuptools.package-data]
 "brushline.web" = ["static/*", "static/vendor/*", "static/vendor/three/*.js", "skins/*"]
+"brushline.resources" = ["*.json"]
 "brushline.resources.instance" = [
   "*.md",
   "config/*.yaml",

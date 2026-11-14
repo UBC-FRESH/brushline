@@ -11,7 +11,7 @@ async function boot(){
 }
 function drawMap(){
  const svg=$("#map");svg.innerHTML="";
- state.blocks.forEach((b,i)=>{const r=document.createElementNS("http://www.w3.org/2000/svg","rect");r.setAttribute("x",60+i*125);r.setAttribute("y",80+(i%2)*45);r.setAttribute("width",100);r.setAttribute("height",55);r.setAttribute("rx",8);r.setAttribute("class","segment"+(b.block_id===state.selected?" selected":""));r.onclick=()=>selectBlock(b.block_id);svg.appendChild(r);const t=document.createElementNS("http://www.w3.org/2000/svg","text");t.setAttribute("x",70+i*125);t.setAttribute("y",112+(i%2)*45);t.textContent=b.block_id;svg.appendChild(t);});
+ state.blocks.forEach((b,i)=>{const r=document.createElementNS("http://www.w3.org/2000/svg","rect");r.setAttribute("x",60+(i%3)*225);r.setAttribute("y",50+Math.floor(i/3)*95);r.setAttribute("width",100);r.setAttribute("height",55);r.setAttribute("rx",8);r.setAttribute("class","segment"+(b.block_id===state.selected?" selected":""));r.onclick=()=>selectBlock(b.block_id);svg.appendChild(r);const t=document.createElementNS("http://www.w3.org/2000/svg","text");t.setAttribute("x",70+(i%3)*225);t.setAttribute("y",82+Math.floor(i/3)*95);t.setAttribute("pointer-events","none");t.textContent=b.block_id;svg.appendChild(t);});
 }
 async function selectBlock(id){
  state.selected=id;drawMap();const b=state.blocks.find(x=>x.block_id===id);$("#map-hint").textContent=`${id} · ${b?.height_m??"?"} m · ${b?.cover_pct??"?"}% cover · ${b?.actions?.length||0} treatment action(s)`;

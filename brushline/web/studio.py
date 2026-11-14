@@ -20,6 +20,7 @@ from fastapi.staticfiles import StaticFiles
 STUDIO_SCHEMA_VERSION: Literal["brushline.studio.v1"] = "brushline.studio.v1"
 STATIC_ROOT = Path(__file__).resolve().with_name("static")
 DEFAULT_ARTIFACT_ROOT = Path(__file__).resolve().parents[2] / "examples" / "synthetic-corridor"
+REAL_SCENE_PATH = Path(__file__).resolve().parents[1] / "resources" / "ubc-real-block.json"
 SKINS: tuple[dict[str, Any], ...] = (
     {"id": "model-builder", "workspaces": ["build", "data"], "read_only": False},
     {"id": "owner-strategic", "workspaces": ["map", "plan", "results", "data"], "read_only": False},
@@ -89,6 +90,21 @@ def _blocks(root: Path, plan: dict[str, Any]) -> list[dict[str, Any]]:
                 "variant_available": bool(actions.get(segment_id)),
             }
         )
+    if REAL_SCENE_PATH.exists():
+        real = json.loads(REAL_SCENE_PATH.read_text(encoding="utf-8"))
+        blocks.append(
+            {
+                "block_id": "ubc-real",
+                "block_kind": "real_block",
+                "segment_ids": [],
+                "height_m": None,
+                "cover_pct": None,
+                "actions": [],
+                "variant_available": False,
+                "label": "UBC public-data block",
+                "tree_count": len(real.get("trees", [])),
+            }
+        )
     return blocks
 
 
@@ -110,6 +126,12 @@ def _segment_geometry(root: Path, block_id: str) -> dict[str, Any]:
 
 
 def _scene(root: Path, block_id: str, variant: str) -> dict[str, Any]:
+    if block_id == "ubc-real":
+        if variant != "pre":
+            raise StudioError("the observed UBC block has no modelled post-treatment state")
+        if not REAL_SCENE_PATH.exists():
+            raise StudioError("real block scene is missing")
+        return dict(json.loads(REAL_SCENE_PATH.read_text(encoding="utf-8")))
     plan = _plan_for(root, "current")
     blocks = _blocks(root, plan)
     block = next((item for item in blocks if item["block_id"] == block_id), None)

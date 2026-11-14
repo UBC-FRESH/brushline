@@ -3,11 +3,17 @@ import { OrbitControls } from "three/addons/OrbitControls.js";
 
 let renderer, scene, camera, controls, terrain, vegetation, group, block = null;
 let pre = null, post = null, variant = "pre", walking = false, walkYaw = 0, walkPitch = 0;
-let keys = new Set(), dragging = false, last = null, saved = null;
+let keys = new Set(), dragging = false, last = null, saved = null, real = null;
 const eyeHeight = 1.7;
 
 function terrainY(x, z) {
-  return 0.7 * Math.sin(x * 0.035) + 0.45 * Math.cos(z * 0.05) + 0.2 * Math.sin((x + z) * 0.08);
+  if (!real) return 0.7 * Math.sin(x * 0.035) + 0.45 * Math.cos(z * 0.05) + 0.2 * Math.sin((x + z) * 0.08);
+  const t = real.terrain, w = t.width, h = t.height, res = t.resolution_m;
+  const col = Math.max(0, Math.min(w - 1, x / res)), row = Math.max(0, Math.min(h - 1, z / res));
+  const c0 = Math.floor(col), r0 = Math.floor(row), c1 = Math.min(w - 1, c0 + 1), r1 = Math.min(h - 1, r0 + 1);
+  const dc = col - c0, dr = row - r0;
+  const v = (r, c) => t.elevation[r][c];
+  return (v(r0,c0)*(1-dc)+v(r0,c1)*dc)*(1-dr) + (v(r1,c0)*(1-dc)+v(r1,c1)*dc)*dr;
 }
 
 function init() {
@@ -61,6 +67,8 @@ function resize() {
 }
 
 function build(sceneData, nextVariant) {
+  if (sceneData.schema_version === "brushline.real-scene.v1") { buildReal(sceneData); return; }
+  real = null;
   block = sceneData;
   variant = nextVariant || variant;
   if (group) scene.remove(group);
@@ -139,6 +147,39 @@ function build(sceneData, nextVariant) {
   applyVariant();
 }
 
+
+function buildReal(data) {
+  block = data; real = data; variant = "pre";
+  if (group) scene.remove(group);
+  group = new THREE.Group(); scene.add(group);
+  const t = data.terrain, w = t.width, h = t.height, res = t.resolution_m;
+  const verts = [], idx = [];
+  for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) verts.push(c*res, t.elevation[r][c], r*res);
+  for (let r = 0; r < h-1; r++) for (let c = 0; c < w-1; c++) {
+    const a=r*w+c, b=a+1, d=a+w, e=d+1; idx.push(a,d,b,b,d,e);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(verts,3));
+  geo.setIndex(idx); geo.computeVertexNormals();
+  group.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:"#78977d", roughness:.95})));
+  const trees = data.trees || [];
+  const trunkGeo = new THREE.CylinderGeometry(.18,.23,1,5);
+  const crownGeo = new THREE.SphereGeometry(1,7,6);
+  const trunks = new THREE.InstancedMesh(trunkGeo, new THREE.MeshStandardMaterial({color:"#5b4433"}), trees.length);
+  const crowns = new THREE.InstancedMesh(crownGeo, new THREE.MeshStandardMaterial({color:"#3f7a4b", roughness:.9}), trees.length);
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3();
+  trees.forEach((tree,i) => {
+    const y = terrainY(tree.x_m, tree.y_m), hh = Math.max(1, tree.height_m), cw = Math.max(1, tree.crown_width_m || hh*.3);
+    m.compose(new THREE.Vector3(tree.x_m, y+hh*.35, tree.y_m), q, s.set(1,hh*.7,1)); trunks.setMatrixAt(i,m);
+    m.compose(new THREE.Vector3(tree.x_m, y+hh*.78, tree.y_m), q, s.set(cw*.5,hh*.34,cw*.5)); crowns.setMatrixAt(i,m);
+  });
+  group.add(trunks); group.add(crowns);
+  const center = [w*res/2, h*res/2];
+  camera.position.set(center[0]+135, 125, center[1]+195);
+  controls.target.set(center[0], 55, center[1]); controls.update();
+  applyVariant();
+}
+
 function setInstance(i, item) {
   const m = new THREE.Matrix4();
   m.compose(
@@ -151,6 +192,7 @@ function setInstance(i, item) {
 }
 
 function applyVariant() {
+  if (real) { document.getElementById("variant").textContent = "observed"; return; }
   if (!vegetation) return;
   const data = variant === "post" ? post : pre;
   data.forEach((item, i) => setInstance(i, item));
@@ -164,9 +206,11 @@ function setWalking(on) {
   if (on) {
     saved = {position: camera.position.clone(), quaternion: camera.quaternion.clone(), target: controls.target.clone(), fov: camera.fov};
     camera.fov = 68; camera.updateProjectionMatrix();
-    const pts = block?.geometry?.points?.length ? block.geometry.points : [[0,0],[100,0]];
-    camera.position.set(pts[0][0], terrainY(pts[0][0],pts[0][1])+eyeHeight, pts[0][1]);
-    walkYaw = Math.atan2(-(pts[1][0]-pts[0][0]), -(pts[1][1]-pts[0][1]));
+    let start = [0,0], target = [100,0];
+    if (real) { start = [20,20]; target = [real.terrain.width*real.terrain.resolution_m/2, real.terrain.height*real.terrain.resolution_m/2]; }
+    else if (block?.geometry?.points?.length) { start = block.geometry.points[0]; target = block.geometry.points[block.geometry.points.length-1]; }
+    camera.position.set(start[0], terrainY(start[0],start[1])+eyeHeight, start[1]);
+    walkYaw = Math.atan2(-(target[0]-start[0]), -(target[1]-start[1]));
     walkPitch = -0.04;
     camera.rotation.set(walkPitch, walkYaw, 0, "YXZ");
     canvas.focus();

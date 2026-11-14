@@ -33,6 +33,11 @@ def test_studio_endpoints_and_pov_variants() -> None:
     assert reviewer["read_only"]
     assert client.get(f"/api/studio/scene/{block_id}?variant=bad").status_code == 422
     assert client.get("/api/studio/scene/missing?variant=pre").status_code == 404
+    real = client.get("/api/studio/scene/ubc-real?variant=pre")
+    assert real.status_code == 200
+    assert real.json()["schema_version"] == "brushline.real-scene.v1"
+    assert real.json()["trees"]
+    assert client.get("/api/studio/scene/ubc-real?variant=post").status_code == 404
     stream = client.get("/api/studio/search/stream")
     assert stream.status_code == 200
     assert "event: start" in stream.text
