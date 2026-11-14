@@ -24,4 +24,5 @@ whenever you add a module to the project.
    capabilities
    model-builder
    lidar
+   terrain
    instance

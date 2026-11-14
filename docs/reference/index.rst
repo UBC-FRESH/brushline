@@ -16,6 +16,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    agent-capabilities
    model-builder
    lidar-bundle
+   terrain-support
    compiled-dataset
    corridor-contract
    state-contract

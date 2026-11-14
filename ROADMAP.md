@@ -166,8 +166,8 @@ with coverage and applicability made explicit.
 
 - [x] P3.1 Add the FEMIC LiDAR bundle adapter and provenance
   - [x] Bundle pin, checksums, CRS, vertical datum, resolution, licence, and product validation
-- [ ] P3.2 Map terrain and slope to segment support
-  - [ ] DEM/DSM support, aggregation rules, access proxy, and no silent reprojection
+- [x] P3.2 Map terrain and slope to segment support
+  - [x] DEM/DSM support, aggregation rules, access proxy, and no silent reprojection
 - [ ] P3.3 Map canopy, cover, and optional tree products
   - [ ] CHM, canopy structure, tree counts, crown radius, and VRI comparison evidence
 - [ ] P3.4 Initialize the vegetation state

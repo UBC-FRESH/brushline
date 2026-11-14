@@ -73,6 +73,10 @@ test suite. This page is the map.
      - ``femic.lidar.product.v1``, ``femic.lidar.bundle.v1``, ``femic.lidar.selection.v1``
      - ``validate_lidar_bundle``
      - Producer pin, selection digest, product checksums, CRS, datum, resolution, licence, paths, and provenance
+   * - Terrain support
+     - ``brushline.terrain-support.v1``
+     - ``validate_terrain_support``
+     - Raster CRS, resolution, datum, buffer, statistic, valid pixels, coverage, slope, aspect, terrain class, and access proxy
 
 Error prefixes
 --------------
@@ -111,6 +115,8 @@ Error prefixes
      - Agent capabilities and sanitized outcome record
    * - ``LIDAR-*``
      - FEMIC LiDAR bundle
+   * - ``TERRAIN-*``
+     - Terrain support
 
 Test layers
 -----------
@@ -128,6 +134,8 @@ Test layers
   progress SSE, review, handoff, and custom AOI gaps.
 - LiDAR bundle tests for the producer pin, selection digest, checksums, CRS, datum, licence, path
   containment, product kinds, derived flags, and provenance.
+- Terrain tests for buffered aggregation, coverage states, every statistic, slope and access classes,
+  RASTER CRS/datum/resolution checks, and provenance.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
