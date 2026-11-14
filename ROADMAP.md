@@ -207,8 +207,8 @@ and publish a model card.
   - [x] Clearance, fall-in, fuel connectivity, access, and a reliability proxy
 - [x] P4.6 Calibrate and validate against held-out plots and LiDAR
   - [x] Spatial holdout, time-lag sensitivity, benchmark against MEDFATE/FVS-FFE/Botequim-type curves
-- [ ] P4.7 Publish the model card and uncertainty contract
-  - [ ] Model id, version, predictors, training data, validation, error, domain, licence, caveats
+- [x] P4.7 Publish the model card and uncertainty contract
+  - [x] Model id, version, predictors, training data, validation, error, domain, licence, caveats
 
 Acceptance criteria:
 

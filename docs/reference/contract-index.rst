@@ -117,6 +117,10 @@ test suite. This page is the map.
      - ``brushline.vegetation-validation.v1``
      - ``validate_vegetation_validation``
      - Spatial holdout, group error, interval coverage, time-lag sensitivity, candidate benchmark, and exclusions
+   * - Low-vegetation model card
+     - ``brushline.low-vegetation-model-card.v1``
+     - ``validate_model_card``
+     - Predictors, training/validation evidence, metrics, candidates, uncertainty, domain, licence, citation, caveats, and decision boundary
 
 Error prefixes
 --------------
@@ -175,6 +179,8 @@ Error prefixes
      - Hazard and service indicators
    * - ``VALIDATION-*``
      - Vegetation validation
+   * - ``MODEL-CARD-*``
+     - Low-vegetation model card
 
 Test layers
 -----------
@@ -214,6 +220,8 @@ Test layers
   missing components, caveats, and validator errors.
 - Validation tests for spatial holdout, eligibility exclusions, group metrics, interval coverage, lag
   sensitivity, candidate disagreement, and report validation.
+- Model-card tests for predictor/domain ranges, evidence, metrics, candidates, uncertainty, domain checks,
+  out-of-domain rejection, and card validation.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
