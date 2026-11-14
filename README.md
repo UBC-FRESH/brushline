@@ -50,11 +50,10 @@ Two things make the problem hard:
 
 ## Status
 
-Phase 0 (bootstrap and scope) is complete and merged. Phase 1 (contracts and prototype) is active: the
-repository is defining the compiled dataset, corridor, state, treatment, observation, plan, run, archive,
-timeline, and demo contracts, and building a synthetic end-to-end prototype. It does not yet have a
-usable vegetation model or planner. `ROADMAP.md` is the plan of record, and the GitHub issues carry the
-live status.
+Phase 0 (bootstrap and scope) and Phase 1 (contracts and prototype) are complete and merged. Phase 2
+(FEMIC-extended instance builder) is active: the repository is pinning the FEMIC provider surface and
+building the map-to-instance workflow on top of it. It does not yet have a usable vegetation model or
+planner. `ROADMAP.md` is the plan of record, and the GitHub issues carry the live status.
 
 Brushline is a working name. It is easy to rename before the first public release.
 
