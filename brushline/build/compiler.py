@@ -270,7 +270,6 @@ def _state_columns() -> list[ColumnSpec]:
     ]
 
 
-
 __all__ = [
     "SEGMENT_COLUMNS",
     "STATE_COLUMNS",
