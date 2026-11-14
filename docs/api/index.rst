@@ -28,4 +28,5 @@ whenever you add a module to the project.
    canopy
    state-init
    lidar-coverage
+   lidar-benchmark
    instance

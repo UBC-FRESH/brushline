@@ -1,0 +1,237 @@
+{
+  "benchmark_id": "synthetic-corridor-lidar-v1",
+  "bundle_id": "lidarbc-benchmark",
+  "bundle_version": "2026.1",
+  "contract": {
+    "buffer_m": 10.0,
+    "crs": "EPSG:3005",
+    "resolution_m": 1.0,
+    "statistic": "mean",
+    "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+    "vertical_datum": "CGVD2013"
+  },
+  "metrics": [
+    {
+      "absolute_tolerance": 0.25,
+      "brushline_value": 110.5,
+      "comparisons": [
+        {
+          "consumer": "femic",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "femic.lidar.terrain_qa.v1:dem-1",
+          "required": true,
+          "value": 110.6
+        },
+        {
+          "consumer": "ws4",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "ws4.dataset:lidar_dem_mean",
+          "required": true,
+          "value": 110.4
+        },
+        {
+          "consumer": "fhops",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "fhops.scenario:lidar_support.dem_mean",
+          "required": true,
+          "value": 110.5
+        }
+      ],
+      "name": "elevation_mean_m",
+      "relative_tolerance": 0.02,
+      "unit": "m"
+    },
+    {
+      "absolute_tolerance": 0.3,
+      "brushline_value": 7.2,
+      "comparisons": [
+        {
+          "consumer": "femic",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "femic.lidar.terrain_qa.v1:slope-1",
+          "required": true,
+          "value": 7.1
+        },
+        {
+          "consumer": "ws4",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "ws4.dataset:lidar_slope_mean",
+          "required": true,
+          "value": 7.3
+        },
+        {
+          "consumer": "fhops",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "fhops.scenario:lidar_support.slope_mean",
+          "required": true,
+          "value": 7.2
+        }
+      ],
+      "name": "slope_mean_deg",
+      "relative_tolerance": 0.05,
+      "unit": "degree"
+    },
+    {
+      "absolute_tolerance": 0.25,
+      "brushline_value": 12.0,
+      "comparisons": [
+        {
+          "consumer": "femic",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "femic.lidar.canopy_qa.v1:chm-1",
+          "required": true,
+          "value": 12.1
+        },
+        {
+          "consumer": "ws4",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "ws4.dataset:lidar_chm_mean",
+          "required": true,
+          "value": 11.9
+        },
+        {
+          "consumer": "fhops",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "fhops.scenario:lidar_products.chm_mean",
+          "required": true,
+          "value": 12.0
+        }
+      ],
+      "name": "chm_mean_m",
+      "relative_tolerance": 0.03,
+      "unit": "m"
+    },
+    {
+      "absolute_tolerance": 2.0,
+      "brushline_value": 100.0,
+      "comparisons": [
+        {
+          "consumer": "femic",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "femic.lidar.canopy_structure.v1:cover_10m",
+          "required": true,
+          "value": 100.0
+        },
+        {
+          "consumer": "ws4",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "ws4.dataset:lidar_cover_10m",
+          "required": true,
+          "value": 99.0
+        },
+        {
+          "consumer": "fhops",
+          "contract": {
+            "buffer_m": 10.0,
+            "crs": "EPSG:3005",
+            "resolution_m": 1.0,
+            "statistic": "mean",
+            "valid_pixel_rule": "valid cells whose centers are within the buffer and whose slope or CHM is finite",
+            "vertical_datum": "CGVD2013"
+          },
+          "missing_reason": "",
+          "provenance": "fhops.scenario:lidar_support.cover_10m",
+          "required": true,
+          "value": 100.0
+        }
+      ],
+      "name": "cover_10m_pct",
+      "relative_tolerance": 0.02,
+      "unit": "%"
+    }
+  ],
+  "product_sha256": {
+    "chm": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "dem": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "schema_version": "brushline.lidar-benchmark-request.v1",
+  "segment_id": "s1"
+}

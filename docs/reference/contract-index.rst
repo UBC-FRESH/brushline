@@ -89,6 +89,10 @@ test suite. This page is the map.
      - ``brushline.lidar-coverage.v1``
      - ``validate_lidar_coverage``
      - Acquisition recency, usable coverage, valid pixels, domain, six coverage states, next action, and stop/continue
+   * - LiDAR benchmark
+     - ``brushline.lidar-benchmark-request.v1``, ``brushline.lidar-benchmark.v1``
+     - ``validate_lidar_benchmark``
+     - Bundle pin, shared contract, absolute/relative tolerance, missing values, case statuses, and bundle hash
 
 Error prefixes
 --------------
@@ -133,6 +137,8 @@ Error prefixes
      - Canopy support
    * - ``LIDAR-COVERAGE-*``
      - LiDAR coverage and applicability
+   * - ``BENCHMARK-*``
+     - LiDAR benchmark
 
 Test layers
 -----------
@@ -158,6 +164,8 @@ Test layers
   species fallback, audit decisions, probabilities, and contract validity.
 - LiDAR coverage tests for observed, stale, partial, missing, out-of-domain, excluded, optional gaps,
   domain reasons, next actions, and stop/continue.
+- Benchmark tests for the committed fixture, absolute and relative tolerance, contract mismatch,
+  required/optional/unexplained missing values, duplicate keys, and report consistency.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
