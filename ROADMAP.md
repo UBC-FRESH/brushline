@@ -324,8 +324,8 @@ Status: active
 Goal: implement the observation model, the UAV/LiDAR mission simulation, value of information, and the
 recalibration and replanning loop.
 
-- [ ] P8.1 Implement the observation model
-  - [ ] Coverage, detection, measurement error, classification confusion, and latency
+- [x] P8.1 Implement the observation model (#79)
+  - [x] Coverage, detection, measurement error, classification confusion, and latency
 - [ ] P8.2 Implement the UAV/LiDAR mission simulation
   - [ ] Corridor graph, travel, endurance, sensor footprint, weather windows, and cost
 - [ ] P8.3 Implement coverage and value of information

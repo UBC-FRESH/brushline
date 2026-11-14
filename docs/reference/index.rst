@@ -50,6 +50,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    tactical-fhops
    tactical-timeline
    tactical-validation
+   observation-model
    compiled-dataset
    corridor-contract
    state-contract

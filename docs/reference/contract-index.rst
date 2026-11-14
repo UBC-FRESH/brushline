@@ -225,6 +225,10 @@ test suite. This page is the map.
      - ``brushline.tactical-validation.v1``
      - ``TacticalValidationResult``
      - Capacity, access, seasonality, traceability, FHOPS dry-run, and timeline checks
+   * - Observation
+     - ``brushline.observation.v1``
+     - ``Observation``
+     - Coverage, detection, observed class, measurement error, confidence, and latency
 
 Error prefixes
 --------------
