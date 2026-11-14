@@ -100,8 +100,8 @@ prototype that exercises them on synthetic data.
 
 - [x] P1.1 Define the compiled corridor dataset and manifest contract
   - [x] Tables, keys, units, CRS, schema version, validator, and manifest
-- [ ] P1.2 Define the corridor, segment, span, and treatment-unit contract
-  - [ ] Graph, linear referencing, geometry, access, structures, and service standards
+- [x] P1.2 Define the corridor, segment, span, and treatment-unit contract
+  - [x] Graph, linear referencing, geometry, access, structures, and service standards
 - [ ] P1.3 Define the vegetation state, treatment, and observation contract
   - [ ] Functional groups, state classes, distributions, treatment actions, observation records
 - [ ] P1.4 Define the plan, run, Pareto archive, operations timeline, and demo manifest contracts

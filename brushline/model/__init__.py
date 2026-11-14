@@ -2,6 +2,18 @@
 
 from __future__ import annotations
 
+from brushline.model.corridor import (
+    AccessPoint,
+    Corridor,
+    CorridorNetwork,
+    CorridorValidation,
+    Segment,
+    ServiceStandard,
+    Span,
+    Structure,
+    TreatmentUnit,
+    validate_corridor_network,
+)
 from brushline.model.schema import (
     DATASET_SCHEMA_VERSION,
     MANIFEST_NAME,
@@ -19,13 +31,23 @@ from brushline.model.schema import (
 __all__ = [
     "DATASET_SCHEMA_VERSION",
     "MANIFEST_NAME",
+    "AccessPoint",
     "ColumnSpec",
+    "Corridor",
+    "CorridorNetwork",
+    "CorridorValidation",
     "DatasetManifest",
     "DatasetValidation",
     "Provenance",
+    "Segment",
+    "ServiceStandard",
+    "Span",
+    "Structure",
     "TableSpec",
+    "TreatmentUnit",
     "file_sha256",
     "load_manifest",
+    "validate_corridor_network",
     "validate_dataset",
     "write_manifest",
 ]

@@ -8,3 +8,4 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    :maxdepth: 2
 
    compiled-dataset
+   corridor-contract

@@ -7,6 +7,8 @@
 - [Home](index.html): the documentation home for the project.
 - [Design record](design/index.html): the scope, architecture, optimization, UI, LiDAR, instance-builder, demo-portal, and literature review decisions.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
+- [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [API reference](api/index.html): every public function, with its parameters, types, and return values.
 - [brushline package](api/brushline.html): the package root and the command line.
 - [dataset schema](api/model.html): the dataset models and validator.
+- [corridor schema](api/corridor.html): the corridor graph models and validator.
