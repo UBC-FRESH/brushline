@@ -8,12 +8,13 @@ selected-block scene with pre/post treatment variants.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 STUDIO_SCHEMA_VERSION: Literal["brushline.studio.v1"] = "brushline.studio.v1"
@@ -91,6 +92,23 @@ def _blocks(root: Path, plan: dict[str, Any]) -> list[dict[str, Any]]:
     return blocks
 
 
+def _segment_geometry(root: Path, block_id: str) -> dict[str, Any]:
+    corridor = _read_json(root, "corridor.json")
+    segment = next(
+        (item for item in corridor.get("segments", []) if item.get("segment_id") == block_id),
+        None,
+    )
+    if segment is None:
+        return {"points": [], "width_m": 10.0}
+    points = [
+        [float(x), float(y)]
+        for x, y in re.findall(
+            r"(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)", segment.get("geometry_wkt", "")
+        )
+    ]
+    return {"points": points, "width_m": 10.0}
+
+
 def _scene(root: Path, block_id: str, variant: str) -> dict[str, Any]:
     plan = _plan_for(root, "current")
     blocks = _blocks(root, plan)
@@ -127,6 +145,7 @@ def _scene(root: Path, block_id: str, variant: str) -> dict[str, Any]:
             "functional_group": current.get("functional_group"),
             "position_status": "unknown",
         },
+        "geometry": _segment_geometry(root, block_id),
         "caveats": [
             "Context view only; positions are not invented.",
             "Model state, not a stem map.",
@@ -157,8 +176,8 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @app.get("/")
-    def home() -> RedirectResponse:
-        return RedirectResponse("/studio")
+    def home() -> FileResponse:
+        return FileResponse(STATIC_ROOT / "studio.html")
 
     @app.get("/studio")
     def studio() -> FileResponse:

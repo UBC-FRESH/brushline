@@ -72,7 +72,7 @@ brushline = "brushline.integrations.freshforge:provider_factory"
 include = ["brushline*"]
 
 [tool.setuptools.package-data]
-"brushline.web" = ["static/*", "static/vendor/*", "skins/*"]
+"brushline.web" = ["static/*", "static/vendor/*", "static/vendor/three/*.js", "skins/*"]
 "brushline.resources.instance" = [
   "*.md",
   "config/*.yaml",

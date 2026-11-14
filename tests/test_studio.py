@@ -44,5 +44,6 @@ def test_studio_static_contains_pre_post_and_skin_hooks() -> None:
     js = (__import__("pathlib").Path("brushline/web/static/studio.js")).read_text()
     assert "toggleVariant" in js
     assert "variant" in js
-    assert "Walk this block" in js
-    assert "pre/post" in js.lower()
+    assert "Walk this block" in (__import__("pathlib").Path("brushline/web/static/studio.html")).read_text()
+    assert "brushline3d" in js
+    assert "Pre / Post" in (__import__("pathlib").Path("brushline/web/static/studio.html")).read_text()
