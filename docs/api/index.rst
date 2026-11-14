@@ -18,4 +18,5 @@ whenever you add a module to the project.
    artifacts
    prototype
    femic
+   freshforge
    instance

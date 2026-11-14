@@ -9,6 +9,7 @@
 - [Contract index](reference/contract-index.html): every schema, validator, error prefix, and test layer.
 - [FEMIC extension boundary](reference/femic-boundary.html): exact pins, providers, nodes, commands, contracts, and drift policy.
 - [Instance template](reference/instance-template.html): the Brushline overlay, the two rebuild specs, configuration, and validation.
+- [FreshForge provider](reference/freshforge-provider.html): the six Brushline nodes, their commands, validation, and offline tests.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -24,3 +25,4 @@
 - [prototype API](api/prototype.html): the compiler, simulator, schedule, and run writer.
 - [FEMIC boundary API](api/femic.html): the boundary constants, compatibility report, and pin validator.
 - [instance template API](api/instance.html): the template installer and result.
+- [FreshForge provider API](api/freshforge.html): the provider metadata, validation, and execution hooks.

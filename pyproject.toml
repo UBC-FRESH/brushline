@@ -46,6 +46,7 @@ dependencies = [
 geo = ["geopandas>=0.14", "pyogrio>=0.9", "shapely>=2.0"]
 opt = ["fresh-solutions>=0.9.3,<0.10"]
 femic = ["femic==0.2.0a1", "freshforge==0.1.0a5"]
+freshforge = ["freshforge==0.1.0a5"]
 web = [
   "fastapi>=0.110",
   "uvicorn>=0.29",
@@ -63,6 +64,9 @@ Issues = "https://github.com/UBC-FRESH/brushline/issues"
 
 [project.scripts]
 brushline = "brushline.cli:app"
+
+[project.entry-points."freshforge.providers"]
+brushline = "brushline.integrations.freshforge:provider_factory"
 
 [tool.setuptools.packages.find]
 include = ["brushline*"]
@@ -112,6 +116,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["typer", "typer.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["freshforge", "freshforge.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
