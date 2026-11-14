@@ -11,7 +11,7 @@ exists and the maintainer approves it.
 
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
-| P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | active |
+| P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | pr-open |
 | P1 Contracts and prototype | TBD | `feature/p1-contracts-prototype` | planned |
 | P2 FEMIC-extended instance builder | TBD | `feature/p2-instance-builder` | planned |
 | P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
@@ -51,7 +51,7 @@ exists and the maintainer approves it.
 
 Parent issue: #1
 Branch: `feature/p0-bootstrap`
-Status: active
+Status: pr-open
 
 Goal: give Brushline its identity, package, operating contract, product scope, architecture, decisions,
 and phase map, and queue a reviewable close-out.
