@@ -98,7 +98,7 @@ The final local dashboard at the evidence head is `OVERALL: GREEN`. The workflow
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | `c3edacc` plus the report | in progress | CI runs on pull request #40; the result is posted on the PR |
+| 43568470999 | `3710de6` | success | Quality gates, Pre-commit parity, and Green dashboard summary all passed; the report-only update follows |
 | n/a | branch pushes | not run | CI runs on pull requests and `main`, not on plain feature-branch pushes |
 
 ## 6. Next phase
