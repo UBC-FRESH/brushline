@@ -25,7 +25,7 @@ exists and the maintainer approves it.
 | P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | complete |
 | P12 Verification and the BAU case | #112 | `feature/p12-verify` | complete |
 | P13 Release and deploy | #121 | `feature/p13-release` | active |
-| P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
+| P14 Operate and maintain | #128 | `feature/p14-operate` | active |
 
 ## Lifecycle Map
 
@@ -505,9 +505,9 @@ Acceptance criteria:
 
 ## Phase 14: Operate and maintain
 
-Parent issue: TBD
+Parent issue: #128
 Branch: `feature/p14-operate`
-Status: planned
+Status: active
 
 Goal: keep the project current, support pilots, and maintain the data and model governance.
 
