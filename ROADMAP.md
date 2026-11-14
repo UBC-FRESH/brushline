@@ -488,12 +488,12 @@ checkout.
   - [x] Version, changes, known limits, and the model-card boundaries
 - [x] P13.2 Build and verify the release artifacts
   - [x] sdist, wheel, docs, and a clean-venv install
-- [ ] P13.3 Publish the docs and the demo portal
-  - [ ] GitHub Pages, the static demo portal, and the optional lab preview
-- [ ] P13.4 Tag and publish the release (maintainer approval required)
-  - [ ] Annotated tag, GitHub release, and artifact verification
-- [ ] P13.5 Verify the published release
-  - [ ] Clean checkout, install, CLI, docs, demo, and a sample run
+- [x] P13.3 Publish the docs and the demo portal
+  - [x] GitHub Pages, the static demo portal, and the optional lab preview
+- [x] P13.4 Tag and publish the release (maintainer approval required)
+  - [x] Annotated tag, GitHub release, and artifact verification
+- [x] P13.5 Verify the published release
+  - [x] Clean checkout, install, CLI, docs, demo, and a sample run
 
 Acceptance criteria:
 
