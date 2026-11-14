@@ -13,7 +13,18 @@ EXPECTED = ("brushline", "LICENSE", "README.md")
 
 
 def check_dist(dist: Path) -> list[str]:
-    """Return problems with the wheel/sdist contents."""
+    """Return problems with the wheel/sdist contents.
+
+    Parameters
+    ----------
+    dist : Path
+        Distribution directory.
+
+    Returns
+    -------
+    list of str
+        Problems, or an empty list.
+    """
     problems: list[str] = []
     wheels = sorted(dist.glob("brushline-*.whl"))
     sdists = sorted(dist.glob("brushline-*.tar.gz"))
@@ -38,7 +49,18 @@ def check_dist(dist: Path) -> list[str]:
 
 
 def clean_install(wheel: Path) -> list[str]:
-    """Install the wheel into a temporary system-site-packages venv and run version."""
+    """Install the wheel into a temporary venv and run version.
+
+    Parameters
+    ----------
+    wheel : Path
+        Wheel path.
+
+    Returns
+    -------
+    list of str
+        Problems, or an empty list.
+    """
     problems: list[str] = []
     venv = Path("/tmp") / "brushline-release-check"
     subprocess.run([sys.executable, "-m", "venv", "--system-site-packages", str(venv)], check=False)
@@ -63,7 +85,13 @@ def clean_install(wheel: Path) -> list[str]:
 
 
 def main() -> int:
-    """Run the release artifact checks."""
+    """Run the release artifact checks.
+
+    Returns
+    -------
+    int
+        Process exit status.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--dist", type=Path, default=Path("dist"))
     parser.add_argument("--install", action="store_true")
