@@ -2,9 +2,9 @@
 
 Phase: P7 Tactical and operational planning
 Parent issue: #69
-Pull request: pending
-Evidence head: `a6654f7`
-Report commit: this commit, plus the PR update
+Pull request: #77, `feature/p7-tactical-operational` into `main`
+Evidence head: `f79be72`
+Report commit: this commit, a report-only update after the evidence head
 Date: 2026-11-14
 Status: queued for approval. Not merged.
 
@@ -54,7 +54,7 @@ Validator: `0 error(s), 0 warning(s)`. Modules: program/resources/access/operati
 
 ## CI
 
-Pending pull request.
+CI runs on pull request #77. The FHOPS version assertion was relaxed after the first run because FHOPS is optional; the fix commit is `f79be72`.
 
 ## Next phase
 
