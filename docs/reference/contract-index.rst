@@ -205,6 +205,10 @@ test suite. This page is the map.
      - ``brushline.tactical-resources.v1``
      - ``ResourcePlan``
      - Contractor requests, cost lines, capacity, cost by contractor/year, and violations
+   * - Tactical access
+     - ``brushline.tactical-access.v1``
+     - ``AccessPlan``
+     - Road status/source, windows, route length, allowed/blocked decisions, and caveats
 
 Error prefixes
 --------------
@@ -291,6 +295,8 @@ Error prefixes
      - Tactical program
    * - ``RESOURCE-*``
      - Tactical resources
+   * - ``ACCESS-*``
+     - Tactical access
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -368,6 +374,8 @@ Test layers
   empty actions, and model guards.
 - Resource tests for the five cost lines, cost by contractor/year, capacity/method/profile failures,
   duplicate profiles, and model guards.
+- Access tests for open/restricted/closed/unknown status, source preservation, route totals, missing
+  links, duplicates, and model guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

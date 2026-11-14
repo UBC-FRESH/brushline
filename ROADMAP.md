@@ -296,8 +296,8 @@ Goal: turn the strategic policy into a 1-to-5-year treatment program and a work-
   - [x] Treatment units, methods, seasons, and contractor allocation
 - [x] P7.2 Implement contractor capacity, productivity, and cost (#71)
   - [x] Crews, machines, rates, travel, supervision, overhead, and risk
-- [ ] P7.3 Integrate access and road status
-  - [ ] fresh-road/ALSroads, route length, access windows, and no invented open/closed verdict
+- [x] P7.3 Integrate access and road status (#72)
+  - [x] fresh-road/ALSroads, route length, access windows, and no invented open/closed verdict
 - [ ] P7.4 Generate the operational work plan
   - [ ] Work order, sequence, assignment, and daily schedule
 - [ ] P7.5 Build the FHOPS adapter

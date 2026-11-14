@@ -45,6 +45,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    strategic-validation
    tactical-program
    tactical-resources
+   tactical-access
    compiled-dataset
    corridor-contract
    state-contract

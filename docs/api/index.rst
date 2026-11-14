@@ -53,4 +53,5 @@ whenever you add a module to the project.
    strategic-validation
    tactical-program
    tactical-resources
+   tactical-access
    instance

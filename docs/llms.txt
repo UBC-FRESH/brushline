@@ -44,6 +44,7 @@
 - [Synthetic strategic validation](reference/strategic-validation.html): 10-year coverage, budget, service, monitoring, BAU, totals, and replay checks.
 - [Tactical program](reference/tactical-program.html): treatment units, actions, seasons, budgets, and contractor allocation.
 - [Tactical resources](reference/tactical-resources.html): contractor capacity, rates, travel, supervision, overhead, risk, and cost lines.
+- [Tactical access](reference/tactical-access.html): source-preserving road status, windows, route length, and no invented open/closed verdict.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -94,3 +95,4 @@
 - [Synthetic strategic validation API](api/strategic-validation.html): the synthetic case and named checks.
 - [Tactical program API](api/tactical-program.html): unit/action/program models and validation.
 - [Tactical resources API](api/tactical-resources.html): profiles, requests, cost lines, and capacity checks.
+- [Tactical access API](api/tactical-access.html): road links, windows, decisions, and access plans.
