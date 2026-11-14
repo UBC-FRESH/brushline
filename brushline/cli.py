@@ -15,6 +15,7 @@ import typer
 
 from brushline import __version__
 from brushline.build.compiler import compile_fixture
+from brushline.demo.builder import build_demo_site
 from brushline.fixtures.synthetic import DEFAULT_SEED, generate_fixture
 from brushline.instance_ops import (
     build_demo_file,
@@ -455,3 +456,21 @@ def validate(
 
 
 app.add_typer(instance_app, name="instance")
+
+
+demo_app = typer.Typer(help="Build the public demo portal.")
+
+
+@demo_app.command("build")
+def demo_build(
+    out: Annotated[Path, typer.Option("--out", help="Destination directory.")] = Path("build/demo"),
+    artifact_root: Annotated[
+        Path, typer.Option("--artifact-root", help="Run artifact root.")
+    ] = Path("examples/synthetic-corridor"),
+) -> None:
+    """Build the static public demo site."""
+    root = build_demo_site(out, artifact_root=artifact_root)
+    typer.echo(f"demo: {root}")
+
+
+app.add_typer(demo_app, name="demo")

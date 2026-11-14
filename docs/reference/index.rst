@@ -58,6 +58,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    monitoring-validation
    plan-exchange
    studio
+   demo-portal
    compiled-dataset
    corridor-contract
    state-contract

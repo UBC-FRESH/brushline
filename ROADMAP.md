@@ -21,8 +21,8 @@ exists and the maintainer approves it.
 | P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | complete |
 | P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
 | P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
-| P10 Interactive planning studio | #94 | `feature/p10-studio` | pr-open |
-| P11 Demo portal and pilot onboarding | TBD | `feature/p11-demo-portal` | planned |
+| P10 Interactive planning studio | #94 | `feature/p10-studio` | complete |
+| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | pr-open |
 | P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
 | P13 Release and deploy | TBD | `feature/p13-release` | planned |
 | P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
@@ -380,7 +380,7 @@ Acceptance criteria:
 
 Parent issue: #94
 Branch: `feature/p10-studio`
-Status: pr-open
+Status: complete
 
 Goal: deliver the optional FastAPI service and static browser shell with the 2D map, 3D scene, seven
 skins, live search, Pareto explorer, and animated operations.
@@ -416,24 +416,24 @@ Acceptance criteria:
 
 ## Phase 11: Demo portal and pilot onboarding
 
-Parent issue: TBD
+Parent issue: #104
 Branch: `feature/p11-demo-portal`
-Status: planned
+Status: pr-open
 
 Goal: publish a public-data-only, read-only demo portal with curated instances and a pilot-request path.
 
-- [ ] P11.1 Define the demo portfolio and narratives
-  - [ ] Four to six instances, each answering a partner question, with headline metrics and caveats
-- [ ] P11.2 Implement the `brushline.demo.v1` manifest and static builder
-  - [ ] `brushline demo build`, validation, links, licences, and a GitHub-Pages-compatible export
-- [ ] P11.3 Build the instance pages
-  - [ ] 2D map, 3D scene, plan timeline, target/account charts, Pareto explorer, methods, caveats
-- [ ] P11.4 Build the pilot funnel and data boundary
-  - [ ] Pilot brief, data-request checklist, success metrics, security/NDA path, and contact
-- [ ] P11.5 Deploy the permanent and lab-preview surfaces
-  - [ ] GitHub Pages, optional read-only service, proxy prefix, health, and access gate
-- [ ] P11.6 Validate the portal
-  - [ ] No private data, no broken links, every licence present, every caveat present, accessibility
+- [x] P11.1 Define the demo portfolio and narratives
+  - [x] Four to six instances, each answering a partner question, with headline metrics and caveats
+- [x] P11.2 Implement the `brushline.demo.v1` manifest and static builder
+  - [x] `brushline demo build`, validation, links, licences, and a GitHub-Pages-compatible export
+- [x] P11.3 Build the instance pages
+  - [x] 2D map, 3D scene, plan timeline, target/account charts, Pareto explorer, methods, caveats
+- [x] P11.4 Build the pilot funnel and data boundary
+  - [x] Pilot brief, data-request checklist, success metrics, security/NDA path, and contact
+- [x] P11.5 Deploy the permanent and lab-preview surfaces
+  - [x] GitHub Pages, optional read-only service, proxy prefix, health, and access gate
+- [x] P11.6 Validate the portal
+  - [x] No private data, no broken links, every licence present, every caveat present, accessibility
 
 Acceptance criteria:
 
