@@ -21,6 +21,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    state-initialization
    lidar-coverage
    lidar-benchmark
+   state-space
    compiled-dataset
    corridor-contract
    state-contract

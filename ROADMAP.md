@@ -195,8 +195,8 @@ Status: active
 Goal: implement the low-vegetation state-transition model and the treatment transitions, calibrate them,
 and publish a model card.
 
-- [ ] P4.1 Define functional groups and state discretization
-  - [ ] Shrub, deciduous sprout, conifer, grass/herb; height, cover, density, age, and uncertainty
+- [x] P4.1 Define functional groups and state discretization
+  - [x] Shrub, deciduous sprout, conifer, grass/herb; height, cover, density, age, and uncertainty
 - [ ] P4.2 Implement the growth model
   - [ ] Saturating height/cover curves, site and climate modifiers, competition, and functional groups
 - [ ] P4.3 Implement the treatment transitions

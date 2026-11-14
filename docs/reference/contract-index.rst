@@ -93,6 +93,10 @@ test suite. This page is the map.
      - ``brushline.lidar-benchmark-request.v1``, ``brushline.lidar-benchmark.v1``
      - ``validate_lidar_benchmark``
      - Bundle pin, shared contract, absolute/relative tolerance, missing values, case statuses, and bundle hash
+   * - Low-vegetation state space
+     - ``brushline.state-space.v1``
+     - ``validate_state_projection``
+     - Functional groups, variables, thresholds, coverage states, class probabilities, uncertainty, and state-contract conversion
 
 Error prefixes
 --------------
@@ -139,6 +143,8 @@ Error prefixes
      - LiDAR coverage and applicability
    * - ``BENCHMARK-*``
      - LiDAR benchmark
+   * - ``STATE-SPACE-*``
+     - Low-vegetation state space
 
 Test layers
 -----------
@@ -166,6 +172,8 @@ Test layers
   domain reasons, next actions, and stop/continue.
 - Benchmark tests for the committed fixture, absolute and relative tolerance, contract mismatch,
   required/optional/unexplained missing values, duplicate keys, and report consistency.
+- State-space tests for every class, coverage state, strata, probabilities, config validation, unknown
+  and partial projection, and state-contract conversion.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

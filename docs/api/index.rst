@@ -29,4 +29,5 @@ whenever you add a module to the project.
    state-init
    lidar-coverage
    lidar-benchmark
+   state-space
    instance
