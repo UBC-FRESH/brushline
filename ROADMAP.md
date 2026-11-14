@@ -22,8 +22,8 @@ exists and the maintainer approves it.
 | P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
 | P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
 | P10 Interactive planning studio | #94 | `feature/p10-studio` | complete |
-| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | pr-open |
-| P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
+| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | complete |
+| P12 Verification and the BAU case | #112 | `feature/p12-verify` | pr-open |
 | P13 Release and deploy | TBD | `feature/p13-release` | planned |
 | P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
 
@@ -418,7 +418,7 @@ Acceptance criteria:
 
 Parent issue: #104
 Branch: `feature/p11-demo-portal`
-Status: pr-open
+Status: complete
 
 Goal: publish a public-data-only, read-only demo portal with curated instances and a pilot-request path.
 
@@ -445,27 +445,27 @@ Acceptance criteria:
 
 ## Phase 12: Verification and the BAU case
 
-Parent issue: TBD
+Parent issue: #112
 Branch: `feature/p12-verify`
-Status: planned
+Status: pr-open
 
 Goal: show that the build meets its acceptance criteria, with evidence, and demonstrate the
 optimal-versus-business-as-usual value proposition.
 
-- [ ] P12.1 Run the acceptance suite
-  - [ ] Every success criterion in the scope, with evidence
-- [ ] P12.2 Run the optimal-versus-BAU case
-  - [ ] Present cost, service attainment, risk, and uncertainty on a synthetic or public case
-- [ ] P12.3 Verify the monitoring value
-  - [ ] Adaptive policy versus fixed calendar, with the observation model and assumptions
-- [ ] P12.4 Verify the owner-contractor exchange
-  - [ ] Same plan, same cost total, attributable differences
-- [ ] P12.5 Verify performance and scale
-  - [ ] 10,000 segments, 30 years, 1,000 evaluations, 8 cores; or the measured limit
-- [ ] P12.6 Verify reproducibility
-  - [ ] Same data/model/config/seed reproduces the schedule and accounts
-- [ ] P12.7 Write the verification report and release recommendation
-  - [ ] Evidence, failures, gaps, and the recommendation
+- [x] P12.1 Run the acceptance suite
+  - [x] Every success criterion in the scope, with evidence
+- [x] P12.2 Run the optimal-versus-BAU case
+  - [x] Present cost, service attainment, risk, and uncertainty on a synthetic or public case
+- [x] P12.3 Verify the monitoring value
+  - [x] Adaptive policy versus fixed calendar, with the observation model and assumptions
+- [x] P12.4 Verify the owner-contractor exchange
+  - [x] Same plan, same cost total, attributable differences
+- [x] P12.5 Verify performance and scale
+  - [x] 10,000 segments, 30 years, 1,000 evaluations, 8 cores; or the measured limit
+- [x] P12.6 Verify reproducibility
+  - [x] Same data/model/config/seed reproduces the schedule and accounts
+- [x] P12.7 Write the verification report and release recommendation
+  - [x] Evidence, failures, gaps, and the recommendation
 
 Acceptance criteria:
 

@@ -241,6 +241,10 @@ test suite. This page is the map.
      - ``brushline.demo.v1``
      - ``DemoManifest``
      - Public synthetic instances, licences, caveats, artifacts, and pilot link
+   * - Verification
+     - ``brushline.verification.v1``
+     - ``VerificationReport``
+     - Criterion evidence, BAU/monitoring/exchange, performance, reproducibility, and recommendation
 
 Error prefixes
 --------------

@@ -118,3 +118,5 @@
 - [Planning studio](reference/studio.html): artifact endpoints, 2D map, 3D walkthrough/pre-post, skins, Pareto, timeline, and SSE.
 
 - [Demo portal](reference/demo-portal.html): public synthetic portfolio, static builder, instance pages, pilot brief, and read-only validation.
+
+- [Verification and BAU](reference/verification.html): 16 criteria, measured BAU/monitoring/exchange evidence, scale gap, replay, and recommendation.

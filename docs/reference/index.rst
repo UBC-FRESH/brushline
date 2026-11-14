@@ -59,6 +59,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    plan-exchange
    studio
    demo-portal
+   verification
    compiled-dataset
    corridor-contract
    state-contract
