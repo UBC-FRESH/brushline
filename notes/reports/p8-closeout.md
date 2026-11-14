@@ -20,7 +20,7 @@ Synthetic-only; no live sensor, UAV control, field data, or production safety/op
 
 ## Verification
 
-Local dashboard `OVERALL: GREEN`; pytest 763 passed with 98% coverage; validator 0 errors. No merge, branch deletion, parent close, tag, release, or settings change has been performed.
+Local dashboard `OVERALL: GREEN`; pytest 768 passed with 98% coverage; validator 0 errors. No merge, branch deletion, parent close, tag, release, or settings change has been performed.
 
 ## Recommendation
 
