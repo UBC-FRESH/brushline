@@ -13,7 +13,7 @@ exists and the maintainer approves it.
 | --- | --- | --- | --- |
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
-| P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | active |
+| P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | pr-open |
 | P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
 | P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
 | P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
@@ -125,7 +125,7 @@ Acceptance criteria:
 
 Parent issue: #24
 Branch: `feature/p2-instance-builder`
-Status: active
+Status: pr-open
 
 Goal: extend FEMIC's instance, rebuild-spec, FreshForge, catalogue, DataLad, and preflight surfaces to
 build Brushline instances from a map-selected AOI. Do not create a second instance-builder package.
