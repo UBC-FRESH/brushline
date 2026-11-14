@@ -101,6 +101,10 @@ test suite. This page is the map.
      - ``brushline.growth.v1``
      - ``validate_growth_result``
      - Group curves, site/climate/competition modifiers, monotonicity, asymptotes, age, uncertainty, and domain
+   * - Treatment transitions
+     - ``brushline.treatment.v1``
+     - ``validate_treatment_result``
+     - Method/season efficacy, top-kill, residual, resprouting, delay, cost, trajectory, and monotonicity
 
 Error prefixes
 --------------
@@ -151,6 +155,8 @@ Error prefixes
      - Low-vegetation state space
    * - ``GROWTH-*``
      - Growth model
+   * - ``TREATMENT-*``
+     - Treatment transitions
 
 Test layers
 -----------
@@ -182,6 +188,8 @@ Test layers
   and partial projection, and state-contract conversion.
 - Growth tests for monotonicity, asymptotes, all functional groups, site/climate/competition modifiers,
   domain blocking, uncertainty, conversion, and validator errors.
+- Treatment tests for method/season effects, immediate residual, resprouting, delay, trajectory,
+  cost, conversion, and validator errors.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

@@ -29,6 +29,15 @@ from brushline.vegetation.state_space import (
     project_state,
     validate_state_projection,
 )
+from brushline.vegetation.treatment import (
+    TREATMENT_PARAMETERS,
+    TreatmentConfig,
+    TreatmentError,
+    TreatmentRequest,
+    TreatmentResult,
+    apply_treatment,
+    validate_treatment_result,
+)
 
 __all__ = [
     "FUNCTIONAL_GROUP_PROFILES",
@@ -37,6 +46,7 @@ __all__ = [
     "STATE_SPACE_GROUPS",
     "STATE_SPACE_SCHEMA_VERSION",
     "STATE_VARIABLES",
+    "TREATMENT_PARAMETERS",
     "FunctionalGroupProfile",
     "GrowthConfig",
     "GrowthEnvironment",
@@ -49,9 +59,15 @@ __all__ = [
     "StateSpaceConfig",
     "StateStratum",
     "StateVariable",
+    "TreatmentConfig",
+    "TreatmentError",
+    "TreatmentRequest",
+    "TreatmentResult",
+    "apply_treatment",
     "classify_state",
     "grow",
     "project_state",
     "validate_growth_result",
     "validate_state_projection",
+    "validate_treatment_result",
 ]

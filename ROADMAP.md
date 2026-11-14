@@ -199,8 +199,8 @@ and publish a model card.
   - [x] Shrub, deciduous sprout, conifer, grass/herb; height, cover, density, age, and uncertainty
 - [x] P4.2 Implement the growth model
   - [x] Saturating height/cover curves, site and climate modifiers, competition, and functional groups
-- [ ] P4.3 Implement the treatment transitions
-  - [ ] Method, season, efficacy, selectivity, resprouting, regrowth delay, and cost hooks
+- [x] P4.3 Implement the treatment transitions
+  - [x] Method, season, efficacy, selectivity, resprouting, regrowth delay, and cost hooks
 - [ ] P4.4 Calibrate the treatment efficacy and resprouting
   - [ ] Brushing, mowing, herbicide, manual, and grazing evidence where available
 - [ ] P4.5 Implement the hazard and service indicators

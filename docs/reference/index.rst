@@ -23,6 +23,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    lidar-benchmark
    state-space
    growth-model
+   treatment-transitions
    compiled-dataset
    corridor-contract
    state-contract

@@ -31,4 +31,5 @@ whenever you add a module to the project.
    lidar-benchmark
    state-space
    growth
+   treatment
    instance
