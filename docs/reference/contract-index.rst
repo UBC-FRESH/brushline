@@ -69,6 +69,10 @@ test suite. This page is the map.
        ``brushline.handoff.v1``
      - ``BuilderSession``, ``ReviewSummary``, ``HandoffRecord``
      - AOI, plan preview, availability, approvals, stages, review, handoff, and dry-run artifacts
+   * - FEMIC LiDAR bundle
+     - ``femic.lidar.product.v1``, ``femic.lidar.bundle.v1``, ``femic.lidar.selection.v1``
+     - ``validate_lidar_bundle``
+     - Producer pin, selection digest, product checksums, CRS, datum, resolution, licence, paths, and provenance
 
 Error prefixes
 --------------
@@ -105,6 +109,8 @@ Error prefixes
      - Coverage and gap report
    * - ``CAPABILITIES-*``, ``AGENT-*``
      - Agent capabilities and sanitized outcome record
+   * - ``LIDAR-*``
+     - FEMIC LiDAR bundle
 
 Test layers
 -----------
@@ -120,6 +126,8 @@ Test layers
   private markers, authoritative fields, and sanitized records.
 - Model-builder tests for the static shell, plan preview, approvals, blocked builds, dry-run artifacts,
   progress SSE, review, handoff, and custom AOI gaps.
+- LiDAR bundle tests for the producer pin, selection digest, checksums, CRS, datum, licence, path
+  containment, product kinds, derived flags, and provenance.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

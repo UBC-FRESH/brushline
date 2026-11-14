@@ -15,6 +15,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    fetch-plan
    agent-capabilities
    model-builder
+   lidar-bundle
    compiled-dataset
    corridor-contract
    state-contract

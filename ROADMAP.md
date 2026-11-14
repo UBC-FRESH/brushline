@@ -164,8 +164,8 @@ Status: active
 Goal: initialize the segment state from validated open LiDAR, terrain, canopy, inventory, and field data,
 with coverage and applicability made explicit.
 
-- [ ] P3.1 Add the FEMIC LiDAR bundle adapter and provenance
-  - [ ] Bundle pin, checksums, CRS, vertical datum, resolution, licence, and product validation
+- [x] P3.1 Add the FEMIC LiDAR bundle adapter and provenance
+  - [x] Bundle pin, checksums, CRS, vertical datum, resolution, licence, and product validation
 - [ ] P3.2 Map terrain and slope to segment support
   - [ ] DEM/DSM support, aggregation rules, access proxy, and no silent reprojection
 - [ ] P3.3 Map canopy, cover, and optional tree products

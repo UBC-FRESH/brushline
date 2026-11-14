@@ -23,4 +23,5 @@ whenever you add a module to the project.
    fetch
    capabilities
    model-builder
+   lidar
    instance

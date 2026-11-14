@@ -14,6 +14,7 @@
 - [Fetch plan, materialization, and coverage](reference/fetch-plan.html): plan-only estimates, bulk approval, checksums, pointers, six coverage states, and the gap decision.
 - [Agent capabilities](reference/agent-capabilities.html): the six bounded capabilities, tool allowlists, validators, retry budgets, and sanitized outcome records.
 - [Model builder](reference/model-builder.html): the map-to-instance prototype, plan preview, approvals, dry run, progress stream, review, and handoff.
+- [FEMIC LiDAR bundle](reference/lidar-bundle.html): the read-only producer bundle contract, manifest and selection checks, product provenance, and named errors.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -34,3 +35,4 @@
 - [Fetch plan API](api/fetch.html): the planner, materialization checks, coverage states, and the gap report.
 - [Agent capabilities API](api/capabilities.html): the registry, fake provider, harness, validators, and scans.
 - [Model builder API](api/model-builder.html): the session store, FastAPI routes, plan preview, approvals, dry run, review, and handoff.
+- [LiDAR bundle API](api/lidar.html): the manifest models, bundle validator, provenance, and reference writer.
