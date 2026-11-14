@@ -15,7 +15,7 @@ exists and the maintainer approves it.
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
-| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | active |
+| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | pr-open |
 | P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
@@ -190,7 +190,7 @@ Acceptance criteria:
 
 Parent issue: #41
 Branch: `feature/p4-vegetation`
-Status: active
+Status: pr-open
 
 Goal: implement the low-vegetation state-transition model and the treatment transitions, calibrate them,
 and publish a model card.
