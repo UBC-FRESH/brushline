@@ -16,7 +16,7 @@ exists and the maintainer approves it.
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
 | P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
-| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | active |
+| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | pr-open |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
 | P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
@@ -222,7 +222,7 @@ Acceptance criteria:
 
 Parent issue: #50
 Branch: `feature/p5-optimization`
-Status: active
+Status: pr-open
 
 Goal: implement the Brushline adapter over Fresh Solutions, the multi-objective archive, and the exact
 small-instance validation.

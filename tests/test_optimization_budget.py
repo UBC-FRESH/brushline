@@ -11,6 +11,7 @@ from brushline.optimization.budget import (
     NO_OPTIMALITY_STATEMENT,
     BudgetError,
     BudgetPoint,
+    BudgetReport,
     CheckpointMeasurement,
     QualityBudgetReport,
     ScalingPoint,
@@ -194,3 +195,16 @@ def test_budget_errors_and_model_guards() -> None:
             replay_ok=True,
             objective=0,
         )
+
+
+def test_committed_budget_fixture_is_valid() -> None:
+    """The committed budget fixture carries the quality and caveat contract."""
+    report = BudgetReport.model_validate_json(
+        (ROOT / "notes" / "reference" / "p5-budget.v1.json").read_text(encoding="utf-8")
+    )
+    assert [point.budget for point in report.quality.points] == [1, 10, 100]
+    assert report.quality.points[-1].feasible_runs == 2
+    assert report.quality.points[-1].reach_optimum is True
+    assert report.quality.no_optimality
+    assert report.scaling
+    assert report.checkpoint is None

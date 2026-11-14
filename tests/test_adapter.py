@@ -309,3 +309,22 @@ def test_search_run_model_guards() -> None:
             evidence={},
             replay_ok=False,
         )
+
+
+def test_core_import_does_not_require_fresh_solutions() -> None:
+    """Importing the optimization package does not import the optional solver."""
+    import subprocess
+    import sys
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import sys; import brushline.optimization; "
+            "assert 'fresh_solutions' not in sys.modules",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode == 0, completed.stderr
