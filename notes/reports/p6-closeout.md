@@ -2,9 +2,9 @@
 
 Phase: P6 Strategic planning and monitoring policy
 Parent issue: #60
-Pull request: pending
-Evidence head: `9b304bd`, the head that the gates and local verification below cover
-Report commit: this commit, plus the pull-request number update
+Pull request: #68, `feature/p6-strategic` into `main`
+Evidence head: `864d89f`, the head that the gates and local verification below cover
+Report commit: this commit, a report-only update after the evidence head
 Date: 2026-11-14
 Status: queued for approval. Not merged.
 
@@ -110,7 +110,7 @@ The final local dashboard at the evidence head is `OVERALL: GREEN`. The workflow
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | pending | pending | CI runs on the pull request; the pull-request number and run will be recorded after opening it |
+| 43580928490 | `864d89f` | success | Quality gates, Pre-commit parity, and Green dashboard summary passed; this report-only update follows |
 | n/a | branch pushes | not run | CI runs on pull requests and `main`, not on plain feature-branch pushes |
 
 ## 6. Next phase
