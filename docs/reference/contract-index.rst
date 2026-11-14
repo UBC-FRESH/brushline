@@ -69,6 +69,30 @@ test suite. This page is the map.
        ``brushline.handoff.v1``
      - ``BuilderSession``, ``ReviewSummary``, ``HandoffRecord``
      - AOI, plan preview, availability, approvals, stages, review, handoff, and dry-run artifacts
+   * - FEMIC LiDAR bundle
+     - ``femic.lidar.product.v1``, ``femic.lidar.bundle.v1``, ``femic.lidar.selection.v1``
+     - ``validate_lidar_bundle``
+     - Producer pin, selection digest, product checksums, CRS, datum, resolution, licence, paths, and provenance
+   * - Terrain support
+     - ``brushline.terrain-support.v1``
+     - ``validate_terrain_support``
+     - Raster CRS, resolution, datum, buffer, statistic, valid pixels, coverage, slope, aspect, terrain class, and access proxy
+   * - Canopy support
+     - ``brushline.canopy-support.v1``
+     - ``validate_canopy_support``
+     - CHM CRS, datum, buffer, height statistics, cover thresholds, structure, optional tree, VRI comparison, and applicability
+   * - Initial vegetation state
+     - ``brushline.state-initialization.v1``
+     - ``validate_state_initialization``
+     - Field/CHM rules, evidence coverage, class probabilities, audit decisions, model card, and state-contract validity
+   * - LiDAR coverage and applicability
+     - ``brushline.lidar-coverage.v1``
+     - ``validate_lidar_coverage``
+     - Acquisition recency, usable coverage, valid pixels, domain, six coverage states, next action, and stop/continue
+   * - LiDAR benchmark
+     - ``brushline.lidar-benchmark-request.v1``, ``brushline.lidar-benchmark.v1``
+     - ``validate_lidar_benchmark``
+     - Bundle pin, shared contract, absolute/relative tolerance, missing values, case statuses, and bundle hash
 
 Error prefixes
 --------------
@@ -105,6 +129,16 @@ Error prefixes
      - Coverage and gap report
    * - ``CAPABILITIES-*``, ``AGENT-*``
      - Agent capabilities and sanitized outcome record
+   * - ``LIDAR-*``
+     - FEMIC LiDAR bundle
+   * - ``TERRAIN-*``
+     - Terrain support
+   * - ``CANOPY-*``
+     - Canopy support
+   * - ``LIDAR-COVERAGE-*``
+     - LiDAR coverage and applicability
+   * - ``BENCHMARK-*``
+     - LiDAR benchmark
 
 Test layers
 -----------
@@ -120,6 +154,18 @@ Test layers
   private markers, authoritative fields, and sanitized records.
 - Model-builder tests for the static shell, plan preview, approvals, blocked builds, dry-run artifacts,
   progress SSE, review, handoff, and custom AOI gaps.
+- LiDAR bundle tests for the producer pin, selection digest, checksums, CRS, datum, licence, path
+  containment, product kinds, derived flags, and provenance.
+- Terrain tests for buffered aggregation, coverage states, every statistic, slope and access classes,
+  RASTER CRS/datum/resolution checks, and provenance.
+- Canopy tests for height and cover statistics, optional structure/tree products, VRI comparison,
+  partial/missing/out-of-domain states, and applicability.
+- State-initialization tests for field-first selection, every prototype class, unknown/partial states,
+  species fallback, audit decisions, probabilities, and contract validity.
+- LiDAR coverage tests for observed, stale, partial, missing, out-of-domain, excluded, optional gaps,
+  domain reasons, next actions, and stop/continue.
+- Benchmark tests for the committed fixture, absolute and relative tolerance, contract mismatch,
+  required/optional/unexplained missing values, duplicate keys, and report consistency.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

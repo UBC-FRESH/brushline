@@ -1,0 +1,68 @@
+{
+  "derived_product_kinds": [
+    "canopy",
+    "chm",
+    "slope"
+  ],
+  "femic_version": "0.2.0a1",
+  "layout_version": "femic.lidar.bundle.v1",
+  "manifest_path": "manifest.json",
+  "model_card_rule": "The product manifest does not carry a low-vegetation model card; P3.4 and P3.5 attach model cards and applicability to derived attributes.",
+  "native_resolution_rule": "Consume the recorded CRS, resolution, and vertical datum. Do not reproject or resample silently.",
+  "payload_rule": "Brushline reads product bytes only after validation. The adapter does not download tiles, compile terrain, or write a payload.",
+  "pin_rule": "Pin bundle_id and bundle_version, verify the producer version, and verify every product sha256 before use.",
+  "producer_tool": "femic",
+  "product_kinds": [
+    "point_cloud",
+    "dem",
+    "dsm",
+    "chm",
+    "canopy",
+    "individual_tree",
+    "slope"
+  ],
+  "product_schema_version": "femic.lidar.product.v1",
+  "products_dir": "products",
+  "raster_product_kinds": [
+    "canopy",
+    "chm",
+    "dem",
+    "dsm",
+    "slope"
+  ],
+  "required_manifest_keys": [
+    "schema_version",
+    "layout_version",
+    "bundle_id",
+    "bundle_name",
+    "bundle_version",
+    "created_utc",
+    "producer",
+    "source",
+    "selection",
+    "processing",
+    "summary",
+    "products",
+    "consumer_contract"
+  ],
+  "required_product_keys": [
+    "product_id",
+    "product",
+    "relative_path",
+    "media_type",
+    "size_bytes",
+    "sha256",
+    "crs",
+    "resolution_m",
+    "vertical_datum",
+    "retrieved_utc",
+    "source_tile_ids",
+    "source_layer_ids",
+    "licence_id",
+    "derived",
+    "lineage"
+  ],
+  "schema_version": "brushline.lidar-bundle-reference.v1",
+  "selection_provenance_path": "provenance/selection.json",
+  "selection_schema_version": "femic.lidar.selection.v1"
+}

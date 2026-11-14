@@ -23,4 +23,10 @@ whenever you add a module to the project.
    fetch
    capabilities
    model-builder
+   lidar
+   terrain
+   canopy
+   state-init
+   lidar-coverage
+   lidar-benchmark
    instance

@@ -13,8 +13,8 @@ exists and the maintainer approves it.
 | --- | --- | --- | --- |
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
-| P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | pr-open |
-| P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
+| P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
+| P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | pr-open |
 | P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
 | P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
@@ -125,7 +125,7 @@ Acceptance criteria:
 
 Parent issue: #24
 Branch: `feature/p2-instance-builder`
-Status: pr-open
+Status: complete
 
 Goal: extend FEMIC's instance, rebuild-spec, FreshForge, catalogue, DataLad, and preflight surfaces to
 build Brushline instances from a map-selected AOI. Do not create a second instance-builder package.
@@ -157,25 +157,25 @@ Acceptance criteria:
 
 ## Phase 3: State, LiDAR, and terrain
 
-Parent issue: TBD
+Parent issue: #33
 Branch: `feature/p3-state-lidar`
-Status: planned
+Status: pr-open
 
 Goal: initialize the segment state from validated open LiDAR, terrain, canopy, inventory, and field data,
 with coverage and applicability made explicit.
 
-- [ ] P3.1 Add the FEMIC LiDAR bundle adapter and provenance
-  - [ ] Bundle pin, checksums, CRS, vertical datum, resolution, licence, and product validation
-- [ ] P3.2 Map terrain and slope to segment support
-  - [ ] DEM/DSM support, aggregation rules, access proxy, and no silent reprojection
-- [ ] P3.3 Map canopy, cover, and optional tree products
-  - [ ] CHM, canopy structure, tree counts, crown radius, and VRI comparison evidence
-- [ ] P3.4 Initialize the vegetation state
-  - [ ] Link LiDAR metrics, inventory, field plots, and treatment history to state classes
-- [ ] P3.5 Report coverage, applicability, and observation gaps
-  - [ ] No point cloud, no contemporary DEM, out-of-domain model, and missing plot data
-- [ ] P3.6 Benchmark the adapter against the FEMIC/WS4/FHOPS consumer values
-  - [ ] Same bundle, same polygons, same aggregation; record the differences
+- [x] P3.1 Add the FEMIC LiDAR bundle adapter and provenance
+  - [x] Bundle pin, checksums, CRS, vertical datum, resolution, licence, and product validation
+- [x] P3.2 Map terrain and slope to segment support
+  - [x] DEM/DSM support, aggregation rules, access proxy, and no silent reprojection
+- [x] P3.3 Map canopy, cover, and optional tree products
+  - [x] CHM, canopy structure, tree counts, crown radius, and VRI comparison evidence
+- [x] P3.4 Initialize the vegetation state
+  - [x] Link LiDAR metrics, inventory, field plots, and treatment history to state classes
+- [x] P3.5 Report coverage, applicability, and observation gaps
+  - [x] No point cloud, no contemporary DEM, out-of-domain model, and missing plot data
+- [x] P3.6 Benchmark the adapter against the FEMIC/WS4/FHOPS consumer values
+  - [x] Same bundle, same polygons, same aggregation; record the differences
 
 Acceptance criteria:
 
