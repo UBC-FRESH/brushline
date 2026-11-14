@@ -77,6 +77,10 @@ test suite. This page is the map.
      - ``brushline.terrain-support.v1``
      - ``validate_terrain_support``
      - Raster CRS, resolution, datum, buffer, statistic, valid pixels, coverage, slope, aspect, terrain class, and access proxy
+   * - Canopy support
+     - ``brushline.canopy-support.v1``
+     - ``validate_canopy_support``
+     - CHM CRS, datum, buffer, height statistics, cover thresholds, structure, optional tree, VRI comparison, and applicability
 
 Error prefixes
 --------------
@@ -117,6 +121,8 @@ Error prefixes
      - FEMIC LiDAR bundle
    * - ``TERRAIN-*``
      - Terrain support
+   * - ``CANOPY-*``
+     - Canopy support
 
 Test layers
 -----------
@@ -136,6 +142,8 @@ Test layers
   containment, product kinds, derived flags, and provenance.
 - Terrain tests for buffered aggregation, coverage states, every statistic, slope and access classes,
   RASTER CRS/datum/resolution checks, and provenance.
+- Canopy tests for height and cover statistics, optional structure/tree products, VRI comparison,
+  partial/missing/out-of-domain states, and applicability.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

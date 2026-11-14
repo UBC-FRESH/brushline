@@ -315,7 +315,7 @@ def aggregate_terrain_support(
             )
         if segment.buffer_m < 0:
             raise TerrainSupportError("segment buffer must be non-negative")
-        support_mask = _buffer_mask(
+        support_mask = segment_buffer_mask(
             x_grid,
             y_grid,
             np.asarray(segment.coordinates, dtype=float),
@@ -470,12 +470,30 @@ def _slope_aspect(
     return slope, aspect
 
 
-def _buffer_mask(
+def segment_buffer_mask(
     x_grid: np.ndarray,
     y_grid: np.ndarray,
     coordinates: np.ndarray,
     buffer_m: float,
 ) -> np.ndarray:
+    """Return cells whose centers fall within a buffered polyline.
+
+    Parameters
+    ----------
+    x_grid : numpy.ndarray
+        Cell-center x coordinates.
+    y_grid : numpy.ndarray
+        Cell-center y coordinates.
+    coordinates : numpy.ndarray
+        Polyline vertices.
+    buffer_m : float
+        Buffer distance.
+
+    Returns
+    -------
+    numpy.ndarray
+        Boolean mask with the grid shape.
+    """
     distance = np.full(x_grid.shape, np.inf, dtype=float)
     for start, end in itertools.pairwise(coordinates):
         distance = np.minimum(
@@ -563,5 +581,6 @@ __all__ = [
     "TerrainSupportError",
     "TerrainSupportReport",
     "aggregate_terrain_support",
+    "segment_buffer_mask",
     "validate_terrain_support",
 ]

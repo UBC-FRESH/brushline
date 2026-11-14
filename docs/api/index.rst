@@ -25,4 +25,5 @@ whenever you add a module to the project.
    model-builder
    lidar
    terrain
+   canopy
    instance
