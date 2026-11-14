@@ -16,8 +16,8 @@ exists and the maintainer approves it.
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
 | P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
-| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | pr-open |
-| P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
+| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | complete |
+| P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | active |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
 | P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
 | P9 Plan and bid exchange | TBD | `feature/p9-plan-exchange` | planned |
@@ -222,7 +222,7 @@ Acceptance criteria:
 
 Parent issue: #50
 Branch: `feature/p5-optimization`
-Status: pr-open
+Status: complete
 
 Goal: implement the Brushline adapter over Fresh Solutions, the multi-objective archive, and the exact
 small-instance validation.
@@ -254,9 +254,9 @@ Acceptance criteria:
 
 ## Phase 6: Strategic planning and monitoring policy
 
-Parent issue: TBD
+Parent issue: #60
 Branch: `feature/p6-strategic`
-Status: planned
+Status: active
 
 Goal: implement the 10-to-30-year strategic plan: budget, service levels, risk appetite, monitoring
 policy, and the business-as-usual comparison.
