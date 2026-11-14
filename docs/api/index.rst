@@ -68,4 +68,5 @@ whenever you add a module to the project.
    studio
    demo-portal
    verification
+   release
    instance
