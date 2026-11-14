@@ -2,9 +2,9 @@
 
 Phase: P3 State, LiDAR, and terrain
 Parent issue: #33
-Pull request: queued on `feature/p3-state-lidar` into `main`
+Pull request: #40, `feature/p3-state-lidar` into `main`
 Evidence head: `c3edacc`, the head that the gates and local verification below cover
-Report commit: the commit that adds this report. Its CI run is posted on the pull request.
+Report commit: `eb164ff`, with the PR number update in the next commit. CI runs on pull request #40.
 Date: 2026-11-14
 Status: queued for approval. Not merged.
 
@@ -12,7 +12,7 @@ Status: queued for approval. Not merged.
 
 Approve these actions. The agent carries them out in this order, and reads back each result.
 
-1. Squash-merge the P3 pull request, and delete the branch `feature/p3-state-lidar`.
+1. Squash-merge pull request #40, and delete the branch `feature/p3-state-lidar`.
 2. Close parent issue #33 with a closeout comment that cites the merge commit.
 3. Launch P4 (Vegetation dynamics and treatments): create its branch, set the phase statuses in
    `ROADMAP.md`, create its child issues as sub-issues, and start P4.1.
@@ -98,7 +98,7 @@ The final local dashboard at the evidence head is `OVERALL: GREEN`. The workflow
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | `c3edacc` plus the report | in progress | CI runs on the pull request; the result is posted on the PR |
+| pending | `c3edacc` plus the report | in progress | CI runs on pull request #40; the result is posted on the PR |
 | n/a | branch pushes | not run | CI runs on pull requests and `main`, not on plain feature-branch pushes |
 
 ## 6. Next phase
