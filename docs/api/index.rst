@@ -45,4 +45,5 @@ whenever you add a module to the project.
    optimization-budget
    optimization-telemetry
    strategic-dynamic-program
+   strategic-portfolio
    instance

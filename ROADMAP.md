@@ -263,8 +263,8 @@ policy, and the business-as-usual comparison.
 
 - [x] P6.1 Implement the single-segment dynamic program (#61)
   - [x] State classes, actions, transition probabilities, discounting, and a policy
-- [ ] P6.2 Implement the network portfolio search
-  - [ ] Budget, service levels, risk, spatial continuity, and contractor capacity at strategic scale
+- [x] P6.2 Implement the network portfolio search (#62)
+  - [x] Budget, service levels, risk, spatial continuity, and contractor capacity at strategic scale
 - [ ] P6.3 Implement the monitoring policy
   - [ ] Frequency, route, sensor, sampling intensity, and value-of-information approximation
 - [ ] P6.4 Implement the business-as-usual baseline

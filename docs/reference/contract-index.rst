@@ -169,6 +169,10 @@ test suite. This page is the map.
      - ``brushline.strategic-dp-result.v1``
      - ``DynamicProgramResult``
      - Policy, value table, expected cost, service, risk, and uncertainty
+   * - Strategic portfolio
+     - ``brushline.strategic-portfolio.v1``
+     - ``StrategicPortfolio``
+     - Selections, period budgets/capacity, service/risk/uncertainty, continuity, and violations
 
 Error prefixes
 --------------
@@ -241,6 +245,8 @@ Error prefixes
      - Telemetry stream
    * - ``DP-*``
      - Strategic dynamic program
+   * - ``PORTFOLIO-*``
+     - Strategic portfolio
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -302,6 +308,8 @@ Test layers
   and order validation, missing/mismatched artifacts, SSE, and JSON round-trips.
 - Dynamic-program tests for the committed policy, transition/availability validation, tie-breaking,
   terminal values, expected outcomes, and invalid models.
+- Portfolio tests for service repair, budget/capacity limits, risk warnings, continuity, local swaps,
+  empty options, and invalid references.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
