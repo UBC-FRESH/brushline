@@ -229,6 +229,10 @@ test suite. This page is the map.
      - ``brushline.observation.v1``
      - ``Observation``
      - Coverage, detection, observed class, measurement error, confidence, and latency
+   * - Plan exchange
+     - ``brushline.plan-exchange.v1``
+     - ``PlanExchange``
+     - Cost category totals, owner/contractor views, bid comparison, and approval digest
 
 Error prefixes
 --------------
