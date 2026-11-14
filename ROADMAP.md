@@ -106,8 +106,8 @@ prototype that exercises them on synthetic data.
   - [x] Functional groups, state classes, distributions, treatment actions, observation records
 - [x] P1.4 Define the plan, run, Pareto archive, operations timeline, and demo manifest contracts
   - [x] JSON/CSV/Parquet shapes, provenance fields, versioning, and examples
-- [ ] P1.5 Build a synthetic corridor fixture
-  - [ ] Two corridors, mixed growth, access, structures, monitoring gaps, and a known optimum case
+- [x] P1.5 Build a synthetic corridor fixture
+  - [x] Two corridors, mixed growth, access, structures, monitoring gaps, and a known optimum case
 - [ ] P1.6 Build the end-to-end prototype
   - [ ] Compile, grow, treat, simulate, report, and write a run directory
 - [ ] P1.7 Add contract validation and property tests

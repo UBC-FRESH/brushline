@@ -1,0 +1,48 @@
+{
+  "aoi": "aoi.geojson",
+  "artifacts": {
+    "pareto": "pareto.json",
+    "plan": "plan.json",
+    "reports": "reports",
+    "run": "run.json",
+    "timeline": "operations_timeline.jsonl"
+  },
+  "caveats": [
+    "Synthetic geometry and synthetic costs; not an operational plan.",
+    "The state and treatment models are P1 prototypes, not the calibrated P4 model."
+  ],
+  "contact": "pilot@example.org",
+  "created_utc": "2026-11-14T00:00:00Z",
+  "data_sources": [
+    {
+      "licence": "CC0-1.0",
+      "name": "Synthetic corridor",
+      "url": "",
+      "version": "1.0"
+    }
+  ],
+  "headline_metrics": [
+    {
+      "name": "present_cost",
+      "unit": "CAD",
+      "value": 5300.0
+    },
+    {
+      "name": "service_risk",
+      "unit": "index",
+      "value": 0.12
+    }
+  ],
+  "id": "synthetic-corridor",
+  "pilot": "pilot.md",
+  "question": "What does a risk-ranked treatment plan look like on a small synthetic corridor?",
+  "region": "British Columbia",
+  "scenarios": [
+    "baseline",
+    "risk-first"
+  ],
+  "schema_version": "brushline.demo.v1",
+  "sector": "utility",
+  "status": "published",
+  "title": "Synthetic corridor"
+}

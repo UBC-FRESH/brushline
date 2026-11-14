@@ -11,3 +11,4 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    corridor-contract
    state-contract
    artifacts
+   synthetic-fixture

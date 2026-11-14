@@ -14,6 +14,7 @@ from typing import Annotated
 import typer
 
 from brushline import __version__
+from brushline.fixtures.synthetic import DEFAULT_SEED, generate_fixture
 from brushline.model.schema import validate_dataset
 
 app = typer.Typer(
@@ -62,6 +63,47 @@ def status() -> None:
     """Print the package version and its pre-alpha status."""
     typer.echo(f"brushline {__version__} (pre-alpha)")
     typer.echo("Phase 1: contracts and prototype. No vegetation model or planner is available yet.")
+
+
+@app.command()
+def fixture(
+    out: Annotated[
+        Path,
+        typer.Option("--out", help="Directory for the synthetic corridor fixture."),
+    ],
+    force: Annotated[
+        bool,
+        typer.Option("--force", help="Overwrite the known fixture files."),
+    ] = False,
+    seed: Annotated[
+        int,
+        typer.Option("--seed", help="Fixture seed."),
+    ] = DEFAULT_SEED,
+) -> None:
+    """Generate the deterministic synthetic corridor fixture.
+
+    Parameters
+    ----------
+    out : Path
+        Destination directory.
+    force : bool, optional
+        Overwrite the known fixture files. Defaults to ``False``.
+    seed : int, optional
+        Fixture seed. Defaults to ``DEFAULT_SEED``.
+
+    Raises
+    ------
+    typer.Exit
+        With status 1 when the destination is not empty or a contract fails.
+    """
+    try:
+        result = generate_fixture(out, seed=seed, force=force)
+    except (FileExistsError, RuntimeError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"fixture: {result.root}")
+    typer.echo(f"artifacts: {len(result.artifacts)}")
+    typer.echo(f"content_digest: {result.content_digest}")
 
 
 @app.command()

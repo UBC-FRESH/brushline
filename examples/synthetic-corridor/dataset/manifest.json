@@ -1,0 +1,63 @@
+{
+  "content_digest": "588632b8a63e9026355748ce35164db5a9b7ddd6b3f89d8aceb05b9d1ee107be",
+  "created_utc": "2026-11-14T00:00:00Z",
+  "crs": "EPSG:3005",
+  "dataset_id": "synthetic-corridor",
+  "description": "A small two-corridor contract fixture.",
+  "name": "Synthetic corridor dataset",
+  "provenance": {
+    "configuration": {},
+    "created_by": "brushline.fixtures.synthetic",
+    "licence": "CC0-1.0",
+    "model_cards": [],
+    "source": "synthetic",
+    "source_version": "1.0"
+  },
+  "schema_version": "brushline.dataset.v1",
+  "tables": [
+    {
+      "columns": [
+        {
+          "description": "",
+          "dtype": "string",
+          "name": "segment_id",
+          "required": true,
+          "unit": null
+        },
+        {
+          "description": "",
+          "dtype": "string",
+          "name": "corridor_id",
+          "required": true,
+          "unit": null
+        },
+        {
+          "description": "",
+          "dtype": "float64",
+          "name": "length_m",
+          "required": true,
+          "unit": "m"
+        },
+        {
+          "description": "",
+          "dtype": "string",
+          "name": "geometry_wkt",
+          "required": true,
+          "unit": null
+        }
+      ],
+      "format": "csv",
+      "name": "segments",
+      "path": "segments.csv",
+      "primary_key": [
+        "segment_id"
+      ],
+      "row_count": 5,
+      "sha256": "3eb810f0a7f725b4d318f5ebf4152a11a0f4fee19a327ebf1bdd7297e9e278a2"
+    }
+  ],
+  "units": {
+    "area": "ha",
+    "length": "m"
+  }
+}

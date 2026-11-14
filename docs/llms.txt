@@ -10,6 +10,7 @@
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
 - [Artifact contracts](reference/artifacts.html): plan, run, Pareto archive, operations timeline, and demo manifest.
+- [Synthetic corridor fixture](reference/synthetic-fixture.html): the deterministic two-corridor example, expected values, warnings, and tiny known optimum.
 - [API reference](api/index.html): every public function, with its parameters, types, and return values.
 - [brushline package](api/brushline.html): the package root and the command line.
 - [dataset schema](api/model.html): the dataset models and validator.
