@@ -22,7 +22,7 @@ exists and the maintainer approves it.
 | P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
 | P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
 | P10 Interactive planning studio | #94 | `feature/p10-studio` | complete |
-| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | active |
+| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | pr-open |
 | P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
 | P13 Release and deploy | TBD | `feature/p13-release` | planned |
 | P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
@@ -418,7 +418,7 @@ Acceptance criteria:
 
 Parent issue: #104
 Branch: `feature/p11-demo-portal`
-Status: active
+Status: pr-open
 
 Goal: publish a public-data-only, read-only demo portal with curated instances and a pilot-request path.
 
