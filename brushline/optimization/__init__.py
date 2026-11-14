@@ -2,6 +2,17 @@
 
 from __future__ import annotations
 
+from brushline.optimization.adapter import (
+    ADAPTER_NAME,
+    SCALARIZATIONS,
+    AdapterError,
+    BrushlineAdapter,
+    Scalarization,
+    SearchRun,
+    SearchSpec,
+    replay_checkpoint,
+    run_search,
+)
 from brushline.optimization.evaluator import (
     AssignmentChange,
     EvaluationConfig,
@@ -42,10 +53,14 @@ from brushline.optimization.operators import (
 )
 
 __all__ = [
+    "ADAPTER_NAME",
     "DEFAULT_OBJECTIVES",
     "FORMULATION_SCHEMA_VERSION",
     "OBJECTIVE_NAMES",
+    "SCALARIZATIONS",
+    "AdapterError",
     "AssignmentChange",
+    "BrushlineAdapter",
     "ConstraintSpec",
     "EvaluationConfig",
     "EvaluationResult",
@@ -61,7 +76,10 @@ __all__ = [
     "OperatorState",
     "PeriodSpec",
     "RepairResult",
+    "Scalarization",
     "ScheduleEvaluator",
+    "SearchRun",
+    "SearchSpec",
     "SegmentContext",
     "SegmentSpec",
     "SpanSpec",
@@ -71,6 +89,8 @@ __all__ = [
     "build_formulation",
     "default_operators",
     "repair_assignment",
+    "replay_checkpoint",
+    "run_search",
     "undo_move",
     "validate_formulation",
     "validate_move",

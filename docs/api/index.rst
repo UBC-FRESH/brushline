@@ -39,4 +39,5 @@ whenever you add a module to the project.
    optimization-formulation
    optimization-evaluator
    optimization-operators
+   optimization-adapter
    instance

@@ -129,6 +129,10 @@ test suite. This page is the map.
      - ``brushline.optimization-evaluation.v1``
      - ``EvaluationResult``
      - Exact four-objective result, costs, feasibility, named violations, and period trail
+   * - Optimization search
+     - ``brushline.optimization-search.v1``
+     - ``SearchRun``
+     - Adapter, seed, budget, assignment, objective vector, evidence, checkpoint, and replay flag
 
 Error prefixes
 --------------
@@ -242,6 +246,8 @@ Test layers
   monitoring allocation, discounting, batch equality, scalarization, and apply/undo.
 - Operator tests for seeded determinism, every move kind, access and locks, move validation,
   apply/undo, budget/capacity/monitoring/access/service repair, and non-repairable blocked models.
+- Adapter tests for the Fresh Solutions contract, scalarizations, random/mutation/crossover, single
+  and compound proposals, all search modes, checkpoint replay, and rejected non-replayable results.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

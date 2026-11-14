@@ -233,8 +233,8 @@ small-instance validation.
   - [x] Simulator-backed evaluation, full-recompute fallback, and batch evaluation
 - [x] P5.3 Implement the move operators (#53)
   - [x] Toggle, shift, swap, block/segment moves, monitoring moves, and repair
-- [ ] P5.4 Integrate Fresh Solutions and exact replay
-  - [ ] Adapter, local search, population, hybrid, checkpoints, seeds, telemetry, and evidence
+- [x] P5.4 Integrate Fresh Solutions and exact replay (#54)
+  - [x] Adapter, local search, population, hybrid, convergence, checkpoints, seeds, and evidence
 - [ ] P5.5 Implement the multi-objective archive and `pareto.json`
   - [ ] Scalarization portfolio, dominance, diversity, archive members, and promotion rule
 - [ ] P5.6 Validate on tiny instances

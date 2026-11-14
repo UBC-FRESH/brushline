@@ -31,6 +31,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    optimization-formulation
    optimization-evaluator
    optimization-operators
+   optimization-adapter
    compiled-dataset
    corridor-contract
    state-contract
