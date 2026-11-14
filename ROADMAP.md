@@ -110,8 +110,8 @@ prototype that exercises them on synthetic data.
   - [x] Two corridors, mixed growth, access, structures, monitoring gaps, and a known optimum case
 - [x] P1.6 Build the end-to-end prototype
   - [x] Compile, grow, treat, simulate, report, and write a run directory
-- [ ] P1.7 Add contract validation and property tests
-  - [ ] Every schema has a failing case; every invariant has a property test
+- [x] P1.7 Add contract validation and property tests
+  - [x] Every schema has a failing case; every invariant has a property test
 
 Acceptance criteria:
 

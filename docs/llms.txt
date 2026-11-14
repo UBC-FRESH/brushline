@@ -6,6 +6,7 @@
 
 - [Home](index.html): the documentation home for the project.
 - [Design record](design/index.html): the scope, architecture, optimization, UI, LiDAR, instance-builder, demo-portal, and literature review decisions.
+- [Contract index](reference/contract-index.html): every schema, validator, error prefix, and test layer.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.

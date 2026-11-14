@@ -7,6 +7,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
 .. toctree::
    :maxdepth: 2
 
+   contract-index
    compiled-dataset
    corridor-contract
    state-contract
