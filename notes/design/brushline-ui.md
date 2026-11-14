@@ -158,6 +158,15 @@ contractor-bid skin is the shared-plan surface, not a separate product.
 - Play, pause, speed, and scrub the operations timeline.
 - Toggle vegetation, structures, machines, and treatment layers.
 - A camera target can be pinned to a segment or a treatment unit.
+- **Walk this block** enters a first-person forester walkthrough for the selected treatment unit or
+  segment group. The camera starts at a landing, access point, or block boundary, follows terrain at
+  1.7 m eye height, and restores the prior orbit camera on exit.
+- The walkthrough has an explicit **Pre / Post** treatment toggle. It swaps the selected block's state
+  variant without moving the camera. The two variants share bounds, geometry seed, and feature ids;
+  missing or blocked post states are labelled rather than invented.
+- The HUD reports block, variant, plan year, action, coordinates, elevation, heading, position
+  confidence, and the context-view caveat. `V` toggles variants and `Esc` exits.
+- The full walkthrough design is `notes/design/brushline-forester-walkthrough.md`.
 
 ### 6.3 Fidelity and caveats
 

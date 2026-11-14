@@ -391,6 +391,8 @@ skins, live search, Pareto explorer, and animated operations.
   - [ ] MapLibre, layer tree, period strip, segment selection, treatment/cumulative/monitoring layers
 - [ ] P10.3 Build the 3D scene
   - [ ] Three.js, DEM, corridor, vegetation, structures, operations timeline, shared selection/time
+  - [ ] Selected-block forester POV walkthrough with terrain-following camera and HUD
+  - [ ] Pre/post-treatment state toggle that preserves camera pose and uses `brushline.scene.v1`
 - [ ] P10.4 Implement the seven skins
   - [ ] `model-builder`, `owner-strategic`, `tactical-planner`, `operations-planner`,
         `contractor-bid`, `monitoring`, `reviewer`; read-only enforcement
