@@ -1,8 +1,8 @@
 # Phase close-out report: P8 Monitoring and adaptive replanning
 
 Parent issue: #78
-Pull request: pending
-Evidence head: `129d1c0`
+Pull request: #85, `feature/p8-monitoring` into `main`
+Evidence head: `67d9dbc`
 Status: queued for approval. Not merged.
 
 ## Delivered
@@ -20,7 +20,7 @@ Synthetic-only; no live sensor, UAV control, field data, or production safety/op
 
 ## Verification
 
-Local dashboard `OVERALL: GREEN`; pytest 768 passed with 98% coverage; validator 0 errors. No merge, branch deletion, parent close, tag, release, or settings change has been performed.
+Local dashboard `OVERALL: GREEN`; pytest 768 passed with 98% coverage; validator 0 errors. Pull request #85 is open; CI run 43615848525 on `67d9dbc` passed all jobs. No merge, branch deletion, parent close, tag, release, or settings change has been performed.
 
 ## Recommendation
 
