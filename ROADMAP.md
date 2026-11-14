@@ -326,15 +326,15 @@ recalibration and replanning loop.
 
 - [x] P8.1 Implement the observation model (#79)
   - [x] Coverage, detection, measurement error, classification confusion, and latency
-- [ ] P8.2 Implement the UAV/LiDAR mission simulation
+- [x] P8.2 Implement the UAV/LiDAR mission simulation
   - [ ] Corridor graph, travel, endurance, sensor footprint, weather windows, and cost
-- [ ] P8.3 Implement coverage and value of information
+- [x] P8.3 Implement coverage and value of information
   - [ ] Expected decision loss, monitoring cost, and a tractable approximation
-- [ ] P8.4 Implement recalibration
+- [x] P8.4 Implement recalibration
   - [ ] State update, parameter update, uncertainty update, and a model-card record
-- [ ] P8.5 Implement the adaptive replanning trigger
+- [x] P8.5 Implement the adaptive replanning trigger
   - [ ] Forecast error, uncertainty, and a new plan version
-- [ ] P8.6 Validate the monitoring policy against a fixed calendar
+- [x] P8.6 Validate the monitoring policy against a fixed calendar
   - [ ] Regret per monitoring dollar on a synthetic case, with the assumptions stated
 
 Acceptance criteria:

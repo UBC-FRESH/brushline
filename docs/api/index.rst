@@ -59,4 +59,9 @@ whenever you add a module to the project.
    tactical-timeline
    tactical-validation
    observation-model
+   mission
+   monitoring-value
+   recalibration
+   replan
+   monitoring-validation
    instance
