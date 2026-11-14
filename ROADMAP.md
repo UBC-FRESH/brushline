@@ -511,12 +511,12 @@ Status: active
 
 Goal: keep the project current, support pilots, and maintain the data and model governance.
 
-- [ ] P14.1 Set the review cadence and triage incoming issues
-- [ ] P14.2 Maintain dependencies, security, and the Fresh Solutions/FEMIC pins
-- [ ] P14.3 Maintain the data and model governance
-  - [ ] Model cards, licences, applicability domains, and validation records
-- [ ] P14.4 Write the maintainer and handover guide
-- [ ] P14.5 Support the first pilots and record their evidence
+- [x] P14.1 Set the review cadence and triage incoming issues
+- [x] P14.2 Maintain dependencies, security, and the Fresh Solutions/FEMIC pins
+- [x] P14.3 Maintain the data and model governance
+  - [x] Model cards, licences, applicability domains, and validation records
+- [x] P14.4 Write the maintainer and handover guide
+- [x] P14.5 Support the first pilots and record their evidence
 
 Acceptance criteria:
 
