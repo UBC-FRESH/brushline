@@ -20,8 +20,8 @@ exists and the maintainer approves it.
 | P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | complete |
 | P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | complete |
 | P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
-| P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | pr-open |
-| P10 Interactive planning studio | TBD | `feature/p10-studio` | planned |
+| P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
+| P10 Interactive planning studio | #94 | `feature/p10-studio` | active |
 | P11 Demo portal and pilot onboarding | TBD | `feature/p11-demo-portal` | planned |
 | P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
 | P13 Release and deploy | TBD | `feature/p13-release` | planned |
@@ -350,7 +350,7 @@ Acceptance criteria:
 
 Parent issue: #86
 Branch: `feature/p9-plan-exchange`
-Status: pr-open
+Status: complete
 
 Goal: make one versioned plan artifact the shared surface for the owner and the contractor, with a
 traceable cost build-up and a fair-bid comparison.
@@ -378,9 +378,9 @@ Acceptance criteria:
 
 ## Phase 10: Interactive planning studio
 
-Parent issue: TBD
+Parent issue: #94
 Branch: `feature/p10-studio`
-Status: planned
+Status: active
 
 Goal: deliver the optional FastAPI service and static browser shell with the 2D map, 3D scene, seven
 skins, live search, Pareto explorer, and animated operations.
