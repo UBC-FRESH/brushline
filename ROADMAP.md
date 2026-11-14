@@ -16,8 +16,8 @@ exists and the maintainer approves it.
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
 | P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
-| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | pr-open |
-| P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
+| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | complete |
+| P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | pr-open |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
 | P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
 | P9 Plan and bid exchange | TBD | `feature/p9-plan-exchange` | planned |
@@ -222,7 +222,7 @@ Acceptance criteria:
 
 Parent issue: #50
 Branch: `feature/p5-optimization`
-Status: pr-open
+Status: complete
 
 Goal: implement the Brushline adapter over Fresh Solutions, the multi-objective archive, and the exact
 small-instance validation.
@@ -254,27 +254,27 @@ Acceptance criteria:
 
 ## Phase 6: Strategic planning and monitoring policy
 
-Parent issue: TBD
+Parent issue: #60
 Branch: `feature/p6-strategic`
-Status: planned
+Status: pr-open
 
 Goal: implement the 10-to-30-year strategic plan: budget, service levels, risk appetite, monitoring
 policy, and the business-as-usual comparison.
 
-- [ ] P6.1 Implement the single-segment dynamic program
-  - [ ] State classes, actions, transition probabilities, discounting, and a policy
-- [ ] P6.2 Implement the network portfolio search
-  - [ ] Budget, service levels, risk, spatial continuity, and contractor capacity at strategic scale
-- [ ] P6.3 Implement the monitoring policy
-  - [ ] Frequency, route, sensor, sampling intensity, and value-of-information approximation
-- [ ] P6.4 Implement the business-as-usual baseline
-  - [ ] Fixed cycle, current policy, and like-for-like simulation
-- [ ] P6.5 Build the strategic reports
-  - [ ] Budget and cash forecast, service trajectory, risk trajectory, monitoring cost, and caveats
-- [ ] P6.6 Add the scenario archive and reproducibility record
-  - [ ] Data/model/config/seed versions and replay
-- [ ] P6.7 Validate the strategic plan on the synthetic corridor
-  - [ ] Service levels met, budget respected, and the BAU comparison measured
+- [x] P6.1 Implement the single-segment dynamic program (#61)
+  - [x] State classes, actions, transition probabilities, discounting, and a policy
+- [x] P6.2 Implement the network portfolio search (#62)
+  - [x] Budget, service levels, risk, spatial continuity, and contractor capacity at strategic scale
+- [x] P6.3 Implement the monitoring policy (#63)
+  - [x] Frequency, route, sensor, sampling intensity, and value-of-information approximation
+- [x] P6.4 Implement the business-as-usual baseline (#64)
+  - [x] Fixed cycle, current policy, and like-for-like simulation
+- [x] P6.5 Build the strategic reports (#65)
+  - [x] Budget and cash forecast, service trajectory, risk trajectory, monitoring cost, and caveats
+- [x] P6.6 Add the scenario archive and reproducibility record (#66)
+  - [x] Data/model/config/seed versions and replay
+- [x] P6.7 Validate the strategic plan on the synthetic corridor (#67)
+  - [x] Service levels met, budget respected, and the BAU comparison measured
 
 Acceptance criteria:
 

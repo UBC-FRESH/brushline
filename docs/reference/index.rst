@@ -36,6 +36,13 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    optimization-validation
    optimization-budget
    optimization-telemetry
+   strategic-dynamic-program
+   strategic-portfolio
+   strategic-monitoring
+   strategic-bau
+   strategic-reports
+   strategic-scenario
+   strategic-validation
    compiled-dataset
    corridor-contract
    state-contract

@@ -161,6 +161,42 @@ test suite. This page is the map.
      - ``brushline.optimization-telemetry.v1``
      - ``EventStream``
      - Versioned run, model/data versions, archive path, and ordered events
+   * - Strategic dynamic program
+     - ``brushline.strategic-dp.v1``
+     - ``validate_dynamic_program``
+     - States, actions, transitions, weights, horizon, discount, and terminal values
+   * - Strategic DP result
+     - ``brushline.strategic-dp-result.v1``
+     - ``DynamicProgramResult``
+     - Policy, value table, expected cost, service, risk, and uncertainty
+   * - Strategic portfolio
+     - ``brushline.strategic-portfolio.v1``
+     - ``StrategicPortfolio``
+     - Selections, period budgets/capacity, service/risk/uncertainty, continuity, and violations
+   * - Strategic monitoring
+     - ``brushline.strategic-monitoring.v1``
+     - ``MonitoringPolicy``
+     - Span decisions, frequency, route, sensor, cost, value of information, and reductions
+   * - Strategic BAU
+     - ``brushline.strategic-bau.v1``
+     - ``BauPlan``
+     - Fixed-cycle selections, period summaries, outcomes, baselines, and budget/capacity flags
+   * - Strategic report
+     - ``brushline.strategic-report.v1``
+     - ``StrategicReport``
+     - Optimized/BAU yearly cost, budget, service, risk, uncertainty, monitoring, and comparison
+   * - Strategic scenario
+     - ``brushline.strategic-scenario.v1``
+     - ``StrategicScenario``
+     - Data/model/config/seed versions, artifact digests, paths, and replay
+   * - Strategic scenario archive
+     - ``brushline.strategic-scenario-archive.v1``
+     - ``ScenarioArchive``
+     - Versioned scenario set with creation metadata
+   * - Strategic validation
+     - ``brushline.strategic-validation.v1``
+     - ``StrategicValidationResult``
+     - Coverage, budget, service, monitoring, BAU, totals, and replay checks
 
 Error prefixes
 --------------
@@ -231,6 +267,18 @@ Error prefixes
      - Promotion record
    * - ``TELEMETRY-*``
      - Telemetry stream
+   * - ``DP-*``
+     - Strategic dynamic program
+   * - ``PORTFOLIO-*``
+     - Strategic portfolio
+   * - ``MONITORING-*``
+     - Strategic monitoring
+   * - ``BAU-*``
+     - Business-as-usual baseline
+   * - ``REPORT-*``
+     - Strategic reports
+   * - ``SCENARIO-*``
+     - Strategic scenario
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -290,6 +338,20 @@ Test layers
   checkpoint save/replay, composed reports, and input guards.
 - Telemetry tests for committed stream/archive compatibility, run events, archive insertion, sequence
   and order validation, missing/mismatched artifacts, SSE, and JSON round-trips.
+- Dynamic-program tests for the committed policy, transition/availability validation, tie-breaking,
+  terminal values, expected outcomes, and invalid models.
+- Portfolio tests for service repair, budget/capacity limits, risk warnings, continuity, local swaps,
+  empty options, and invalid references.
+- Monitoring tests for value-ranked selection, intervals/event years, budget/value floors, empty options,
+  invalid references, and model guards.
+- BAU tests for annual and multi-year cycles, budget truncation and unenforced violations, capacity,
+  action filters, empty/invalid inputs, and like-for-like comparison.
+- Report tests for optimized/BAU rows, monitoring allocation, overruns, mismatched scopes, row totals,
+  and JSON round-trips.
+- Scenario tests for canonical digests, artifact replay, missing/tampered artifacts, archive validation,
+  model guards, and the committed example.
+- Validation tests for the 10-year case, every named check, failed service/budget/monitoring/BAU/totals/
+  replay, writers, and model guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

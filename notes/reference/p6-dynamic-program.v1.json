@@ -1,0 +1,142 @@
+{
+  "schema_version": "brushline.strategic-dp.v1",
+  "program_id": "p6-dp-v1",
+  "segment_id": "seg-1",
+  "states": [
+    {
+      "state_id": "shrub",
+      "state_class": "shrub",
+      "age_years": 2,
+      "label": ""
+    },
+    {
+      "state_id": "grass",
+      "state_class": "grass_herb",
+      "age_years": 0,
+      "label": ""
+    },
+    {
+      "state_id": "unknown",
+      "state_class": "unknown",
+      "age_years": null,
+      "label": ""
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "none",
+      "label": "No treatment",
+      "method": null,
+      "intensity": 0.0,
+      "season": "any",
+      "cost": 0.0,
+      "currency": "CAD",
+      "available_states": []
+    },
+    {
+      "action_id": "mow",
+      "label": "Mow",
+      "method": "mowing",
+      "intensity": 0.7,
+      "season": "spring",
+      "cost": 500.0,
+      "currency": "CAD",
+      "available_states": [
+        "shrub",
+        "grass"
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "from_state": "shrub",
+      "action_id": "none",
+      "to_state": "shrub",
+      "probability": 0.7,
+      "service_attainment": 0.2,
+      "risk": 0.8,
+      "uncertainty": 0.4
+    },
+    {
+      "from_state": "shrub",
+      "action_id": "none",
+      "to_state": "grass",
+      "probability": 0.3,
+      "service_attainment": 0.2,
+      "risk": 0.8,
+      "uncertainty": 0.4
+    },
+    {
+      "from_state": "shrub",
+      "action_id": "mow",
+      "to_state": "shrub",
+      "probability": 0.3,
+      "service_attainment": 0.9,
+      "risk": 0.2,
+      "uncertainty": 0.3
+    },
+    {
+      "from_state": "shrub",
+      "action_id": "mow",
+      "to_state": "grass",
+      "probability": 0.7,
+      "service_attainment": 0.9,
+      "risk": 0.2,
+      "uncertainty": 0.3
+    },
+    {
+      "from_state": "grass",
+      "action_id": "none",
+      "to_state": "grass",
+      "probability": 0.9,
+      "service_attainment": 0.8,
+      "risk": 0.2,
+      "uncertainty": 0.2
+    },
+    {
+      "from_state": "grass",
+      "action_id": "none",
+      "to_state": "shrub",
+      "probability": 0.1,
+      "service_attainment": 0.8,
+      "risk": 0.2,
+      "uncertainty": 0.2
+    },
+    {
+      "from_state": "grass",
+      "action_id": "mow",
+      "to_state": "grass",
+      "probability": 0.95,
+      "service_attainment": 0.85,
+      "risk": 0.15,
+      "uncertainty": 0.15
+    },
+    {
+      "from_state": "grass",
+      "action_id": "mow",
+      "to_state": "shrub",
+      "probability": 0.05,
+      "service_attainment": 0.85,
+      "risk": 0.15,
+      "uncertainty": 0.15
+    },
+    {
+      "from_state": "unknown",
+      "action_id": "none",
+      "to_state": "unknown",
+      "probability": 1.0,
+      "service_attainment": 0.0,
+      "risk": 1.0,
+      "uncertainty": 0.8
+    }
+  ],
+  "horizon": 3,
+  "discount_rate": 0.1,
+  "initial_state": "shrub",
+  "terminal_values": {},
+  "service_weight": 1.0,
+  "risk_weight": 1.0,
+  "uncertainty_weight": 0.5,
+  "cost_weight": 0.001,
+  "created_utc": "2026-11-14T00:00:00Z"
+}

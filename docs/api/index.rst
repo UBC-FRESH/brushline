@@ -44,4 +44,11 @@ whenever you add a module to the project.
    optimization-validation
    optimization-budget
    optimization-telemetry
+   strategic-dynamic-program
+   strategic-portfolio
+   strategic-monitoring
+   strategic-bau
+   strategic-reports
+   strategic-scenario
+   strategic-validation
    instance
