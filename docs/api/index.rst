@@ -15,3 +15,4 @@ whenever you add a module to the project.
    model
    corridor
    state
+   artifacts

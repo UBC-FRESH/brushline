@@ -9,8 +9,10 @@
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
+- [Artifact contracts](reference/artifacts.html): plan, run, Pareto archive, operations timeline, and demo manifest.
 - [API reference](api/index.html): every public function, with its parameters, types, and return values.
 - [brushline package](api/brushline.html): the package root and the command line.
 - [dataset schema](api/model.html): the dataset models and validator.
 - [corridor schema](api/corridor.html): the corridor graph models and validator.
 - [state schema](api/state.html): the vegetation state, treatment, transition, and observation models.
+- [artifact schemas](api/artifacts.html): the plan, run, Pareto archive, timeline, demo, and validation models.

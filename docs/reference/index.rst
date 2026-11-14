@@ -10,3 +10,4 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    compiled-dataset
    corridor-contract
    state-contract
+   artifacts

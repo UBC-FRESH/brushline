@@ -104,8 +104,8 @@ prototype that exercises them on synthetic data.
   - [x] Graph, linear referencing, geometry, access, structures, and service standards
 - [x] P1.3 Define the vegetation state, treatment, and observation contract
   - [x] Functional groups, state classes, distributions, treatment actions, observation records
-- [ ] P1.4 Define the plan, run, Pareto archive, operations timeline, and demo manifest contracts
-  - [ ] JSON/CSV/Parquet shapes, provenance fields, versioning, and examples
+- [x] P1.4 Define the plan, run, Pareto archive, operations timeline, and demo manifest contracts
+  - [x] JSON/CSV/Parquet shapes, provenance fields, versioning, and examples
 - [ ] P1.5 Build a synthetic corridor fixture
   - [ ] Two corridors, mixed growth, access, structures, monitoring gaps, and a known optimum case
 - [ ] P1.6 Build the end-to-end prototype
