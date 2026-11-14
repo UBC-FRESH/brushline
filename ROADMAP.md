@@ -269,8 +269,8 @@ policy, and the business-as-usual comparison.
   - [x] Frequency, route, sensor, sampling intensity, and value-of-information approximation
 - [x] P6.4 Implement the business-as-usual baseline (#64)
   - [x] Fixed cycle, current policy, and like-for-like simulation
-- [ ] P6.5 Build the strategic reports
-  - [ ] Budget and cash forecast, service trajectory, risk trajectory, monitoring cost, and caveats
+- [x] P6.5 Build the strategic reports (#65)
+  - [x] Budget and cash forecast, service trajectory, risk trajectory, monitoring cost, and caveats
 - [ ] P6.6 Add the scenario archive and reproducibility record
   - [ ] Data/model/config/seed versions and replay
 - [ ] P6.7 Validate the strategic plan on the synthetic corridor

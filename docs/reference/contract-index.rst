@@ -181,6 +181,10 @@ test suite. This page is the map.
      - ``brushline.strategic-bau.v1``
      - ``BauPlan``
      - Fixed-cycle selections, period summaries, outcomes, baselines, and budget/capacity flags
+   * - Strategic report
+     - ``brushline.strategic-report.v1``
+     - ``StrategicReport``
+     - Optimized/BAU yearly cost, budget, service, risk, uncertainty, monitoring, and comparison
 
 Error prefixes
 --------------
@@ -259,6 +263,8 @@ Error prefixes
      - Strategic monitoring
    * - ``BAU-*``
      - Business-as-usual baseline
+   * - ``REPORT-*``
+     - Strategic reports
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -326,6 +332,8 @@ Test layers
   invalid references, and model guards.
 - BAU tests for annual and multi-year cycles, budget truncation and unenforced violations, capacity,
   action filters, empty/invalid inputs, and like-for-like comparison.
+- Report tests for optimized/BAU rows, monitoring allocation, overruns, mismatched scopes, row totals,
+  and JSON round-trips.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

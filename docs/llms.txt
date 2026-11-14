@@ -39,6 +39,7 @@
 - [Strategic portfolio](reference/strategic-portfolio.html): budget, capacity, service/risk targets, continuity, and deterministic selection.
 - [Strategic monitoring](reference/strategic-monitoring.html): frequency, route, sensor, sampling, cost, and value of information.
 - [Business-as-usual baseline](reference/strategic-bau.html): fixed cycles, budget/capacity enforcement, and the optimized comparison.
+- [Strategic reports](reference/strategic-reports.html): yearly cost, budget, service, risk, uncertainty, monitoring, and BAU rows.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -84,3 +85,4 @@
 - [Strategic portfolio API](api/strategic-portfolio.html): portfolio models, builder, and validation.
 - [Strategic monitoring API](api/strategic-monitoring.html): monitoring policy models and selection.
 - [Business-as-usual API](api/strategic-bau.html): the baseline and comparison models.
+- [Strategic reports API](api/strategic-reports.html): report rows and writers.

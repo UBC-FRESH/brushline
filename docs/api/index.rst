@@ -48,4 +48,5 @@ whenever you add a module to the project.
    strategic-portfolio
    strategic-monitoring
    strategic-bau
+   strategic-reports
    instance

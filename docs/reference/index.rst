@@ -40,6 +40,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    strategic-portfolio
    strategic-monitoring
    strategic-bau
+   strategic-reports
    compiled-dataset
    corridor-contract
    state-contract
