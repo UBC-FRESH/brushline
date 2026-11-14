@@ -2,9 +2,9 @@
 
 Phase: P2 FEMIC-extended instance builder
 Parent issue: #24
-Pull request: queued on `feature/p2-instance-builder` into `main`
+Pull request: #32, `feature/p2-instance-builder` into `main`
 Evidence head: `8283827`, the head that the gates and the local dry run below cover
-Report commit: the commit that adds this report. Its CI run is posted on the pull request.
+Report commit: `ba69b64`, with the PR number update in the next commit. CI runs on pull request #32.
 Date: 2026-11-14
 Status: queued for approval. Not merged.
 
@@ -12,7 +12,7 @@ Status: queued for approval. Not merged.
 
 Approve these actions. The agent carries them out in this order, and reads back each result.
 
-1. Squash-merge the P2 pull request, and delete the branch `feature/p2-instance-builder`.
+1. Squash-merge pull request #32, and delete the branch `feature/p2-instance-builder`.
 2. Close parent issue #24 with a closeout comment that cites the merge commit.
 3. Launch P3 (State, LiDAR, and terrain): create its branch, set the phase statuses in `ROADMAP.md`,
    create its child issues as sub-issues, and start P3.1.
@@ -101,7 +101,7 @@ The required local dry run used the committed synthetic AOI and a temporary runt
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | `8283827` plus this report | in progress | The pull request's CI run is posted on the PR |
+| pending | `8283827` plus the report | in progress | CI runs on pull request #32; the result is posted on the PR |
 | n/a | branch pushes | not run | CI runs on pull requests and `main`, not on plain feature-branch pushes |
 
 ## 6. Next phase
