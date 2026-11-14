@@ -185,6 +185,14 @@ test suite. This page is the map.
      - ``brushline.strategic-report.v1``
      - ``StrategicReport``
      - Optimized/BAU yearly cost, budget, service, risk, uncertainty, monitoring, and comparison
+   * - Strategic scenario
+     - ``brushline.strategic-scenario.v1``
+     - ``StrategicScenario``
+     - Data/model/config/seed versions, artifact digests, paths, and replay
+   * - Strategic scenario archive
+     - ``brushline.strategic-scenario-archive.v1``
+     - ``ScenarioArchive``
+     - Versioned scenario set with creation metadata
 
 Error prefixes
 --------------
@@ -265,6 +273,8 @@ Error prefixes
      - Business-as-usual baseline
    * - ``REPORT-*``
      - Strategic reports
+   * - ``SCENARIO-*``
+     - Strategic scenario
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -334,6 +344,8 @@ Test layers
   action filters, empty/invalid inputs, and like-for-like comparison.
 - Report tests for optimized/BAU rows, monitoring allocation, overruns, mismatched scopes, row totals,
   and JSON round-trips.
+- Scenario tests for canonical digests, artifact replay, missing/tampered artifacts, archive validation,
+  model guards, and the committed example.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

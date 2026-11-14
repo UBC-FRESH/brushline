@@ -271,8 +271,8 @@ policy, and the business-as-usual comparison.
   - [x] Fixed cycle, current policy, and like-for-like simulation
 - [x] P6.5 Build the strategic reports (#65)
   - [x] Budget and cash forecast, service trajectory, risk trajectory, monitoring cost, and caveats
-- [ ] P6.6 Add the scenario archive and reproducibility record
-  - [ ] Data/model/config/seed versions and replay
+- [x] P6.6 Add the scenario archive and reproducibility record (#66)
+  - [x] Data/model/config/seed versions and replay
 - [ ] P6.7 Validate the strategic plan on the synthetic corridor
   - [ ] Service levels met, budget respected, and the BAU comparison measured
 

@@ -1,0 +1,31 @@
+{
+  "schema_version": "brushline.strategic-scenario.v1",
+  "scenario_id": "p6-scenario-v1",
+  "instance_id": "tiny",
+  "versions": {
+    "dataset_version": "synthetic.v1",
+    "dataset_digest": "sha256:demo",
+    "state_model": "state.v1",
+    "growth_model": "growth.v1",
+    "treatment_model": "treatment.v1",
+    "adapter": "brushline.optimization.adapter.v1",
+    "brushline_version": "0.1.0"
+  },
+  "configuration": {
+    "horizon_years": 1,
+    "service_target": 0.7,
+    "currency": "CAD"
+  },
+  "config_digest": "4df5ec5fd3064897dc77c2e8bea194bfe3bc43ae6d7e9f57dfc3a280fd039332",
+  "seed": 7,
+  "budget": 100,
+  "horizon_years": 1,
+  "portfolio_id": "opt",
+  "report_id": "report",
+  "portfolio_path": "runs/tiny/portfolio.json",
+  "report_path": "runs/tiny/report.json",
+  "archive_path": "runs/tiny/pareto.json",
+  "portfolio_digest": "8e65dc1e762d8dc5cb49ba112d8c1a241cd5d509ab40734d6dfecdf7604f35e2",
+  "report_digest": "a6009179a20d5e154d11461239c44081513c764435c31250ae46a1140b21e9fa",
+  "created_utc": "2026-11-14T00:00:00Z"
+}
