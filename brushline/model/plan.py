@@ -107,6 +107,8 @@ class PlanAction(BaseModel):
         Treatment method.
     intensity : float
         Intensity from 0 to 1.
+    efficacy : float, optional
+        Expected efficacy from 0 to 1. Defaults to ``0.5``.
     cost_lines : list of CostLine
         Line-item cost build-up. At least one line is required.
     treatment_unit_id : str or None, optional
@@ -129,6 +131,7 @@ class PlanAction(BaseModel):
     season: Season
     method: TreatmentMethod
     intensity: float = Field(ge=0, le=1)
+    efficacy: float = Field(default=0.5, ge=0, le=1)
     cost_lines: list[CostLine] = Field(min_length=1)
     treatment_unit_id: str | None = None
     quantity_ha: float = Field(default=0.0, ge=0)

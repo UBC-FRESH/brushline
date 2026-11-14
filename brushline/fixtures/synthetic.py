@@ -655,11 +655,11 @@ def _plan(dataset_digest: str) -> Plan:
         seed=DEFAULT_SEED,
     )
     actions = [
-        _plan_action("pa1", "s1", 2026, "summer", "mowing", 0.8, 1500.0),
-        _plan_action("pa2", "s2", 2026, "summer", "manual", 0.6, 900.0),
-        _plan_action("pa3", "s3", 2027, "summer", "mowing", 0.8, 1500.0),
-        _plan_action("pa4", "s4", 2026, "fall", "mowing", 0.7, 600.0),
-        _plan_action("pa5", "s5", 2026, "summer", "manual", 0.5, 800.0),
+        _plan_action("pa1", "s1", 2026, "summer", "mowing", 0.8, 0.75, 1500.0),
+        _plan_action("pa2", "s2", 2026, "summer", "manual", 0.6, 0.6, 900.0),
+        _plan_action("pa3", "s3", 2027, "summer", "mowing", 0.8, 0.75, 1500.0),
+        _plan_action("pa4", "s4", 2026, "fall", "mowing", 0.7, 0.7, 600.0),
+        _plan_action("pa5", "s5", 2026, "summer", "manual", 0.5, 0.55, 800.0),
     ]
     return Plan(
         header=header,
@@ -683,6 +683,7 @@ def _plan_action(
         "manual", "mechanical", "chemical", "mowing", "grazing", "prescribed_fire", "other"
     ],
     intensity: float,
+    efficacy: float,
     amount: float,
 ) -> PlanAction:
     return PlanAction(
@@ -692,6 +693,7 @@ def _plan_action(
         season=season,
         method=method,
         intensity=intensity,
+        efficacy=efficacy,
         cost_lines=[
             CostLine(
                 category="labour",
@@ -773,7 +775,7 @@ def _archive_plan(plan_id: str, dataset_digest: str, amount: float) -> Plan:
     )
     return Plan(
         header=header,
-        actions=[_plan_action(f"{plan_id}-a1", "s1", 2026, "summer", "mowing", 0.8, amount)],
+        actions=[_plan_action(f"{plan_id}-a1", "s1", 2026, "summer", "mowing", 0.8, 0.75, amount)],
         assumptions=[
             PlanAssumption(
                 assumption_id="as1",

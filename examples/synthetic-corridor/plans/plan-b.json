@@ -16,6 +16,7 @@
           "source": "synthetic"
         }
       ],
+      "efficacy": 0.75,
       "intensity": 0.8,
       "method": "mowing",
       "quantity_ha": 1.0,

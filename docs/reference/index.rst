@@ -12,3 +12,4 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    state-contract
    artifacts
    synthetic-fixture
+   prototype

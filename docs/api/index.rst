@@ -16,3 +16,4 @@ whenever you add a module to the project.
    corridor
    state
    artifacts
+   prototype

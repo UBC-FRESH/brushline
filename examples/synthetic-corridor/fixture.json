@@ -48,27 +48,27 @@
     {
       "path": "plan.json",
       "schema_version": "brushline.plan.v1",
-      "sha256": "cb43d1d2470b79067a769a61a7f5a842fd4338a9a0201c9c3bf212759072c547"
+      "sha256": "60241928f8193803d4b9d1e3d98bb7c7ff96b14a522c8b3a5515e9be97def851"
     },
     {
       "path": "plans/plan-a.json",
       "schema_version": "brushline.plan.v1",
-      "sha256": "da89b9e4e9d0c3e8616a2d4fe01d032b3e9e799d28d0ceee3e1a59d1c1845201"
+      "sha256": "70d42221a316a995e8280b4b25afce7634825510b34ab3979c80e2c05b01dbaf"
     },
     {
       "path": "plans/plan-b.json",
       "schema_version": "brushline.plan.v1",
-      "sha256": "8083ce81a1e556732aeeda4c8d532f368a450914adba97cdf8effd023ed29a9d"
+      "sha256": "e949568a3694d9ced8883730f1ea16af9afdbd62c037bfe5f983e4ba97b929fb"
     },
     {
       "path": "plans/plan-c.json",
       "schema_version": "brushline.plan.v1",
-      "sha256": "1c7192258e04602b5647c9eaa51343c476018ca85ac660b5791dc4dfeadfdb0c"
+      "sha256": "c8618082374aa310bf215c15efad02618ad16748db1a65118fd234b3c912f43a"
     },
     {
       "path": "run.json",
       "schema_version": "brushline.run.v1",
-      "sha256": "87e2eed82fc2fa8b0a86acdd7265c165d8b6c240ecf14b8d293b8f4d75af4f34"
+      "sha256": "04b1cce2c45da766abdff508516cbfb62ad5f13221cfd32761d4e27ef87ee419"
     },
     {
       "path": "state.json",
@@ -81,7 +81,7 @@
       "sha256": "9c0b4715a9fbf69af8e150df22668882ddcfec34407c6d1ff4a05d57f0fecbb6"
     }
   ],
-  "content_digest": "9ee9f4be63fbbc328932eb696aebfa9a2aeb5e59a423b01f88154dc1ddd24e00",
+  "content_digest": "6b31023dd27bc109b502e12b9fbee75027f856ef0a02b3f7fb0087f9f378db24",
   "created_utc": "2026-11-14T00:00:00+00:00",
   "expected": {
     "access_gaps": 1,

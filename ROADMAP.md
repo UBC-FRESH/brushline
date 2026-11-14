@@ -108,8 +108,8 @@ prototype that exercises them on synthetic data.
   - [x] JSON/CSV/Parquet shapes, provenance fields, versioning, and examples
 - [x] P1.5 Build a synthetic corridor fixture
   - [x] Two corridors, mixed growth, access, structures, monitoring gaps, and a known optimum case
-- [ ] P1.6 Build the end-to-end prototype
-  - [ ] Compile, grow, treat, simulate, report, and write a run directory
+- [x] P1.6 Build the end-to-end prototype
+  - [x] Compile, grow, treat, simulate, report, and write a run directory
 - [ ] P1.7 Add contract validation and property tests
   - [ ] Every schema has a failing case; every invariant has a property test
 
