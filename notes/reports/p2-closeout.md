@@ -66,6 +66,7 @@ Settings changes, each with its exact command. Each one runs only after its own 
 | P2.7 uses a synthetic local build, not a live FEMIC graph | CI has no FEMIC service or network access; the prototype must be deterministic | Stated limit and a P3 integration item; no claim of a live graph run |
 | P2.7 browser coverage is in-process | No browser automation dependency is approved | The static shell and every HTTP contract are tested; a browser test remains future work |
 | FastAPI's test client emits a deprecation warning with the pinned httpx | Upstream test-client deprecation | The warning is non-fatal; the dashboard is green; a later test-client migration is recorded here |
+| The first PR CI run failed the docs build on FastAPI autodoc import | The optional web dependency and the docs environment did not agree | The API page is prose-only, FastAPI is no longer a docs requirement, and the local dashboard is green |
 
 ## 3. Gate evidence
 
