@@ -67,4 +67,5 @@ whenever you add a module to the project.
    plan-exchange
    studio
    demo-portal
+   verification
    instance
