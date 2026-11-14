@@ -3,7 +3,7 @@
 Phase: P0 Bootstrap and scope
 Parent issue: #1
 Pull request: #14, `feature/p0-bootstrap` into `main`
-Evidence head: `da9a215`, the head that the gates and the CI runs below cover
+Evidence head: `05fb950`, the head that the gates and the CI runs below cover
 Report commit: the commit that adds this report. Its CI run is posted on the pull request.
 Date: 2026-11-14
 Status: queued for approval. Not merged.
@@ -102,7 +102,8 @@ design notes were complete. The expansion is recorded in the parent issue and in
 | 43538876711 | `6e39d87` | success | Seed CI on `main` |
 | 43538877064 | `6e39d87` | failure | Seed Docs workflow lacked a package install; fixed in P0.2 |
 | 43542525197 | `43a7043` | failure | The CLI help test assumed a wide terminal; Typer's rich table wrapped differently in CI. Fixed in `da9a215` by asserting on the option name, not the `--` prefix. |
-| pending | `da9a215` | in progress | The CI run on the fix; its result is posted on pull request #14 |
+| 43542716118 | `da9a215` | success | The CI run on the terminal-independent CLI test fix |
+| 43542758033 | `05fb950` | success | The CI run on the design index, changelog, and close-out report; all three jobs passed |
 
 The report commit will add its own CI run to the pull request. The phase is not complete until the CI run
 on the report commit is green.
