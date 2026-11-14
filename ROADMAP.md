@@ -22,8 +22,8 @@ exists and the maintainer approves it.
 | P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
 | P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
 | P10 Interactive planning studio | #94 | `feature/p10-studio` | complete |
-| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | pr-open |
-| P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
+| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | complete |
+| P12 Verification and the BAU case | #112 | `feature/p12-verify` | active |
 | P13 Release and deploy | TBD | `feature/p13-release` | planned |
 | P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
 
@@ -418,7 +418,7 @@ Acceptance criteria:
 
 Parent issue: #104
 Branch: `feature/p11-demo-portal`
-Status: pr-open
+Status: complete
 
 Goal: publish a public-data-only, read-only demo portal with curated instances and a pilot-request path.
 
@@ -445,9 +445,9 @@ Acceptance criteria:
 
 ## Phase 12: Verification and the BAU case
 
-Parent issue: TBD
+Parent issue: #112
 Branch: `feature/p12-verify`
-Status: planned
+Status: active
 
 Goal: show that the build meets its acceptance criteria, with evidence, and demonstrate the
 optimal-versus-business-as-usual value proposition.
