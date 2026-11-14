@@ -294,8 +294,8 @@ Goal: turn the strategic policy into a 1-to-5-year treatment program and a work-
 
 - [x] P7.1 Implement the multi-year tactical program (#70)
   - [x] Treatment units, methods, seasons, and contractor allocation
-- [ ] P7.2 Implement contractor capacity, productivity, and cost
-  - [ ] Crews, machines, rates, travel, supervision, overhead, and risk
+- [x] P7.2 Implement contractor capacity, productivity, and cost (#71)
+  - [x] Crews, machines, rates, travel, supervision, overhead, and risk
 - [ ] P7.3 Integrate access and road status
   - [ ] fresh-road/ALSroads, route length, access windows, and no invented open/closed verdict
 - [ ] P7.4 Generate the operational work plan

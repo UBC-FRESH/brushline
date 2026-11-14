@@ -201,6 +201,10 @@ test suite. This page is the map.
      - ``brushline.tactical-program.v1``
      - ``TacticalProgram``
      - Units, actions, year budgets, contractor allocation, cost, and violations
+   * - Tactical resources
+     - ``brushline.tactical-resources.v1``
+     - ``ResourcePlan``
+     - Contractor requests, cost lines, capacity, cost by contractor/year, and violations
 
 Error prefixes
 --------------
@@ -285,6 +289,8 @@ Error prefixes
      - Strategic scenario
    * - ``TACTICAL-*``
      - Tactical program
+   * - ``RESOURCE-*``
+     - Tactical resources
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -360,6 +366,8 @@ Test layers
   replay, writers, and model guards.
 - Tactical program tests for feasible allocation, budget/method/season/year violations, missing refs,
   empty actions, and model guards.
+- Resource tests for the five cost lines, cost by contractor/year, capacity/method/profile failures,
+  duplicate profiles, and model guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

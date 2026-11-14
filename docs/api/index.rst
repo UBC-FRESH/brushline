@@ -52,4 +52,5 @@ whenever you add a module to the project.
    strategic-scenario
    strategic-validation
    tactical-program
+   tactical-resources
    instance
