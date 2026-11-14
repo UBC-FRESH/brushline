@@ -12,7 +12,7 @@ exists and the maintainer approves it.
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
-| P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | pr-open |
+| P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
 | P2 FEMIC-extended instance builder | TBD | `feature/p2-instance-builder` | planned |
 | P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
 | P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
@@ -93,7 +93,7 @@ Acceptance criteria:
 
 Parent issue: #15
 Branch: `feature/p1-contracts-prototype`
-Status: pr-open
+Status: complete
 
 Goal: fix the data, plan, run, archive, timeline, and demo contracts, and build the smallest end-to-end
 prototype that exercises them on synthetic data.
@@ -527,7 +527,7 @@ Acceptance criteria:
 ## Detailed Next Steps Notes
 
 1. P0 is complete and merged: pull request #14 squash-merged as `0a6778c`, the branch deleted, and parent issue #1 closed. The repository is public and the docs are published at https://ubc-fresh.github.io/brushline/.
-2. P1 is complete on `feature/p1-contracts-prototype`, parent issue #15, with child issues #16 to #22 closed. The close-out report is `notes/reports/p1-closeout.md` and pull request #23 is queued for approval.
-3. Do not merge, close #15, or launch P2 before the maintainer approves the P1 close-out.
-4. On approval, merge #23, delete the branch, close #15, and launch P2 (FEMIC-extended instance builder).
+2. P1 is complete: pull request #23 squash-merged as `58b3065`, the branch deleted, and parent issue #15 closed. The close-out report is `notes/reports/p1-closeout.md`.
+3. P2 (FEMIC-extended instance builder) is next. Start with P2.1, the FEMIC extension boundary and provider API pin.
+4. Keep the instance builder an extension of FEMIC; do not create a parallel package or data-acquisition stack.
 5. Do not start P12 until P1 to P11 have evidence.
