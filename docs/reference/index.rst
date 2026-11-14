@@ -57,6 +57,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    replan
    monitoring-validation
    plan-exchange
+   studio
    compiled-dataset
    corridor-contract
    state-contract

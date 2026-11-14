@@ -233,6 +233,10 @@ test suite. This page is the map.
      - ``brushline.plan-exchange.v1``
      - ``PlanExchange``
      - Cost category totals, owner/contractor views, bid comparison, and approval digest
+   * - Studio
+     - ``brushline.scene.v1``
+     - ``Studio``
+     - Artifact-backed block scene with pre/post variants and unknown-position labels
 
 Error prefixes
 --------------
