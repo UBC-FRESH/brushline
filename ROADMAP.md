@@ -13,7 +13,7 @@ exists and the maintainer approves it.
 | --- | --- | --- | --- |
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
-| P2 FEMIC-extended instance builder | TBD | `feature/p2-instance-builder` | planned |
+| P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | pr-open |
 | P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
 | P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
 | P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
@@ -123,28 +123,28 @@ Acceptance criteria:
 
 ## Phase 2: FEMIC-extended instance builder
 
-Parent issue: TBD
+Parent issue: #24
 Branch: `feature/p2-instance-builder`
-Status: planned
+Status: pr-open
 
 Goal: extend FEMIC's instance, rebuild-spec, FreshForge, catalogue, DataLad, and preflight surfaces to
 build Brushline instances from a map-selected AOI. Do not create a second instance-builder package.
 
-- [ ] P2.1 Record and pin the FEMIC extension boundary and provider API
-  - [ ] Version pin, entry points, compatibility policy, and a failing test if the API drifts
-- [ ] P2.2 Add the Brushline instance template and rebuild spec
-  - [ ] Config, scenario, targets, data pointers, tests, runbooks, docs, evidence, and demo manifest
-- [ ] P2.3 Add the Brushline provider nodes
-  - [ ] `validate_aoi`, `segment_corridor`, `compile_dataset`, `seed_vegetation_state`,
+- [x] P2.1 Record and pin the FEMIC extension boundary and provider API
+  - [x] Version pin, entry points, compatibility policy, and a failing test if the API drifts
+- [x] P2.2 Add the Brushline instance template and rebuild spec
+  - [x] Config, scenario, targets, data pointers, tests, runbooks, docs, evidence, and demo manifest
+- [x] P2.3 Add the Brushline provider nodes
+  - [x] `validate_aoi`, `segment_corridor`, `compile_dataset`, `seed_vegetation_state`,
         `validate_scenario`, `build_demo`
-- [ ] P2.4 Add the data catalogue and connector registry
-  - [ ] Public sources, private connectors, licences, classifications, and allowlists
-- [ ] P2.5 Add the fetch plan, materialization, coverage, and gap report
-  - [ ] Plan-only preview, checksums, DataLad/annex pointers, coverage state, and gap report
-- [ ] P2.6 Add the agent capability contract and offline test harness
-  - [ ] Prompt, tool allowlist, validator, retry budget, fake provider, and evidence record
-- [ ] P2.7 Build the map-to-instance prototype and review screen
-  - [ ] AOI draw/select, data availability, approvals, progress, gap report, and instance handoff
+- [x] P2.4 Add the data catalogue and connector registry
+  - [x] Public sources, private connectors, licences, classifications, and allowlists
+- [x] P2.5 Add the fetch plan, materialization, coverage, and gap report
+  - [x] Plan-only preview, checksums, DataLad/annex pointers, coverage state, and gap report
+- [x] P2.6 Add the agent capability contract and offline test harness
+  - [x] Prompt, tool allowlist, validator, retry budget, fake provider, and evidence record
+- [x] P2.7 Build the map-to-instance prototype and review screen
+  - [x] AOI draw/select, data availability, approvals, progress, gap report, and instance handoff
 
 Acceptance criteria:
 
@@ -528,6 +528,6 @@ Acceptance criteria:
 
 1. P0 is complete and merged: pull request #14 squash-merged as `0a6778c`, the branch deleted, and parent issue #1 closed. The repository is public and the docs are published at https://ubc-fresh.github.io/brushline/.
 2. P1 is complete: pull request #23 squash-merged as `58b3065`, the branch deleted, and parent issue #15 closed. The close-out report is `notes/reports/p1-closeout.md`.
-3. P2 (FEMIC-extended instance builder) is next. Start with P2.1, the FEMIC extension boundary and provider API pin.
+3. P2 is active on `feature/p2-instance-builder`, parent issue #24, with child issues #25 to #31. Start with P2.1, the FEMIC extension boundary and provider API pin.
 4. Keep the instance builder an extension of FEMIC; do not create a parallel package or data-acquisition stack.
 5. Do not start P12 until P1 to P11 have evidence.

@@ -44,6 +44,31 @@ test suite. This page is the map.
      - ``brushline.demo.v1``
      - ``validate_demo_manifest``
      - Slug, sources, licences, artifacts, caveats, publication status
+   * - Data catalogue and connectors
+     - ``brushline.catalogue.v1``
+     - ``validate_catalogue``
+     - Sources, licences, classifications, coverage, connectors, auth references, scope, outputs, audit, approval, secret scan
+   * - Fetch plan
+     - ``brushline.fetch-plan.v1``
+     - ``validate_fetch_plan``
+     - Items, estimates, licences, access, materialization pointers, bulk approvals, catalogue drift
+   * - Materialization
+     - ``brushline.materialization.v1``
+     - ``validate_materialization``
+     - Checksums, sizes, paths, containment, licences, pointers, retrieval time, missing reasons
+   * - Coverage and gaps
+     - ``brushline.coverage.v1``, ``brushline.gap-report.v1``
+     - ``validate_coverage``, ``validate_gap_report``
+     - Six coverage states, evidence, reasons, next action, and stop/continue
+   * - Agent capabilities
+     - ``brushline.capabilities.v1``, ``brushline.capability-outcome.v1``
+     - ``validate_capability_registry``, ``validate_capability_outcome``
+     - Six capabilities, prompt ids, tool allowlists, validators, retry budgets, private markers, authority fields, sanitized outcomes
+   * - Model builder session
+     - ``brushline.model-builder-session.v1``, ``brushline.model-builder-review.v1``,
+       ``brushline.handoff.v1``
+     - ``BuilderSession``, ``ReviewSummary``, ``HandoffRecord``
+     - AOI, plan preview, availability, approvals, stages, review, handoff, and dry-run artifacts
 
 Error prefixes
 --------------
@@ -70,6 +95,16 @@ Error prefixes
      - Operations timeline
    * - ``DEMO-*``
      - Demo manifest
+   * - ``CATALOGUE-*``
+     - Data catalogue and connectors
+   * - ``FETCH-*``
+     - Fetch plan
+   * - ``MATERIALIZATION-*``
+     - Materialization manifest
+   * - ``COVERAGE-*``, ``GAP-*``
+     - Coverage and gap report
+   * - ``CAPABILITIES-*``, ``AGENT-*``
+     - Agent capabilities and sanitized outcome record
 
 Test layers
 -----------
@@ -77,6 +112,14 @@ Test layers
 - Unit tests for each model and validator.
 - Contract tests for the public interfaces.
 - Integration tests for the CLI (``validate``, ``build``, ``simulate``, ``prototype``).
+- Catalogue tests for licences, classifications, unknown references, connector scope, approval, and
+  the secret scan.
+- Fetch tests for estimates, bulk approval, catalogue drift, materialization checksums and containment,
+  the six coverage states, and the gap decision.
+- Capability tests for the six prompts, tool allowlists, validator failure, retry budget, fake provider,
+  private markers, authoritative fields, and sanitized records.
+- Model-builder tests for the static shell, plan preview, approvals, blocked builds, dry-run artifacts,
+  progress SSE, review, handoff, and custom AOI gaps.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

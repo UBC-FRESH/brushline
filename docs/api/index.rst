@@ -17,3 +17,10 @@ whenever you add a module to the project.
    state
    artifacts
    prototype
+   femic
+   freshforge
+   catalogue
+   fetch
+   capabilities
+   model-builder
+   instance

@@ -8,6 +8,13 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    :maxdepth: 2
 
    contract-index
+   femic-boundary
+   instance-template
+   freshforge-provider
+   data-catalogue
+   fetch-plan
+   agent-capabilities
+   model-builder
    compiled-dataset
    corridor-contract
    state-contract

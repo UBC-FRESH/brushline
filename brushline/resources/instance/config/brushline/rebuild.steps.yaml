@@ -1,0 +1,57 @@
+schema_version: "brushline.instance.rebuild.v1"
+
+instance:
+  case_id: "brushline-case"
+
+# The Brushline provider stages run after the FEMIC stages in
+# config/rebuild.spec.yaml. This file is validated by Brushline, not by FEMIC's
+# rebuild-spec validator, because FEMIC's schema and runner own a fixed stage
+# list.
+stages:
+  - step_id: "brushline_validate_aoi"
+    provider: "brushline.validate_aoi"
+    depends_on:
+      - "geospatial_preflight"
+    required: true
+    expected_outputs:
+      - "aoi_validation"
+
+  - step_id: "brushline_segment_corridor"
+    provider: "brushline.segment_corridor"
+    depends_on:
+      - "brushline_validate_aoi"
+    required: true
+    expected_outputs:
+      - "segments.parquet"
+
+  - step_id: "brushline_compile_dataset"
+    provider: "brushline.compile_dataset"
+    depends_on:
+      - "brushline_segment_corridor"
+    required: true
+    expected_outputs:
+      - "dataset/manifest.json"
+
+  - step_id: "brushline_seed_state"
+    provider: "brushline.seed_vegetation_state"
+    depends_on:
+      - "brushline_compile_dataset"
+    required: true
+    expected_outputs:
+      - "states.parquet"
+
+  - step_id: "brushline_validate_scenario"
+    provider: "brushline.validate_scenario"
+    depends_on:
+      - "brushline_seed_state"
+    required: true
+    expected_outputs:
+      - "scenario_validation"
+
+  - step_id: "brushline_build_demo"
+    provider: "brushline.build_demo"
+    depends_on:
+      - "brushline_validate_scenario"
+    required: false
+    expected_outputs:
+      - "demo/demo.json"

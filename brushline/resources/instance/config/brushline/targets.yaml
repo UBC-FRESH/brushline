@@ -1,0 +1,5 @@
+schema_version: "brushline.targets.v1"
+
+# One entry per target. The P4/P5 phases define the account names and the
+# normalizations; this template starts empty.
+targets: []

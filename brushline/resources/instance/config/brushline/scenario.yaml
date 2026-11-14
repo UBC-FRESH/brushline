@@ -1,0 +1,11 @@
+schema_version: "brushline.scenario.v1"
+instance_id: "brushline-case"
+name: "Brushline case"
+corridor_ids: []
+horizon:
+  start_year: 2026
+  years: 5
+currency: "CAD"
+service_standard_ids: []
+targets: "config/brushline/targets.yaml"
+standards: "config/brushline/standards.yaml"

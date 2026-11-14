@@ -16,6 +16,15 @@ import typer
 from brushline import __version__
 from brushline.build.compiler import compile_fixture
 from brushline.fixtures.synthetic import DEFAULT_SEED, generate_fixture
+from brushline.instance_ops import (
+    build_demo_file,
+    compile_dataset_file,
+    seed_state_file,
+    segment_corridor_file,
+    validate_aoi_file,
+    validate_scenario_file,
+)
+from brushline.instance_template import install_instance_template
 from brushline.model.schema import validate_dataset
 from brushline.sim.engine import simulate_dataset
 
@@ -106,6 +115,134 @@ def fixture(
     typer.echo(f"fixture: {result.root}")
     typer.echo(f"artifacts: {len(result.artifacts)}")
     typer.echo(f"content_digest: {result.content_digest}")
+
+
+instance_app = typer.Typer(
+    help="Manage Brushline instance templates.",
+    no_args_is_help=True,
+)
+
+
+@instance_app.command("template")
+def instance_template(
+    instance_root: Annotated[
+        Path,
+        typer.Option("--instance-root", help="FEMIC instance root."),
+    ],
+    force: Annotated[
+        bool,
+        typer.Option("--force", help="Overwrite existing template files."),
+    ] = False,
+) -> None:
+    """Install the Brushline template overlay on a FEMIC instance.
+
+    Parameters
+    ----------
+    instance_root : Path
+        FEMIC instance root. It is created when it does not exist.
+    force : bool, optional
+        Overwrite existing template files. Defaults to ``False``.
+
+    Raises
+    ------
+    typer.Exit
+        With status 1 when the packaged template is missing.
+    """
+    try:
+        result = install_instance_template(instance_root, force=force)
+    except FileNotFoundError as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"instance: {result.root}")
+    typer.echo(f"written: {len(result.written)}")
+    typer.echo(f"skipped: {len(result.skipped)}")
+
+
+@instance_app.command("validate-aoi")
+def instance_validate_aoi(
+    aoi: Annotated[Path, typer.Option("--aoi", help="AOI GeoJSON.")],
+    out: Annotated[Path, typer.Option("--out", help="Output directory.")],
+) -> None:
+    """Validate an AOI GeoJSON and write the report."""
+    try:
+        path = validate_aoi_file(aoi, out)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"aoi_validation: {path}")
+
+
+@instance_app.command("segment-corridor")
+def instance_segment_corridor(
+    corridor: Annotated[Path, typer.Option("--corridor", help="Corridor graph JSON.")],
+    out: Annotated[Path, typer.Option("--out", help="Output directory.")],
+) -> None:
+    """Validate a corridor graph and write its segment table."""
+    try:
+        path = segment_corridor_file(corridor, out)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"segments: {path}")
+
+
+@instance_app.command("compile-dataset")
+def instance_compile_dataset(
+    fixture: Annotated[Path, typer.Option("--fixture", help="Fixture directory.")],
+    out: Annotated[Path, typer.Option("--out", help="Compiled dataset directory.")],
+    force: Annotated[bool, typer.Option("--force", help="Overwrite the dataset.")] = False,
+) -> None:
+    """Compile a fixture into a validated Brushline dataset."""
+    try:
+        result = compile_dataset_file(fixture, out, force=force)
+    except (OSError, ValueError, FileExistsError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"dataset: {result.root}")
+    typer.echo(f"content_digest: {result.manifest.content_digest}")
+
+
+@instance_app.command("seed-state")
+def instance_seed_state(
+    state: Annotated[Path, typer.Option("--state", help="State contract JSON.")],
+    out: Annotated[Path, typer.Option("--out", help="Output directory.")],
+) -> None:
+    """Validate a state contract and write the seed state artifact."""
+    try:
+        path = seed_state_file(state, out)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"state: {path}")
+
+
+@instance_app.command("validate-scenario")
+def instance_validate_scenario(
+    scenario: Annotated[Path, typer.Option("--scenario", help="Scenario YAML.")],
+    targets: Annotated[Path, typer.Option("--targets", help="Targets YAML.")],
+    out: Annotated[Path, typer.Option("--out", help="Output directory.")],
+) -> None:
+    """Validate the scenario and targets YAML."""
+    try:
+        path = validate_scenario_file(scenario, targets, out)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"scenario_validation: {path}")
+
+
+@instance_app.command("build-demo")
+def instance_build_demo(
+    demo: Annotated[Path, typer.Option("--demo", help="Demo manifest JSON.")],
+    out: Annotated[Path, typer.Option("--out", help="Output directory.")],
+) -> None:
+    """Validate a demo manifest and write the demo artifact."""
+    try:
+        path = build_demo_file(demo, out)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"demo: {path}")
 
 
 @app.command()
@@ -315,3 +452,6 @@ def validate(
         typer.echo("VALID" if report.is_valid else "INVALID")
     if not report.is_valid:
         raise typer.Exit(code=1)
+
+
+app.add_typer(instance_app, name="instance")

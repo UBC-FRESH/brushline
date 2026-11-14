@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brushline model builder</title>
+  <link rel="stylesheet" href="/static/model-builder.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Brushline prototype</p>
+      <h1>Model builder</h1>
+      <p class="lede">Select an AOI, inspect the public sources, approve the plan, and run a dry run.
+        No network fetch and no private rows in this prototype.</p>
+    </div>
+    <div class="status" id="status" role="status">Loading catalogue...</div>
+  </header>
+
+  <main class="layout">
+    <section class="panel map-panel" aria-labelledby="aoi-title">
+      <div class="panel-head">
+        <div>
+          <p class="step">01</p>
+          <h2 id="aoi-title">Area of interest</h2>
+        </div>
+        <button id="draw-toggle" class="secondary" type="button">Draw AOI</button>
+      </div>
+      <div id="aoi-list" class="aoi-list" aria-label="Selectable AOIs"></div>
+      <div class="map-shell">
+        <svg id="map" viewBox="0 0 600 200" role="img" aria-label="Synthetic corridor AOI map">
+          <defs>
+            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d9e2df" stroke-width="1"></path>
+            </pattern>
+          </defs>
+          <rect x="0" y="0" width="600" height="200" fill="url(#grid)"></rect>
+          <line x1="0" y1="40" x2="300" y2="40" class="corridor"></line>
+          <line x1="0" y1="140" x2="200" y2="140" class="corridor"></line>
+          <g id="aoi-shapes"></g>
+        </svg>
+        <p class="map-note" id="map-note">Synthetic corridor fixture. Draw a rectangle for a custom
+          prototype AOI; custom coverage stays missing.</p>
+      </div>
+      <div class="form-grid">
+        <label>Asset type
+          <select id="asset-type"></select>
+        </label>
+        <label>Management standard
+          <select id="standard"></select>
+        </label>
+        <label>Horizon (years)
+          <input id="horizon" type="number" min="1" max="50" value="5">
+        </label>
+        <label>Currency
+          <input id="currency" type="text" value="CAD" maxlength="8">
+        </label>
+        <label class="check"><input id="bulk-fetch" type="checkbox"> Bulk fetch plan</label>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="data-title">
+      <div class="panel-head">
+        <div>
+          <p class="step">02</p>
+          <h2 id="data-title">Data availability</h2>
+        </div>
+        <span class="pill">Metadata only</span>
+      </div>
+      <div id="source-list" class="source-list"></div>
+      <div class="split">
+        <div>
+          <h3>Private connectors</h3>
+          <div id="connector-list" class="source-list"></div>
+        </div>
+        <div>
+          <h3>Gaps</h3>
+          <div id="gap-list" class="gap-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel wide" aria-labelledby="plan-title">
+      <div class="panel-head">
+        <div>
+          <p class="step">03</p>
+          <h2 id="plan-title">Fetch plan preview</h2>
+        </div>
+        <button id="create-session" type="button">Create plan</button>
+      </div>
+      <p class="hint">The plan is produced before any network call. A bulk plan needs an explicit bulk
+        approval. A private connector stays blocked until the owner approval is recorded.</p>
+      <div id="plan" class="plan"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="approve-title">
+      <div class="panel-head">
+        <div>
+          <p class="step">04</p>
+          <h2 id="approve-title">Approvals</h2>
+        </div>
+        <button id="approve" class="secondary" type="button">Approve selected</button>
+      </div>
+      <label class="check"><input id="approve-public" type="checkbox"> Approve public sources</label>
+      <label class="check"><input id="approve-bulk" type="checkbox"> Approve bulk fetch</label>
+      <div id="connector-approvals" class="source-list"></div>
+      <p class="hint" id="approval-hint">A private connector approval is a prototype owner decision.
+        Production uses the catalogue approval record.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="build-title">
+      <div class="panel-head">
+        <div>
+          <p class="step">05</p>
+          <h2 id="build-title">Build progress</h2>
+        </div>
+        <button id="build" type="button">Run dry run</button>
+      </div>
+      <label class="check"><input id="dry-run" type="checkbox" checked> Dry run: write the plan and
+        review, no payloads</label>
+      <ol id="progress" class="progress" aria-live="polite"></ol>
+    </section>
+
+    <section class="panel wide" aria-labelledby="review-title">
+      <div class="panel-head">
+        <div>
+          <p class="step">06</p>
+          <h2 id="review-title">Review and handoff</h2>
+        </div>
+        <button id="handoff" class="secondary" type="button">Link instance</button>
+      </div>
+      <div id="review" class="review"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>P2 prototype. No production authentication, no full planning studio, and no public demo portal.
+      Synthetic data only; not an operational decision.</p>
+  </footer>
+  <script src="/static/model-builder.js"></script>
+</body>
+</html>
