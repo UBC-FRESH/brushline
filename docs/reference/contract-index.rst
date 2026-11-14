@@ -193,6 +193,10 @@ test suite. This page is the map.
      - ``brushline.strategic-scenario-archive.v1``
      - ``ScenarioArchive``
      - Versioned scenario set with creation metadata
+   * - Strategic validation
+     - ``brushline.strategic-validation.v1``
+     - ``StrategicValidationResult``
+     - Coverage, budget, service, monitoring, BAU, totals, and replay checks
 
 Error prefixes
 --------------
@@ -346,6 +350,8 @@ Test layers
   and JSON round-trips.
 - Scenario tests for canonical digests, artifact replay, missing/tampered artifacts, archive validation,
   model guards, and the committed example.
+- Validation tests for the 10-year case, every named check, failed service/budget/monitoring/BAU/totals/
+  replay, writers, and model guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

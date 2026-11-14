@@ -50,4 +50,5 @@ whenever you add a module to the project.
    strategic-bau
    strategic-reports
    strategic-scenario
+   strategic-validation
    instance

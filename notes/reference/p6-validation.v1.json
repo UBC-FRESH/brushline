@@ -1,0 +1,47 @@
+{
+  "schema_version": "brushline.strategic-validation.v1",
+  "instance_id": "synthetic-strategic",
+  "portfolio_id": "p6-opt",
+  "bau_policy_id": "p6-bau",
+  "report_id": "p6-report",
+  "scenario_id": "p6-scenario",
+  "checks": [
+    {
+      "code": "COVERAGE",
+      "passed": true,
+      "detail": "optimized=10 bau=10"
+    },
+    {
+      "code": "BUDGET",
+      "passed": true,
+      "detail": "optimized rows within period budget"
+    },
+    {
+      "code": "SERVICE",
+      "passed": true,
+      "detail": "service=0.707 target=0.700"
+    },
+    {
+      "code": "MONITORING",
+      "passed": true,
+      "detail": "cost=200.00 decisions=1"
+    },
+    {
+      "code": "BAU",
+      "passed": true,
+      "detail": "BAU is like-for-like and feasible"
+    },
+    {
+      "code": "TOTALS",
+      "passed": true,
+      "detail": "optimized report total matches yearly rows"
+    },
+    {
+      "code": "REPLAY",
+      "passed": true,
+      "detail": "scenario portfolio/report digests replay"
+    }
+  ],
+  "passed": true,
+  "created_utc": "2026-11-14T00:00:00Z"
+}

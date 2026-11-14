@@ -42,6 +42,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    strategic-bau
    strategic-reports
    strategic-scenario
+   strategic-validation
    compiled-dataset
    corridor-contract
    state-contract

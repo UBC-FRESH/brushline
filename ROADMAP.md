@@ -273,8 +273,8 @@ policy, and the business-as-usual comparison.
   - [x] Budget and cash forecast, service trajectory, risk trajectory, monitoring cost, and caveats
 - [x] P6.6 Add the scenario archive and reproducibility record (#66)
   - [x] Data/model/config/seed versions and replay
-- [ ] P6.7 Validate the strategic plan on the synthetic corridor
-  - [ ] Service levels met, budget respected, and the BAU comparison measured
+- [x] P6.7 Validate the strategic plan on the synthetic corridor (#67)
+  - [x] Service levels met, budget respected, and the BAU comparison measured
 
 Acceptance criteria:
 
