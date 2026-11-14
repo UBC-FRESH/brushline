@@ -60,6 +60,10 @@ test suite. This page is the map.
      - ``brushline.coverage.v1``, ``brushline.gap-report.v1``
      - ``validate_coverage``, ``validate_gap_report``
      - Six coverage states, evidence, reasons, next action, and stop/continue
+   * - Agent capabilities
+     - ``brushline.capabilities.v1``, ``brushline.capability-outcome.v1``
+     - ``validate_capability_registry``, ``validate_capability_outcome``
+     - Six capabilities, prompt ids, tool allowlists, validators, retry budgets, private markers, authority fields, sanitized outcomes
 
 Error prefixes
 --------------
@@ -94,6 +98,8 @@ Error prefixes
      - Materialization manifest
    * - ``COVERAGE-*``, ``GAP-*``
      - Coverage and gap report
+   * - ``CAPABILITIES-*``, ``AGENT-*``
+     - Agent capabilities and sanitized outcome record
 
 Test layers
 -----------
@@ -105,6 +111,8 @@ Test layers
   the secret scan.
 - Fetch tests for estimates, bulk approval, catalogue drift, materialization checksums and containment,
   the six coverage states, and the gap decision.
+- Capability tests for the six prompts, tool allowlists, validator failure, retry budget, fake provider,
+  private markers, authoritative fields, and sanitized records.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

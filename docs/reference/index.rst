@@ -13,6 +13,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    freshforge-provider
    data-catalogue
    fetch-plan
+   agent-capabilities
    compiled-dataset
    corridor-contract
    state-contract

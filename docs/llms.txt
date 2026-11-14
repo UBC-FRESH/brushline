@@ -12,6 +12,7 @@
 - [FreshForge provider](reference/freshforge-provider.html): the six Brushline nodes, their commands, validation, and offline tests.
 - [Data catalogue and connectors](reference/data-catalogue.html): public sources, private connectors, licences, classifications, the secret scan, and the agent approval gate.
 - [Fetch plan, materialization, and coverage](reference/fetch-plan.html): plan-only estimates, bulk approval, checksums, pointers, six coverage states, and the gap decision.
+- [Agent capabilities](reference/agent-capabilities.html): the six bounded capabilities, tool allowlists, validators, retry budgets, and sanitized outcome records.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -30,3 +31,4 @@
 - [FreshForge provider API](api/freshforge.html): the provider metadata, validation, and execution hooks.
 - [Data catalogue API](api/catalogue.html): source and connector models, validation, agent metadata, and connection tests.
 - [Fetch plan API](api/fetch.html): the planner, materialization checks, coverage states, and the gap report.
+- [Agent capabilities API](api/capabilities.html): the registry, fake provider, harness, validators, and scans.
