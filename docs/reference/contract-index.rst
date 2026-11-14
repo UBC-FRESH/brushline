@@ -153,6 +153,14 @@ test suite. This page is the map.
      - ``brushline.optimization-budget-report.v1``
      - ``BudgetReport``
      - Quality, scaling, checkpoint, adapter and Fresh Solutions versions, and caveat
+   * - Optimization event
+     - ``brushline.optimization-event.v1``
+     - ``TelemetryEvent``
+     - Progress event with run, seed, budget, payload, objective, plan, and evidence references
+   * - Optimization telemetry
+     - ``brushline.optimization-telemetry.v1``
+     - ``EventStream``
+     - Versioned run, model/data versions, archive path, and ordered events
 
 Error prefixes
 --------------
@@ -221,6 +229,10 @@ Error prefixes
      - Optimization move validation
    * - ``PROMOTION-*``
      - Promotion record
+   * - ``TELEMETRY-*``
+     - Telemetry stream
+   * - ``STUDIO-*``
+     - Studio compatibility
 
 Test layers
 -----------
@@ -276,6 +288,8 @@ Test layers
   search gap, replay, infeasible instances, ties, and report round-trips.
 - Budget tests for every budget/seed point, feasible and infeasible runs, scaling timing and memory,
   checkpoint save/replay, composed reports, and input guards.
+- Telemetry tests for committed stream/archive compatibility, run events, archive insertion, sequence
+  and order validation, missing/mismatched artifacts, SSE, and JSON round-trips.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

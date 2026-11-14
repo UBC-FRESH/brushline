@@ -241,8 +241,8 @@ small-instance validation.
   - [x] Exhaustive enumeration, exact/batch agreement, known optimum, and replay
 - [x] P5.7 Certify the search budget and performance (#57)
   - [x] Quality-versus-budget curve, seed variance, scaling, and the no-optimality statement
-- [ ] P5.8 Freeze the archive and telemetry contract for the studio
-  - [ ] `pareto.json`, progress events, incumbent records, and evidence links
+- [x] P5.8 Freeze the archive and telemetry contract for the studio (#58)
+  - [x] `pareto.json`, progress events, incumbent records, and evidence links
 
 Acceptance criteria:
 

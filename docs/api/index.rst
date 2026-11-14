@@ -43,4 +43,5 @@ whenever you add a module to the project.
    optimization-archive
    optimization-validation
    optimization-budget
+   optimization-telemetry
    instance

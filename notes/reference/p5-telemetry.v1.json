@@ -1,0 +1,129 @@
+{
+  "schema_version": "brushline.optimization-telemetry.v1",
+  "run_id": "tiny-run-1",
+  "instance_id": "tiny",
+  "model_version": "brushline.low-vegetation.prototype.v0",
+  "data_version": "synthetic-corridor.v1",
+  "archive_path": "runs/tiny/pareto.json",
+  "events": [
+    {
+      "schema_version": "brushline.optimization-event.v1",
+      "event_id": "tiny-run-1:0",
+      "run_id": "tiny-run-1",
+      "sequence": 0,
+      "event_type": "start",
+      "created_utc": "2026-11-14T12:00:00Z",
+      "instance_id": "tiny",
+      "adapter": "brushline.optimization.adapter.v1",
+      "fresh_solutions_version": "0.9.3",
+      "seed": 7,
+      "budget": 20,
+      "payload": {
+        "mode": "local",
+        "stop_reason": "budget"
+      },
+      "objective_vector": null,
+      "feasible": null,
+      "plan_id": null,
+      "evidence_path": null
+    },
+    {
+      "schema_version": "brushline.optimization-event.v1",
+      "event_id": "tiny-run-1:1",
+      "run_id": "tiny-run-1",
+      "sequence": 1,
+      "event_type": "incumbent",
+      "created_utc": "2026-11-14T12:00:00Z",
+      "instance_id": "tiny",
+      "adapter": "brushline.optimization.adapter.v1",
+      "fresh_solutions_version": "0.9.3",
+      "seed": 7,
+      "budget": 20,
+      "payload": {
+        "assignment": {
+          "0": 1,
+          "1": 1,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "evaluations": 21,
+        "stop_reason": "budget",
+        "history": [
+          25.0814
+        ]
+      },
+      "objective_vector": {
+        "present_cost": 100.0,
+        "service_risk": 0.0003,
+        "service_attainment": 1.0,
+        "uncertainty": 0.3253
+      },
+      "feasible": true,
+      "plan_id": null,
+      "evidence_path": null
+    },
+    {
+      "schema_version": "brushline.optimization-event.v1",
+      "event_id": "tiny-run-1:2",
+      "run_id": "tiny-run-1",
+      "sequence": 2,
+      "event_type": "archive",
+      "created_utc": "2026-11-14T12:00:00Z",
+      "instance_id": "tiny",
+      "adapter": "brushline.optimization.adapter.v1",
+      "fresh_solutions_version": "0.9.3",
+      "seed": 7,
+      "budget": 20,
+      "payload": {
+        "archive_path": "runs/tiny/pareto.json",
+        "members": [
+          {
+            "plan_id": "tiny-plan-001",
+            "plan_path": "plans/tiny-plan-001.json",
+            "objective": {
+              "present_cost": 100.0,
+              "service_risk": 0.0003,
+              "service_attainment": 1.0,
+              "uncertainty": 0.3253
+            },
+            "feasible": true,
+            "seed": 7,
+            "evidence_path": "evidence/tiny-plan-001.json",
+            "budget": 20,
+            "metadata": {
+              "crowding_distance": 1000000000.0,
+              "scalarization": "balanced"
+            }
+          }
+        ]
+      },
+      "objective_vector": null,
+      "feasible": null,
+      "plan_id": null,
+      "evidence_path": null
+    },
+    {
+      "schema_version": "brushline.optimization-event.v1",
+      "event_id": "tiny-run-1:3",
+      "run_id": "tiny-run-1",
+      "sequence": 3,
+      "event_type": "finish",
+      "created_utc": "2026-11-14T12:00:00Z",
+      "instance_id": "tiny",
+      "adapter": "brushline.optimization.adapter.v1",
+      "fresh_solutions_version": "0.9.3",
+      "seed": 7,
+      "budget": 20,
+      "payload": {
+        "stop_reason": "budget",
+        "evaluations": 21
+      },
+      "objective_vector": null,
+      "feasible": null,
+      "plan_id": null,
+      "evidence_path": null
+    }
+  ]
+}
