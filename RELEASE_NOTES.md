@@ -1,6 +1,6 @@
-# Brushline 0.1.2 release notes
+# Brushline 0.1.3 release notes
 
-Status: patch release adding the observed public-data UBC 3D block and retaining the 0.1.1 Three.js fix.
+Status: patch release adding the multi-instance studio selector and three observed UBC public-data blocks.
 
 ## What this is
 
@@ -33,6 +33,9 @@ studio.
   release recommendation.
 
 ## Patch changes
+
+- Add a model-instance selector: synthetic planning corridor plus three observed UBC public-data blocks.
+- Each instance switches its block list, map, 3D scene, and summary.
 
 - Add `ubc-real`: 538 UBC campus tree records plus a 2 m UBC 2021 DEM/CHM terrain grid, with PDDL-1.0 / Abacus attribution. The block is observed state; pre/post is disabled.
 

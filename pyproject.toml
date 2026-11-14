@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "brushline"
-version = "0.1.2"
+version = "0.1.3"
 description = "Decision support for vegetation management along linear infrastructure corridors"
 authors = [{name = "UBC FRESH Lab", email = "noreply@example.org"}]
 requires-python = ">=3.11"
