@@ -137,6 +137,14 @@ test suite. This page is the map.
      - ``brushline.promotion.v1``
      - ``PromotionRecord``
      - Promoted plan, parent, reason, objective vector, time, and promoter
+   * - Tiny optimum
+     - ``brushline.tiny-optimum.v1``
+     - ``TinyOptimum``
+     - Enumerated assignment count, best assignment/vector, ties, and exact/batch agreement
+   * - Tiny validation
+     - ``brushline.tiny-validation.v1``
+     - ``TinyValidationReport``
+     - Optimum, optional search, gap, reach flag, replay, and expected-match evidence
 
 Error prefixes
 --------------
@@ -256,6 +264,8 @@ Test layers
   and compound proposals, all search modes, checkpoint replay, and rejected non-replayable results.
 - Archive tests for dominance, duplicates, infeasible rejection, crowding, size eviction, round-trip,
   invalid archives, and promotion records.
+- Tiny-validation tests for complete enumeration, the committed optimum, exact/batch agreement,
+  search gap, replay, infeasible instances, ties, and report round-trips.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

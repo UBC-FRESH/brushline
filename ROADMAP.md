@@ -237,8 +237,8 @@ small-instance validation.
   - [x] Adapter, local search, population, hybrid, convergence, checkpoints, seeds, and evidence
 - [x] P5.5 Implement the multi-objective archive and `pareto.json` (#55)
   - [x] Scalarization portfolio, dominance, diversity, archive members, and promotion rule
-- [ ] P5.6 Validate on tiny instances
-  - [ ] Exhaustive enumeration, MIP/CP bound where practical, exact/batch agreement, and replay
+- [x] P5.6 Validate on tiny instances (#56)
+  - [x] Exhaustive enumeration, exact/batch agreement, known optimum, and replay
 - [ ] P5.7 Certify the search budget and performance
   - [ ] Quality-versus-budget curve, seed variance, scaling, and the no-optimality statement
 - [ ] P5.8 Freeze the archive and telemetry contract for the studio

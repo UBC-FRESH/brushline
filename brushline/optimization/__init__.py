@@ -65,6 +65,18 @@ from brushline.optimization.pareto import (
     write_pareto_archive,
     write_promotion,
 )
+from brushline.optimization.validation import (
+    TinyOptimum,
+    TinyValidationError,
+    TinyValidationReport,
+    enumerate_assignments,
+    exhaustive_optimum,
+    load_tiny_optimum,
+    load_tiny_validation,
+    validate_tiny_instance,
+    write_tiny_optimum,
+    write_tiny_validation,
+)
 
 __all__ = [
     "ADAPTER_NAME",
@@ -102,6 +114,9 @@ __all__ = [
     "SegmentContext",
     "SegmentSpec",
     "SpanSpec",
+    "TinyOptimum",
+    "TinyValidationError",
+    "TinyValidationReport",
     "TreatmentOption",
     "Variable",
     "apply_move",
@@ -109,8 +124,12 @@ __all__ = [
     "build_archive",
     "build_formulation",
     "default_operators",
+    "enumerate_assignments",
+    "exhaustive_optimum",
     "load_pareto_archive",
     "load_promotion",
+    "load_tiny_optimum",
+    "load_tiny_validation",
     "promote_member",
     "repair_assignment",
     "replay_checkpoint",
@@ -118,6 +137,9 @@ __all__ = [
     "undo_move",
     "validate_formulation",
     "validate_move",
+    "validate_tiny_instance",
     "write_pareto_archive",
     "write_promotion",
+    "write_tiny_optimum",
+    "write_tiny_validation",
 ]

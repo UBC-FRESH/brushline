@@ -33,6 +33,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    optimization-operators
    optimization-adapter
    optimization-archive
+   optimization-validation
    compiled-dataset
    corridor-contract
    state-contract
