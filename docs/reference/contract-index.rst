@@ -197,6 +197,10 @@ test suite. This page is the map.
      - ``brushline.strategic-validation.v1``
      - ``StrategicValidationResult``
      - Coverage, budget, service, monitoring, BAU, totals, and replay checks
+   * - Tactical program
+     - ``brushline.tactical-program.v1``
+     - ``TacticalProgram``
+     - Units, actions, year budgets, contractor allocation, cost, and violations
 
 Error prefixes
 --------------
@@ -279,6 +283,8 @@ Error prefixes
      - Strategic reports
    * - ``SCENARIO-*``
      - Strategic scenario
+   * - ``TACTICAL-*``
+     - Tactical program
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -352,6 +358,8 @@ Test layers
   model guards, and the committed example.
 - Validation tests for the 10-year case, every named check, failed service/budget/monitoring/BAU/totals/
   replay, writers, and model guards.
+- Tactical program tests for feasible allocation, budget/method/season/year violations, missing refs,
+  empty actions, and model guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

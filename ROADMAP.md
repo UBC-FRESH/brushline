@@ -292,8 +292,8 @@ Status: active
 
 Goal: turn the strategic policy into a 1-to-5-year treatment program and a work-ready operational plan.
 
-- [ ] P7.1 Implement the multi-year tactical program
-  - [ ] Treatment units, methods, seasons, and contractor allocation
+- [x] P7.1 Implement the multi-year tactical program (#70)
+  - [x] Treatment units, methods, seasons, and contractor allocation
 - [ ] P7.2 Implement contractor capacity, productivity, and cost
   - [ ] Crews, machines, rates, travel, supervision, overhead, and risk
 - [ ] P7.3 Integrate access and road status
