@@ -1,8 +1,8 @@
 # Phase close-out report: P9 Plan and bid exchange
 
 Parent issue: #86
-Pull request: pending
-Evidence head: `71e26f5`
+Pull request: #93, `feature/p9-plan-exchange` into `main`
+Evidence head: `2ffccac`
 Status: queued for approval. Not merged.
 
 ## Delivered
@@ -11,7 +11,7 @@ P9.1 shared plan cost build-up; P9.2 owner view; P9.3 contractor bid view; P9.4 
 
 ## Verification
 
-Local dashboard `OVERALL: GREEN`; pytest 771 passed with 98% coverage; validator 0 errors. No merge, branch deletion, parent close, tag, release, or settings change has been performed.
+Local dashboard `OVERALL: GREEN`; pytest 771 passed with 98% coverage; validator 0 errors. CI run 43617724957 on `2ffccac` passed all jobs. No merge, branch deletion, parent close, tag, release, or settings change has been performed.
 
 ## Limits
 
