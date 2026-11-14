@@ -1,0 +1,167 @@
+{
+  "access_points": [
+    {
+      "access_point_id": "ap1",
+      "corridor_id": "c1",
+      "kind": "road",
+      "location_wkt": "POINT (0 0)"
+    },
+    {
+      "access_point_id": "ap2",
+      "corridor_id": "c2",
+      "kind": "trail",
+      "location_wkt": "POINT (200 100)"
+    }
+  ],
+  "corridors": [
+    {
+      "asset_type": "transmission",
+      "corridor_id": "c1",
+      "crs": "EPSG:3005",
+      "length_m": 300.0,
+      "name": "Synthetic transmission corridor"
+    },
+    {
+      "asset_type": "pipeline",
+      "corridor_id": "c2",
+      "crs": "EPSG:3005",
+      "length_m": 200.0,
+      "name": "Synthetic pipeline corridor"
+    }
+  ],
+  "crs": "EPSG:3005",
+  "schema_version": "brushline.corridor.v1",
+  "segments": [
+    {
+      "access_point_id": "ap1",
+      "corridor_id": "c1",
+      "geometry_wkt": "LINESTRING (0 0, 100 0)",
+      "length_m": 100.0,
+      "segment_id": "s1",
+      "sequence": 0,
+      "service_standard_id": "std1",
+      "span_id": "sp1",
+      "structure_ids": [
+        "st1"
+      ],
+      "treatment_unit_id": "tu1"
+    },
+    {
+      "access_point_id": "ap1",
+      "corridor_id": "c1",
+      "geometry_wkt": "LINESTRING (100 0, 200 0)",
+      "length_m": 100.0,
+      "segment_id": "s2",
+      "sequence": 1,
+      "service_standard_id": "std1",
+      "span_id": "sp1",
+      "structure_ids": [],
+      "treatment_unit_id": "tu1"
+    },
+    {
+      "access_point_id": null,
+      "corridor_id": "c1",
+      "geometry_wkt": "LINESTRING (200 0, 300 0)",
+      "length_m": 100.0,
+      "segment_id": "s3",
+      "sequence": 2,
+      "service_standard_id": "std1",
+      "span_id": "sp1",
+      "structure_ids": [],
+      "treatment_unit_id": "tu1"
+    },
+    {
+      "access_point_id": "ap2",
+      "corridor_id": "c2",
+      "geometry_wkt": "LINESTRING (0 100, 100 100)",
+      "length_m": 100.0,
+      "segment_id": "s4",
+      "sequence": 0,
+      "service_standard_id": "std2",
+      "span_id": "sp2",
+      "structure_ids": [],
+      "treatment_unit_id": "tu2"
+    },
+    {
+      "access_point_id": "ap2",
+      "corridor_id": "c2",
+      "geometry_wkt": "LINESTRING (100 100, 200 100)",
+      "length_m": 100.0,
+      "segment_id": "s5",
+      "sequence": 1,
+      "service_standard_id": "std2",
+      "span_id": "sp2",
+      "structure_ids": [],
+      "treatment_unit_id": "tu2"
+    }
+  ],
+  "service_standards": [
+    {
+      "access_required": true,
+      "max_height_m": 3.0,
+      "min_clearance_m": 6.0,
+      "service_standard_id": "std1"
+    },
+    {
+      "access_required": true,
+      "max_height_m": 1.5,
+      "min_clearance_m": 4.0,
+      "service_standard_id": "std2"
+    }
+  ],
+  "spans": [
+    {
+      "access_point_ids": [],
+      "corridor_id": "c1",
+      "segment_ids": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "span_id": "sp1"
+    },
+    {
+      "access_point_ids": [
+        "ap2"
+      ],
+      "corridor_id": "c2",
+      "segment_ids": [
+        "s4",
+        "s5"
+      ],
+      "span_id": "sp2"
+    }
+  ],
+  "structures": [
+    {
+      "clearance_m": 6.0,
+      "corridor_id": "c1",
+      "segment_id": "s1",
+      "structure_id": "st1",
+      "structure_type": "tower"
+    }
+  ],
+  "treatment_units": [
+    {
+      "contract_end_year": 2030,
+      "contract_start_year": 2026,
+      "corridor_id": "c1",
+      "segment_ids": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "treatment_unit_id": "tu1"
+    },
+    {
+      "contract_end_year": 2028,
+      "contract_start_year": 2026,
+      "corridor_id": "c2",
+      "segment_ids": [
+        "s4",
+        "s5"
+      ],
+      "treatment_unit_id": "tu2"
+    }
+  ]
+}

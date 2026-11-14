@@ -1,0 +1,29 @@
+{
+  "objective": {
+    "cost_scale": 1000.0,
+    "cost_weight": 0.4,
+    "risk_weight": 0.6
+  },
+  "optimum": "mow-2026",
+  "optimum_penalty": 0.46,
+  "options": [
+    {
+      "cost": 0.0,
+      "option_id": "none",
+      "risk": 0.8
+    },
+    {
+      "cost": 1000.0,
+      "option_id": "mow-2026",
+      "risk": 0.1
+    },
+    {
+      "cost": 900.0,
+      "option_id": "mow-2027",
+      "risk": 0.2
+    }
+  ],
+  "schema_version": "brushline.fixture.tiny.v1",
+  "seed": 20261114,
+  "segment_id": "s1"
+}

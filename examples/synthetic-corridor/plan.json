@@ -1,0 +1,168 @@
+{
+  "actions": [
+    {
+      "action_id": "pa1",
+      "assumptions": [
+        "Synthetic rate; not a real contract price."
+      ],
+      "cost_lines": [
+        {
+          "amount": 1500.0,
+          "category": "labour",
+          "currency": "CAD",
+          "description": "Synthetic treatment cost.",
+          "quantity": null,
+          "rate": null,
+          "source": "synthetic"
+        }
+      ],
+      "efficacy": 0.75,
+      "intensity": 0.8,
+      "method": "mowing",
+      "quantity_ha": 1.0,
+      "quantity_km": 0.0,
+      "risk_notes": "",
+      "season": "summer",
+      "segment_id": "s1",
+      "treatment_unit_id": null,
+      "year": 2026
+    },
+    {
+      "action_id": "pa2",
+      "assumptions": [
+        "Synthetic rate; not a real contract price."
+      ],
+      "cost_lines": [
+        {
+          "amount": 900.0,
+          "category": "labour",
+          "currency": "CAD",
+          "description": "Synthetic treatment cost.",
+          "quantity": null,
+          "rate": null,
+          "source": "synthetic"
+        }
+      ],
+      "efficacy": 0.6,
+      "intensity": 0.6,
+      "method": "manual",
+      "quantity_ha": 1.0,
+      "quantity_km": 0.0,
+      "risk_notes": "",
+      "season": "summer",
+      "segment_id": "s2",
+      "treatment_unit_id": null,
+      "year": 2026
+    },
+    {
+      "action_id": "pa3",
+      "assumptions": [
+        "Synthetic rate; not a real contract price."
+      ],
+      "cost_lines": [
+        {
+          "amount": 1500.0,
+          "category": "labour",
+          "currency": "CAD",
+          "description": "Synthetic treatment cost.",
+          "quantity": null,
+          "rate": null,
+          "source": "synthetic"
+        }
+      ],
+      "efficacy": 0.75,
+      "intensity": 0.8,
+      "method": "mowing",
+      "quantity_ha": 1.0,
+      "quantity_km": 0.0,
+      "risk_notes": "",
+      "season": "summer",
+      "segment_id": "s3",
+      "treatment_unit_id": null,
+      "year": 2027
+    },
+    {
+      "action_id": "pa4",
+      "assumptions": [
+        "Synthetic rate; not a real contract price."
+      ],
+      "cost_lines": [
+        {
+          "amount": 600.0,
+          "category": "labour",
+          "currency": "CAD",
+          "description": "Synthetic treatment cost.",
+          "quantity": null,
+          "rate": null,
+          "source": "synthetic"
+        }
+      ],
+      "efficacy": 0.7,
+      "intensity": 0.7,
+      "method": "mowing",
+      "quantity_ha": 1.0,
+      "quantity_km": 0.0,
+      "risk_notes": "",
+      "season": "fall",
+      "segment_id": "s4",
+      "treatment_unit_id": null,
+      "year": 2026
+    },
+    {
+      "action_id": "pa5",
+      "assumptions": [
+        "Synthetic rate; not a real contract price."
+      ],
+      "cost_lines": [
+        {
+          "amount": 800.0,
+          "category": "labour",
+          "currency": "CAD",
+          "description": "Synthetic treatment cost.",
+          "quantity": null,
+          "rate": null,
+          "source": "synthetic"
+        }
+      ],
+      "efficacy": 0.55,
+      "intensity": 0.5,
+      "method": "manual",
+      "quantity_ha": 1.0,
+      "quantity_km": 0.0,
+      "risk_notes": "",
+      "season": "summer",
+      "segment_id": "s5",
+      "treatment_unit_id": null,
+      "year": 2026
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "as1",
+      "impact": "",
+      "source": "brushline.fixtures.synthetic",
+      "statement": "Synthetic rates; not a real contract price."
+    }
+  ],
+  "header": {
+    "configuration": {},
+    "created_by": "brushline.fixtures.synthetic",
+    "created_utc": "2026-11-14T00:00:00Z",
+    "currency": "CAD",
+    "data_version": "sha256:588632b8a63e9026355748ce35164db5a9b7ddd6b3f89d8aceb05b9d1ee107be",
+    "dataset_id": "synthetic-corridor",
+    "model_versions": {
+      "growth": "p1-prototype",
+      "treatment": "p1-prototype"
+    },
+    "notes": "",
+    "parent_plan_id": null,
+    "plan_id": "plan-2026",
+    "scenario_id": "scenario-2026",
+    "schema_version": "brushline.plan.v1",
+    "seed": 20261114,
+    "service_standard_ids": [],
+    "status": "proposed",
+    "version": 1
+  }
+}

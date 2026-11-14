@@ -1,0 +1,71 @@
+{
+  "created_by": "brushline.fixtures.synthetic",
+  "created_utc": "2026-11-14T00:00:00Z",
+  "eviction": "crowding-distance",
+  "instance_id": "synthetic-corridor",
+  "members": [
+    {
+      "budget": 1000,
+      "evidence_path": "evidence/plan-a.json",
+      "feasible": true,
+      "metadata": {},
+      "objective": {
+        "present_cost": 5300.0,
+        "service_risk": 0.12
+      },
+      "plan_id": "plan-a",
+      "plan_path": "plans/plan-a.json",
+      "seed": 20261114
+    },
+    {
+      "budget": 1000,
+      "evidence_path": "evidence/plan-b.json",
+      "feasible": true,
+      "metadata": {},
+      "objective": {
+        "present_cost": 4700.0,
+        "service_risk": 0.16
+      },
+      "plan_id": "plan-b",
+      "plan_path": "plans/plan-b.json",
+      "seed": 20261114
+    },
+    {
+      "budget": 1000,
+      "evidence_path": "evidence/plan-c.json",
+      "feasible": true,
+      "metadata": {},
+      "objective": {
+        "present_cost": 4300.0,
+        "service_risk": 0.22
+      },
+      "plan_id": "plan-c",
+      "plan_path": "plans/plan-c.json",
+      "seed": 20261114
+    }
+  ],
+  "objectives": [
+    {
+      "direction": "minimize",
+      "name": "present_cost",
+      "unit": "CAD"
+    },
+    {
+      "direction": "minimize",
+      "name": "service_risk",
+      "unit": "index"
+    }
+  ],
+  "run_id": "run-2026",
+  "scalarizations": [
+    {
+      "description": "",
+      "scalarization_id": "balanced",
+      "weights": {
+        "present_cost": 0.5,
+        "service_risk": 0.5
+      }
+    }
+  ],
+  "schema_version": "brushline.pareto.v1"
+}

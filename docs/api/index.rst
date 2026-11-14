@@ -12,3 +12,8 @@ whenever you add a module to the project.
    check-workflow
    dashboard
    brushline
+   model
+   corridor
+   state
+   artifacts
+   prototype

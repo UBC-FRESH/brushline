@@ -1,0 +1,105 @@
+{
+  "artifacts": [
+    {
+      "path": "corridor.json",
+      "schema_version": "brushline.corridor.v1",
+      "sha256": "d010b2f39003ea11232aee2c9460cf87356c2f09b8cfd8215be8bc0cc712c099"
+    },
+    {
+      "path": "dataset/manifest.json",
+      "schema_version": "brushline.dataset.v1",
+      "sha256": "57e0611c029efda2e793ed95342f349c5e1b2b5513e8f650548326c82b979e8a"
+    },
+    {
+      "path": "dataset/segments.csv",
+      "schema_version": "brushline.dataset.table.v1",
+      "sha256": "3eb810f0a7f725b4d318f5ebf4152a11a0f4fee19a327ebf1bdd7297e9e278a2"
+    },
+    {
+      "path": "demo.json",
+      "schema_version": "brushline.demo.v1",
+      "sha256": "28c705a70f69b208d988b2fcff363fc30f0932a62ee5ec26f3016051cc160f89"
+    },
+    {
+      "path": "evidence/plan-a.json",
+      "schema_version": "brushline.evidence.v1",
+      "sha256": "14eb6ae5fe1b7bcde4145429b640c6bfd6991d0372607ae8fee3a9f2a1bd4f67"
+    },
+    {
+      "path": "evidence/plan-b.json",
+      "schema_version": "brushline.evidence.v1",
+      "sha256": "1ac65e4ae06ff2ec3e89e1e39a3f1ce6a96afae9fa275656292e458ddf50ae8e"
+    },
+    {
+      "path": "evidence/plan-c.json",
+      "schema_version": "brushline.evidence.v1",
+      "sha256": "91ad47b717f3edecde8b7ae06f94c90aa8a2395d5be592d3aa241c1bba4ede2c"
+    },
+    {
+      "path": "operations_timeline.jsonl",
+      "schema_version": "brushline.timeline.v1",
+      "sha256": "7c5dda056492aac9615971a046295ca330abe63a39d9d93642d73f69ab473a62"
+    },
+    {
+      "path": "pareto.json",
+      "schema_version": "brushline.pareto.v1",
+      "sha256": "f26dfb4f79e926a77ee36ce4960f829e463fad9be2eb2b6233e72f8630f82914"
+    },
+    {
+      "path": "plan.json",
+      "schema_version": "brushline.plan.v1",
+      "sha256": "60241928f8193803d4b9d1e3d98bb7c7ff96b14a522c8b3a5515e9be97def851"
+    },
+    {
+      "path": "plans/plan-a.json",
+      "schema_version": "brushline.plan.v1",
+      "sha256": "70d42221a316a995e8280b4b25afce7634825510b34ab3979c80e2c05b01dbaf"
+    },
+    {
+      "path": "plans/plan-b.json",
+      "schema_version": "brushline.plan.v1",
+      "sha256": "e949568a3694d9ced8883730f1ea16af9afdbd62c037bfe5f983e4ba97b929fb"
+    },
+    {
+      "path": "plans/plan-c.json",
+      "schema_version": "brushline.plan.v1",
+      "sha256": "c8618082374aa310bf215c15efad02618ad16748db1a65118fd234b3c912f43a"
+    },
+    {
+      "path": "run.json",
+      "schema_version": "brushline.run.v1",
+      "sha256": "04b1cce2c45da766abdff508516cbfb62ad5f13221cfd32761d4e27ef87ee419"
+    },
+    {
+      "path": "state.json",
+      "schema_version": "brushline.state.v1",
+      "sha256": "ba42da19b5ad832240c0e3bd96e6e906ef7a45d3b0846b6fcd7defc68b9ef9dd"
+    },
+    {
+      "path": "tiny_optimum.json",
+      "schema_version": "brushline.fixture.tiny.v1",
+      "sha256": "9c0b4715a9fbf69af8e150df22668882ddcfec34407c6d1ff4a05d57f0fecbb6"
+    }
+  ],
+  "content_digest": "6b31023dd27bc109b502e12b9fbee75027f856ef0a02b3f7fb0087f9f378db24",
+  "created_utc": "2026-11-14T00:00:00+00:00",
+  "expected": {
+    "access_gaps": 1,
+    "corridors": 2,
+    "known_optimum": "mow-2026",
+    "known_optimum_penalty": 0.46,
+    "monitoring_gaps": 1,
+    "observations": 4,
+    "pareto_members": 3,
+    "plan_actions": 5,
+    "segments": 5,
+    "states": 5,
+    "structures": 1,
+    "timeline_events": 5,
+    "treatments": 3
+  },
+  "fixture_id": "synthetic-corridor",
+  "generator": "brushline.fixtures.synthetic.generate_fixture",
+  "schema_version": "brushline.fixture.v1",
+  "seed": 20261114
+}

@@ -1,0 +1,9 @@
+{
+  "objective": {
+    "present_cost": 4300.0,
+    "service_risk": 0.22
+  },
+  "plan_id": "plan-c",
+  "schema_version": "brushline.evidence.v1",
+  "seed": 20261114
+}

@@ -12,7 +12,7 @@ exists and the maintainer approves it.
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
-| P1 Contracts and prototype | TBD | `feature/p1-contracts-prototype` | planned |
+| P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | pr-open |
 | P2 FEMIC-extended instance builder | TBD | `feature/p2-instance-builder` | planned |
 | P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
 | P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
@@ -91,27 +91,27 @@ Acceptance criteria:
 
 ## Phase 1: Contracts and prototype
 
-Parent issue: TBD
+Parent issue: #15
 Branch: `feature/p1-contracts-prototype`
-Status: planned
+Status: pr-open
 
 Goal: fix the data, plan, run, archive, timeline, and demo contracts, and build the smallest end-to-end
 prototype that exercises them on synthetic data.
 
-- [ ] P1.1 Define the compiled corridor dataset and manifest contract
-  - [ ] Tables, keys, units, CRS, schema version, validator, and manifest
-- [ ] P1.2 Define the corridor, segment, span, and treatment-unit contract
-  - [ ] Graph, linear referencing, geometry, access, structures, and service standards
-- [ ] P1.3 Define the vegetation state, treatment, and observation contract
-  - [ ] Functional groups, state classes, distributions, treatment actions, observation records
-- [ ] P1.4 Define the plan, run, Pareto archive, operations timeline, and demo manifest contracts
-  - [ ] JSON/CSV/Parquet shapes, provenance fields, versioning, and examples
-- [ ] P1.5 Build a synthetic corridor fixture
-  - [ ] Two corridors, mixed growth, access, structures, monitoring gaps, and a known optimum case
-- [ ] P1.6 Build the end-to-end prototype
-  - [ ] Compile, grow, treat, simulate, report, and write a run directory
-- [ ] P1.7 Add contract validation and property tests
-  - [ ] Every schema has a failing case; every invariant has a property test
+- [x] P1.1 Define the compiled corridor dataset and manifest contract
+  - [x] Tables, keys, units, CRS, schema version, validator, and manifest
+- [x] P1.2 Define the corridor, segment, span, and treatment-unit contract
+  - [x] Graph, linear referencing, geometry, access, structures, and service standards
+- [x] P1.3 Define the vegetation state, treatment, and observation contract
+  - [x] Functional groups, state classes, distributions, treatment actions, observation records
+- [x] P1.4 Define the plan, run, Pareto archive, operations timeline, and demo manifest contracts
+  - [x] JSON/CSV/Parquet shapes, provenance fields, versioning, and examples
+- [x] P1.5 Build a synthetic corridor fixture
+  - [x] Two corridors, mixed growth, access, structures, monitoring gaps, and a known optimum case
+- [x] P1.6 Build the end-to-end prototype
+  - [x] Compile, grow, treat, simulate, report, and write a run directory
+- [x] P1.7 Add contract validation and property tests
+  - [x] Every schema has a failing case; every invariant has a property test
 
 Acceptance criteria:
 
@@ -526,11 +526,8 @@ Acceptance criteria:
 
 ## Detailed Next Steps Notes
 
-1. P0 is complete: pull request #14 squash-merged as `0a6778c`, the branch was deleted, and parent issue #1 is closed. The close-out report is `notes/reports/p0-closeout.md`.
-2. Complete P0.6 to P0.11: the UI, optimization, LiDAR, instance-builder, and demo-portal design notes,
-   the design documentation index, the changelog, the close-out report, and the phase pull request.
-3. Queue the P0 close-out and wait for the maintainer's approval. Do not merge the pull request, close
-   the parent issue, or launch P1 before that approval.
-4. On approval, launch P1: create the parent issue, the child issues, and
-   `feature/p1-contracts-prototype`; start with P1.1 and P1.2.
-5. Do not start P2 until the P1 contracts are accepted. Do not start P12 until P1 to P11 have evidence.
+1. P0 is complete and merged: pull request #14 squash-merged as `0a6778c`, the branch deleted, and parent issue #1 closed. The repository is public and the docs are published at https://ubc-fresh.github.io/brushline/.
+2. P1 is complete on `feature/p1-contracts-prototype`, parent issue #15, with child issues #16 to #22 closed. The close-out report is `notes/reports/p1-closeout.md` and pull request #23 is queued for approval.
+3. Do not merge, close #15, or launch P2 before the maintainer approves the P1 close-out.
+4. On approval, merge #23, delete the branch, close #15, and launch P2 (FEMIC-extended instance builder).
+5. Do not start P12 until P1 to P11 have evidence.

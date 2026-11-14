@@ -1,0 +1,84 @@
+{
+  "artifacts": [
+    {
+      "available": true,
+      "media_type": "application/json",
+      "name": "plan",
+      "path": "plan.json",
+      "reason": null,
+      "schema_version": "brushline.plan.v1",
+      "sha256": "60241928f8193803d4b9d1e3d98bb7c7ff96b14a522c8b3a5515e9be97def851"
+    },
+    {
+      "available": true,
+      "media_type": "application/json",
+      "name": "corridor",
+      "path": "corridor.json",
+      "reason": null,
+      "schema_version": "brushline.corridor.v1",
+      "sha256": "d010b2f39003ea11232aee2c9460cf87356c2f09b8cfd8215be8bc0cc712c099"
+    },
+    {
+      "available": true,
+      "media_type": "application/json",
+      "name": "state",
+      "path": "state.json",
+      "reason": null,
+      "schema_version": "brushline.state.v1",
+      "sha256": "ba42da19b5ad832240c0e3bd96e6e906ef7a45d3b0846b6fcd7defc68b9ef9dd"
+    },
+    {
+      "available": true,
+      "media_type": "application/json",
+      "name": "pareto",
+      "path": "pareto.json",
+      "reason": null,
+      "schema_version": "brushline.pareto.v1",
+      "sha256": "f26dfb4f79e926a77ee36ce4960f829e463fad9be2eb2b6233e72f8630f82914"
+    },
+    {
+      "available": true,
+      "media_type": "application/jsonl",
+      "name": "timeline",
+      "path": "operations_timeline.jsonl",
+      "reason": null,
+      "schema_version": "brushline.timeline.v1",
+      "sha256": "7c5dda056492aac9615971a046295ca330abe63a39d9d93642d73f69ab473a62"
+    },
+    {
+      "available": true,
+      "media_type": "application/json",
+      "name": "demo",
+      "path": "demo.json",
+      "reason": null,
+      "schema_version": "brushline.demo.v1",
+      "sha256": "28c705a70f69b208d988b2fcff363fc30f0932a62ee5ec26f3016051cc160f89"
+    },
+    {
+      "available": true,
+      "media_type": "application/json",
+      "name": "dataset",
+      "path": "dataset/manifest.json",
+      "reason": null,
+      "schema_version": "brushline.dataset.v1",
+      "sha256": "57e0611c029efda2e793ed95342f349c5e1b2b5513e8f650548326c82b979e8a"
+    }
+  ],
+  "configuration": {},
+  "created_by": "brushline.fixtures.synthetic",
+  "created_utc": "2026-11-14T00:00:00Z",
+  "data_version": "sha256:synthetic-corridor",
+  "model_versions": {
+    "growth": "p1-prototype",
+    "treatment": "p1-prototype"
+  },
+  "run_id": "run-2026",
+  "run_type": "plan",
+  "schema_version": "brushline.run.v1",
+  "seed": 20261114,
+  "status": "complete",
+  "summary": {
+    "actions": 5,
+    "plan_id": "plan-2026"
+  }
+}
