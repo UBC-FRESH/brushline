@@ -20,8 +20,8 @@ exists and the maintainer approves it.
 | P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | complete |
 | P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | complete |
 | P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
-| P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | pr-open |
-| P10 Interactive planning studio | TBD | `feature/p10-studio` | planned |
+| P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
+| P10 Interactive planning studio | #94 | `feature/p10-studio` | pr-open |
 | P11 Demo portal and pilot onboarding | TBD | `feature/p11-demo-portal` | planned |
 | P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
 | P13 Release and deploy | TBD | `feature/p13-release` | planned |
@@ -350,23 +350,23 @@ Acceptance criteria:
 
 Parent issue: #86
 Branch: `feature/p9-plan-exchange`
-Status: pr-open
+Status: complete
 
 Goal: make one versioned plan artifact the shared surface for the owner and the contractor, with a
 traceable cost build-up and a fair-bid comparison.
 
 - [x] P9.1 Implement the plan schema and cost build-up
-  - [ ] Header, segments, actions, quantities, rates, assumptions, risk, provenance, and approval
+  - [x] Header, segments, actions, quantities, rates, assumptions, risk, provenance, and approval
 - [x] P9.2 Build the owner view
-  - [ ] Budget, service levels, risk, portfolio, and BAU comparison
+  - [x] Budget, service levels, risk, portfolio, and BAU comparison
 - [x] P9.3 Build the contractor bid view
-  - [ ] Quantities, access, schedule, productivity, cost build-up, and assumptions
+  - [x] Quantities, access, schedule, productivity, cost build-up, and assumptions
 - [x] P9.4 Build the bid normalization and comparison
-  - [ ] Named assumptions, rate differences, scope differences, and a fair-price range
+  - [x] Named assumptions, rate differences, scope differences, and a fair-price range
 - [x] P9.5 Add the audit trail and approval record
-  - [ ] Data/model/plan versions, reviewer, and approval status
+  - [x] Data/model/plan versions, reviewer, and approval status
 - [x] P9.6 Validate the exchange on a synthetic owner-contractor case
-  - [ ] Same artifact, same cost total, every difference attributable
+  - [x] Same artifact, same cost total, every difference attributable
 
 Acceptance criteria:
 
@@ -378,32 +378,32 @@ Acceptance criteria:
 
 ## Phase 10: Interactive planning studio
 
-Parent issue: TBD
+Parent issue: #94
 Branch: `feature/p10-studio`
-Status: planned
+Status: pr-open
 
 Goal: deliver the optional FastAPI service and static browser shell with the 2D map, 3D scene, seven
 skins, live search, Pareto explorer, and animated operations.
 
-- [ ] P10.1 Implement the service and artifact endpoints
-  - [ ] Summary, run, plan, accounts, targets, reports, layers, periods, Pareto, timeline, and skins
-- [ ] P10.2 Build the 2D map shell
-  - [ ] MapLibre, layer tree, period strip, segment selection, treatment/cumulative/monitoring layers
-- [ ] P10.3 Build the 3D scene
-  - [ ] Three.js, DEM, corridor, vegetation, structures, operations timeline, shared selection/time
-  - [ ] Selected-block forester POV walkthrough with terrain-following camera and HUD
-  - [ ] Pre/post-treatment state toggle that preserves camera pose and uses `brushline.scene.v1`
-- [ ] P10.4 Implement the seven skins
-  - [ ] `model-builder`, `owner-strategic`, `tactical-planner`, `operations-planner`,
+- [x] P10.1 Implement the service and artifact endpoints
+  - [x] Summary, run, plan, accounts, targets, reports, layers, periods, Pareto, timeline, and skins
+- [x] P10.2 Build the 2D map shell
+  - [x] MapLibre, layer tree, period strip, segment selection, treatment/cumulative/monitoring layers
+- [x] P10.3 Build the 3D scene
+  - [x] Three.js, DEM, corridor, vegetation, structures, operations timeline, shared selection/time
+  - [x] Selected-block forester POV walkthrough with terrain-following camera and HUD
+  - [x] Pre/post-treatment state toggle that preserves camera pose and uses `brushline.scene.v1`
+- [x] P10.4 Implement the seven skins
+  - [x] `model-builder`, `owner-strategic`, `tactical-planner`, `operations-planner`,
         `contractor-bid`, `monitoring`, `reviewer`; read-only enforcement
-- [ ] P10.5 Implement live search
-  - [ ] SSE progress, incumbent, target values, schedule changes, pause, and stop
-- [ ] P10.6 Implement the Pareto explorer
-  - [ ] Objective vectors, dominance, parallel coordinates, scatter matrix, comparison, promotion
-- [ ] P10.7 Implement the operations animation
-  - [ ] Play, pause, speed, timeline, and 2D/3D synchronization
-- [ ] P10.8 Test and deploy the studio
-  - [ ] Contract tests, browser tests, accessibility, proxy prefix, loopback, and read-only skins
+- [x] P10.5 Implement live search
+  - [x] SSE progress, incumbent, target values, schedule changes, pause, and stop
+- [x] P10.6 Implement the Pareto explorer
+  - [x] Objective vectors, dominance, parallel coordinates, scatter matrix, comparison, promotion
+- [x] P10.7 Implement the operations animation
+  - [x] Play, pause, speed, timeline, and 2D/3D synchronization
+- [x] P10.8 Test and deploy the studio
+  - [x] Contract tests, browser tests, accessibility, proxy prefix, loopback, and read-only skins
 
 Acceptance criteria:
 

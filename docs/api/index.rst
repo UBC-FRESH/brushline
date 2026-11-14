@@ -65,4 +65,5 @@ whenever you add a module to the project.
    replan
    monitoring-validation
    plan-exchange
+   studio
    instance
