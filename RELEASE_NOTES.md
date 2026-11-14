@@ -52,6 +52,12 @@ Use Brushline to structure evidence and compare transparent scenarios. Do not us
 for field treatment, contract award, safety clearance, or regulatory approval. Read the model card,
 verification report, caveats, and known-gaps list before citing a result.
 
+## Publishing
+
+- PyPI trusted publisher: project `brushline`, repository `UBC-FRESH/brushline`, workflow `release.yml`, environment `pypi`.
+- TestPyPI trusted publisher: same project/repository/workflow, environment `testpypi`.
+- A published GitHub release publishes the wheel and sdist to PyPI. A manual `Release` run publishes to TestPyPI.
+
 ## Verification
 
 - P12 verification report: `notes/reports/p12-verification.md`

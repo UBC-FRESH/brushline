@@ -12,6 +12,13 @@ Date: 2026-11-14
 - Static demo: `brushline demo build --out /tmp/brushline-demo`; portal validation passed with 7 pages.
 - Docs: local Sphinx build with warnings-as-errors passes.
 
+## PyPI trusted publishing
+
+`.github/workflows/release.yml` is present for the pending PyPI/TestPyPI trusted publishers:
+project `brushline`, repository `UBC-FRESH/brushline`, workflow `release.yml`, environments `pypi` and
+`testpypi`. It builds once, runs `twine check`, publishes to TestPyPI on manual dispatch, and publishes
+to PyPI on a published GitHub release.
+
 ## Not performed
 
 - No annotated tag or GitHub release. P13.4 requires explicit maintainer approval.

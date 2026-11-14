@@ -13,5 +13,6 @@ Build locally:
    python scripts/check_release.py --install
    brushline demo build --out /tmp/brushline-demo --artifact-root examples/synthetic-corridor
 
-Tagging and publishing are a separate maintainer approval gate. No tag or GitHub release is created by
-this page or the release script.
+Tagging and GitHub release creation are a separate maintainer approval gate. The `Release` workflow
+publishes a published GitHub release to PyPI and supports a manual TestPyPI run through GitHub OIDC
+trusted publishing. No token secret is stored in the repository.
