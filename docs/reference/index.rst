@@ -61,6 +61,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    demo-portal
    verification
    release
+   operations
    compiled-dataset
    corridor-contract
    state-contract

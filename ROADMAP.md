@@ -25,7 +25,7 @@ exists and the maintainer approves it.
 | P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | complete |
 | P12 Verification and the BAU case | #112 | `feature/p12-verify` | complete |
 | P13 Release and deploy | #121 | `feature/p13-release` | active |
-| P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
+| P14 Operate and maintain | #128 | `feature/p14-operate` | pr-open |
 
 ## Lifecycle Map
 
@@ -505,18 +505,18 @@ Acceptance criteria:
 
 ## Phase 14: Operate and maintain
 
-Parent issue: TBD
+Parent issue: #128
 Branch: `feature/p14-operate`
-Status: planned
+Status: pr-open
 
 Goal: keep the project current, support pilots, and maintain the data and model governance.
 
-- [ ] P14.1 Set the review cadence and triage incoming issues
-- [ ] P14.2 Maintain dependencies, security, and the Fresh Solutions/FEMIC pins
-- [ ] P14.3 Maintain the data and model governance
-  - [ ] Model cards, licences, applicability domains, and validation records
-- [ ] P14.4 Write the maintainer and handover guide
-- [ ] P14.5 Support the first pilots and record their evidence
+- [x] P14.1 Set the review cadence and triage incoming issues
+- [x] P14.2 Maintain dependencies, security, and the Fresh Solutions/FEMIC pins
+- [x] P14.3 Maintain the data and model governance
+  - [x] Model cards, licences, applicability domains, and validation records
+- [x] P14.4 Write the maintainer and handover guide
+- [x] P14.5 Support the first pilots and record their evidence
 
 Acceptance criteria:
 

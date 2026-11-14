@@ -1,0 +1,109 @@
+{
+  "schema_version": "brushline.operations.v1",
+  "cadence": {
+    "cadence": "monthly",
+    "owner": "Brushline maintainers",
+    "next_review": "2026-12-14",
+    "checklist": [
+      "Triage new issues and label phase/task",
+      "Review open pull requests and dashboards",
+      "Check dependency/security advisories",
+      "Review model/data cards and licences",
+      "Record decisions, owners, and due dates"
+    ]
+  },
+  "reviews": [
+    {
+      "review_id": "p14-review-1",
+      "date": "2026-11-14",
+      "attendees": [
+        "Brushline maintainers"
+      ],
+      "issues": [
+        "P14 launch"
+      ],
+      "decisions": [
+        "Monthly cadence adopted",
+        "0.1.3 released"
+      ],
+      "actions": [
+        "Record governance register",
+        "Prepare handover guide",
+        "Record pilot evidence"
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "package": "fresh-solutions",
+      "pin": ">=0.9.3,<0.10",
+      "installed": "0.9.3",
+      "status": "current",
+      "reason": "Pinned optional integration."
+    },
+    {
+      "package": "femic",
+      "pin": "==0.2.0a1",
+      "installed": "0.2.0a1",
+      "status": "current",
+      "reason": "Pinned optional integration."
+    },
+    {
+      "package": "freshforge",
+      "pin": "==0.1.0a5",
+      "installed": "0.1.0a5",
+      "status": "current",
+      "reason": "Pinned optional integration."
+    }
+  ],
+  "governance": [
+    {
+      "asset_id": "brushline.low-vegetation.prototype.v0",
+      "kind": "model",
+      "card_path": "notes/reference/low-vegetation-model-card.v1.json",
+      "licence": "Apache-2.0",
+      "domain": "low vegetation; prototype applicability domain",
+      "validation_path": "notes/reference/vegetation-validation.v1.json",
+      "status": "current"
+    },
+    {
+      "asset_id": "synthetic-corridor",
+      "kind": "dataset",
+      "card_path": "examples/synthetic-corridor/README.md",
+      "licence": "CC0-1.0",
+      "domain": "synthetic utility corridor",
+      "validation_path": "notes/reference/p12-verification.v1.json",
+      "status": "current"
+    },
+    {
+      "asset_id": "femic.provider.v1",
+      "kind": "boundary",
+      "card_path": "notes/reference/femic-provider-api.v1.json",
+      "licence": "Apache-2.0",
+      "domain": "FEMIC 0.2.0a1 / FreshForge 0.1.0a5 boundary",
+      "validation_path": "notes/reference/femic-provider-api.v1.json",
+      "status": "current"
+    }
+  ],
+  "pilot": {
+    "pilot_id": "p14-synthetic-pilot",
+    "title": "Synthetic corridor owner-contractor pilot",
+    "data_boundary": "Synthetic/public data only; no private owner data.",
+    "metrics": {
+      "optimized_service": 0.707,
+      "bau_service": 0.413,
+      "optimized_cost": 920.0,
+      "bau_cost": 360.0,
+      "monitoring_regret_per_dollar": 5.0,
+      "fixed_calendar_regret_per_dollar": 1.3333,
+      "plan_cost": 120.0
+    },
+    "caveats": [
+      "Synthetic evidence; not a field pilot.",
+      "No private data, uploads, or production dispatch.",
+      "Scale and field-calibration gaps remain."
+    ],
+    "status": "synthetic"
+  },
+  "created_utc": "2026-11-14T22:53:58.518767+00:00"
+}

@@ -122,3 +122,5 @@
 - [Verification and BAU](reference/verification.html): 16 criteria, measured BAU/monitoring/exchange evidence, scale gap, replay, and recommendation.
 
 - [Release 0.1.3](reference/release.html): release notes, known gaps, artifact build, clean install, demo, and approval gate.
+
+- [Operations and maintenance](reference/operations.html): review cadence, dependency/pin audit, governance register, handover, and pilot evidence.

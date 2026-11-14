@@ -69,4 +69,5 @@ whenever you add a module to the project.
    demo-portal
    verification
    release
+   operations
    instance
