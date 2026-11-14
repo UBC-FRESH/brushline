@@ -18,6 +18,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    lidar-bundle
    terrain-support
    canopy-support
+   state-initialization
    compiled-dataset
    corridor-contract
    state-contract

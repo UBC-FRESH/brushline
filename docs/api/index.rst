@@ -26,4 +26,5 @@ whenever you add a module to the project.
    lidar
    terrain
    canopy
+   state-init
    instance

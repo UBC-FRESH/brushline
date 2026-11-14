@@ -81,6 +81,10 @@ test suite. This page is the map.
      - ``brushline.canopy-support.v1``
      - ``validate_canopy_support``
      - CHM CRS, datum, buffer, height statistics, cover thresholds, structure, optional tree, VRI comparison, and applicability
+   * - Initial vegetation state
+     - ``brushline.state-initialization.v1``
+     - ``validate_state_initialization``
+     - Field/CHM rules, evidence coverage, class probabilities, audit decisions, model card, and state-contract validity
 
 Error prefixes
 --------------
@@ -144,6 +148,8 @@ Test layers
   RASTER CRS/datum/resolution checks, and provenance.
 - Canopy tests for height and cover statistics, optional structure/tree products, VRI comparison,
   partial/missing/out-of-domain states, and applicability.
+- State-initialization tests for field-first selection, every prototype class, unknown/partial states,
+  species fallback, audit decisions, probabilities, and contract validity.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

@@ -170,8 +170,8 @@ with coverage and applicability made explicit.
   - [x] DEM/DSM support, aggregation rules, access proxy, and no silent reprojection
 - [x] P3.3 Map canopy, cover, and optional tree products
   - [x] CHM, canopy structure, tree counts, crown radius, and VRI comparison evidence
-- [ ] P3.4 Initialize the vegetation state
-  - [ ] Link LiDAR metrics, inventory, field plots, and treatment history to state classes
+- [x] P3.4 Initialize the vegetation state
+  - [x] Link LiDAR metrics, inventory, field plots, and treatment history to state classes
 - [ ] P3.5 Report coverage, applicability, and observation gaps
   - [ ] No point cloud, no contemporary DEM, out-of-domain model, and missing plot data
 - [ ] P3.6 Benchmark the adapter against the FEMIC/WS4/FHOPS consumer values
