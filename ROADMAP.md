@@ -98,8 +98,8 @@ Status: active
 Goal: fix the data, plan, run, archive, timeline, and demo contracts, and build the smallest end-to-end
 prototype that exercises them on synthetic data.
 
-- [ ] P1.1 Define the compiled corridor dataset and manifest contract
-  - [ ] Tables, keys, units, CRS, schema version, validator, and manifest
+- [x] P1.1 Define the compiled corridor dataset and manifest contract
+  - [x] Tables, keys, units, CRS, schema version, validator, and manifest
 - [ ] P1.2 Define the corridor, segment, span, and treatment-unit contract
   - [ ] Graph, linear referencing, geometry, access, structures, and service standards
 - [ ] P1.3 Define the vegetation state, treatment, and observation contract
