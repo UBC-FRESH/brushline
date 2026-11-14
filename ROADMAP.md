@@ -17,8 +17,8 @@ exists and the maintainer approves it.
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
 | P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
 | P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | complete |
-| P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | pr-open |
-| P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
+| P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | complete |
+| P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | pr-open |
 | P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
 | P9 Plan and bid exchange | TBD | `feature/p9-plan-exchange` | planned |
 | P10 Interactive planning studio | TBD | `feature/p10-studio` | planned |
@@ -256,7 +256,7 @@ Acceptance criteria:
 
 Parent issue: #60
 Branch: `feature/p6-strategic`
-Status: pr-open
+Status: complete
 
 Goal: implement the 10-to-30-year strategic plan: budget, service levels, risk appetite, monitoring
 policy, and the business-as-usual comparison.
@@ -286,26 +286,26 @@ Acceptance criteria:
 
 ## Phase 7: Tactical and operational planning
 
-Parent issue: TBD
+Parent issue: #69
 Branch: `feature/p7-tactical-operational`
-Status: planned
+Status: pr-open
 
 Goal: turn the strategic policy into a 1-to-5-year treatment program and a work-ready operational plan.
 
-- [ ] P7.1 Implement the multi-year tactical program
-  - [ ] Treatment units, methods, seasons, and contractor allocation
-- [ ] P7.2 Implement contractor capacity, productivity, and cost
-  - [ ] Crews, machines, rates, travel, supervision, overhead, and risk
-- [ ] P7.3 Integrate access and road status
-  - [ ] fresh-road/ALSroads, route length, access windows, and no invented open/closed verdict
-- [ ] P7.4 Generate the operational work plan
-  - [ ] Work order, sequence, assignment, and daily schedule
-- [ ] P7.5 Build the FHOPS adapter
-  - [ ] Brushline treatment unit to FHOPS scenario; return productivity, cost, and timeline
-- [ ] P7.6 Build the operations timeline and 3D data contract
-  - [ ] Timestamped events, crew/machine ids, segments, actions, and cost
-- [ ] P7.7 Validate tactical and operational feasibility
-  - [ ] Capacity, access, seasonality, and a dry-run work plan
+- [x] P7.1 Implement the multi-year tactical program (#70)
+  - [x] Treatment units, methods, seasons, and contractor allocation
+- [x] P7.2 Implement contractor capacity, productivity, and cost (#71)
+  - [x] Crews, machines, rates, travel, supervision, overhead, and risk
+- [x] P7.3 Integrate access and road status (#72)
+  - [x] fresh-road/ALSroads, route length, access windows, and no invented open/closed verdict
+- [x] P7.4 Generate the operational work plan (#73)
+  - [x] Work order, sequence, assignment, and daily schedule
+- [x] P7.5 Build the FHOPS adapter (#74)
+  - [x] Brushline treatment unit to FHOPS scenario; return productivity, cost, and timeline
+- [x] P7.6 Build the operations timeline and 3D data contract (#75)
+  - [x] Timestamped events, crew/machine ids, segments, actions, and cost
+- [x] P7.7 Validate tactical and operational feasibility (#76)
+  - [x] Capacity, access, seasonality, and a dry-run work plan
 
 Acceptance criteria:
 

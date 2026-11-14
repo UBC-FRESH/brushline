@@ -197,6 +197,34 @@ test suite. This page is the map.
      - ``brushline.strategic-validation.v1``
      - ``StrategicValidationResult``
      - Coverage, budget, service, monitoring, BAU, totals, and replay checks
+   * - Tactical program
+     - ``brushline.tactical-program.v1``
+     - ``TacticalProgram``
+     - Units, actions, year budgets, contractor allocation, cost, and violations
+   * - Tactical resources
+     - ``brushline.tactical-resources.v1``
+     - ``ResourcePlan``
+     - Contractor requests, cost lines, capacity, cost by contractor/year, and violations
+   * - Tactical access
+     - ``brushline.tactical-access.v1``
+     - ``AccessPlan``
+     - Road status/source, windows, route length, allowed/blocked decisions, and caveats
+   * - Operational plan
+     - ``brushline.tactical-operations.v1``
+     - ``OperationsPlan``
+     - Work orders, source action, crew/day, cost, access gates, and violations
+   * - Tactical FHOPS
+     - ``brushline.tactical-fhops.v1``
+     - ``FhopsResult``
+     - Optional boundary, request mapping, dry-run machine hours/productivity/cost, and notes
+   * - Operations timeline
+     - ``brushline.tactical-timeline.v1``
+     - ``OperationsTimeline``
+     - Start/finish events, source work orders, segments, positions, cost, and unknown-position count
+   * - Tactical validation
+     - ``brushline.tactical-validation.v1``
+     - ``TacticalValidationResult``
+     - Capacity, access, seasonality, traceability, FHOPS dry-run, and timeline checks
 
 Error prefixes
 --------------
@@ -279,6 +307,18 @@ Error prefixes
      - Strategic reports
    * - ``SCENARIO-*``
      - Strategic scenario
+   * - ``TACTICAL-*``
+     - Tactical program
+   * - ``RESOURCE-*``
+     - Tactical resources
+   * - ``ACCESS-*``
+     - Tactical access
+   * - ``OPERATIONS-*``
+     - Operational plan
+   * - ``FHOPS-*``
+     - Tactical FHOPS boundary
+   * - ``TIMELINE-*``
+     - Operations timeline
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -352,6 +392,18 @@ Test layers
   model guards, and the committed example.
 - Validation tests for the 10-year case, every named check, failed service/budget/monitoring/BAU/totals/
   replay, writers, and model guards.
+- Tactical program tests for feasible allocation, budget/method/season/year violations, missing refs,
+  empty actions, and model guards.
+- Resource tests for the five cost lines, cost by contractor/year, capacity/method/profile failures,
+  duplicate profiles, and model guards.
+- Access tests for open/restricted/closed/unknown status, source preservation, route totals, missing
+  links, duplicates, and model guards.
+- Operations tests for work-order traceability, crew/day assignment, blocked/missing access, and totals.
+- FHOPS tests for mapping, deterministic dry-run, boundary pin, optional-version reporting, and guards.
+- Timeline tests for start/finish events, known/unknown positions, segment/crew traceability, ordering,
+  and model guards.
+- Tactical validation tests for the synthetic case, every named check, fixture loading, writers, and
+  model guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

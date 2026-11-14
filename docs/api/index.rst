@@ -51,4 +51,11 @@ whenever you add a module to the project.
    strategic-reports
    strategic-scenario
    strategic-validation
+   tactical-program
+   tactical-resources
+   tactical-access
+   tactical-operations
+   tactical-fhops
+   tactical-timeline
+   tactical-validation
    instance

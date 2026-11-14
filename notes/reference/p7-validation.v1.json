@@ -1,0 +1,41 @@
+{
+  "schema_version": "brushline.tactical-validation.v1",
+  "instance_id": "synthetic-tactical",
+  "program_id": "p7-program",
+  "operations_id": "p7-operations",
+  "timeline_id": "p7-timeline",
+  "checks": [
+    {
+      "code": "CAPACITY",
+      "passed": true,
+      "detail": "program and contractor capacity are feasible"
+    },
+    {
+      "code": "ACCESS",
+      "passed": true,
+      "detail": "access windows=2"
+    },
+    {
+      "code": "SEASONALITY",
+      "passed": true,
+      "detail": "methods and seasons match the units"
+    },
+    {
+      "code": "TRACEABILITY",
+      "passed": true,
+      "detail": "work orders=2"
+    },
+    {
+      "code": "DRY_RUN",
+      "passed": true,
+      "detail": "status=dry_run cost=850.00"
+    },
+    {
+      "code": "TIMELINE",
+      "passed": true,
+      "detail": "events=4"
+    }
+  ],
+  "passed": true,
+  "created_utc": "2026-11-14T00:00:00Z"
+}

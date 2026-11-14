@@ -43,6 +43,13 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    strategic-reports
    strategic-scenario
    strategic-validation
+   tactical-program
+   tactical-resources
+   tactical-access
+   tactical-operations
+   tactical-fhops
+   tactical-timeline
+   tactical-validation
    compiled-dataset
    corridor-contract
    state-contract
