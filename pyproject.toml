@@ -1,12 +1,81 @@
-# Tool configuration for the UBC-FRESH dev workflow. This repository is a seed and
-# documentation kit, not a Python package, so there is no [project] table. Each gate
-# configured here is also a check in the green dashboard (scripts/dashboard.py).
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brushline"
+version = "0.1.0"
+description = "Decision support for vegetation management along linear infrastructure corridors"
+authors = [{name = "UBC FRESH Lab", email = "noreply@example.org"}]
+requires-python = ">=3.11"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+keywords = [
+  "forestry",
+  "vegetation management",
+  "rights-of-way",
+  "linear infrastructure",
+  "optimization",
+  "metaheuristics",
+  "remote sensing",
+  "decision support",
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Science/Research",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Typing :: Typed",
+]
+dependencies = [
+  "typer>=0.12",
+  "rich>=13.7",
+  "pydantic>=2.7",
+  "pandas>=2.2",
+  "numpy>=1.26",
+  "pyarrow>=15",
+  "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+geo = ["geopandas>=0.14", "pyogrio>=0.9", "shapely>=2.0"]
+opt = ["fresh-solutions>=0.9.3,<0.10"]
+web = [
+  "fastapi>=0.110",
+  "uvicorn>=0.29",
+  "mapbox-vector-tile>=2.1",
+  "mercantile>=1.2",
+  "shapely>=2.0",
+  "pyproj>=3.6",
+]
+
+[project.urls]
+Homepage = "https://github.com/UBC-FRESH/brushline"
+Documentation = "https://ubc-fresh.github.io/brushline/"
+Repository = "https://github.com/UBC-FRESH/brushline"
+Issues = "https://github.com/UBC-FRESH/brushline/issues"
+
+[project.scripts]
+brushline = "brushline.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["brushline*"]
+
+[tool.setuptools.package-data]
+"brushline.web" = ["static/*", "static/vendor/*", "skins/*"]
+
+# Tool configuration for the green dashboard (scripts/dashboard.py). Each gate configured
+# here is also a CI check and a pre-commit hook.
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["scripts", "tests"]
-extend-exclude = ["tmp", "_build"]
+src = ["brushline", "scripts", "tests"]
+extend-exclude = ["tmp", "_build", "docs/_build", "*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "UP", "D", "ANN", "N", "PT", "SIM", "RUF", "C4"]
@@ -16,27 +85,32 @@ convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["D"]
-"templates/project/tests/**" = ["D"]
 "docs/conf.py" = ["D", "ANN", "N"]
+# Typer options are declared as default arguments by design.
+"brushline/cli.py" = ["B008"]
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
 warn_unreachable = true
 mypy_path = "scripts"
-files = ["scripts", "tests", "docs/conf.py"]
+files = ["brushline", "scripts", "tests", "docs/conf.py"]
 
 [[tool.mypy.overrides]]
 module = ["numpydoc", "numpydoc.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["typer", "typer.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=scripts --cov-branch --cov-report=term-missing --cov-fail-under=95"
+addopts = "--cov=brushline --cov=scripts --cov-branch --cov-report=term-missing --cov-fail-under=95"
 
 [tool.coverage.run]
 branch = true
-source = ["scripts"]
+source = ["brushline", "scripts"]
 
 [tool.coverage.report]
 show_missing = true
