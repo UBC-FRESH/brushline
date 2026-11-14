@@ -18,8 +18,8 @@ exists and the maintainer approves it.
 | P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
 | P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | complete |
 | P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | complete |
-| P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | pr-open |
-| P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
+| P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | complete |
+| P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | active |
 | P9 Plan and bid exchange | TBD | `feature/p9-plan-exchange` | planned |
 | P10 Interactive planning studio | TBD | `feature/p10-studio` | planned |
 | P11 Demo portal and pilot onboarding | TBD | `feature/p11-demo-portal` | planned |
@@ -288,7 +288,7 @@ Acceptance criteria:
 
 Parent issue: #69
 Branch: `feature/p7-tactical-operational`
-Status: pr-open
+Status: complete
 
 Goal: turn the strategic policy into a 1-to-5-year treatment program and a work-ready operational plan.
 
@@ -317,9 +317,9 @@ Acceptance criteria:
 
 ## Phase 8: Monitoring and adaptive replanning
 
-Parent issue: TBD
+Parent issue: #78
 Branch: `feature/p8-monitoring`
-Status: planned
+Status: active
 
 Goal: implement the observation model, the UAV/LiDAR mission simulation, value of information, and the
 recalibration and replanning loop.
