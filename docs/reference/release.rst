@@ -1,4 +1,4 @@
-Release 0.1.0
+Release 0.1.1
 =============
 
 `RELEASE_NOTES.md` and `notes/reports/p13-known-gaps.md` define the release candidate, the delivered

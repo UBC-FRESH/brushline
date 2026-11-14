@@ -26,12 +26,13 @@ def test_help_names_the_status_command_and_the_version_flag() -> None:
 
 
 def test_status_prints_the_version_and_the_pre_alpha_state() -> None:
-    """The status command states the package version and that no model exists yet."""
+    """The status command states the package version and current planning surface."""
     result = RUNNER.invoke(app, ["status"])
     assert result.exit_code == 0
     assert __version__ in result.stdout
     assert "pre-alpha" in result.stdout
-    assert "No vegetation model" in result.stdout
+    assert "Planning, monitoring" in result.stdout
+    assert "known gaps" in result.stdout
 
 
 def test_unknown_command_exits_with_a_usage_error() -> None:

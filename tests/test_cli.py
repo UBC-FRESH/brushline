@@ -73,3 +73,14 @@ def test_dashboard_rejects_an_unknown_option() -> None:
     """The dashboard exits with status 2 on an option it does not know."""
     result = run_script("dashboard.py", "--bogus")
     assert result.returncode == 2
+
+
+def test_status_is_current() -> None:
+    """The status command reflects the released planning surface."""
+    from brushline.cli import app
+    from typer.testing import CliRunner
+
+    result = CliRunner().invoke(app, ["status"])
+    assert result.exit_code == 0
+    assert "Planning, monitoring" in result.stdout
+    assert "Phase 1" not in result.stdout

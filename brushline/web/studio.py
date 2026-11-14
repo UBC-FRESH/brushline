@@ -167,7 +167,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
         Artifact-only studio service.
     """
     root = Path(artifact_root or DEFAULT_ARTIFACT_ROOT).resolve()
-    app = FastAPI(title="Brushline studio", version="0.1.0")
+    app = FastAPI(title="Brushline studio", version="0.1.1")
 
     def safe_json(relative: str) -> Any:  # noqa: ANN401
         try:

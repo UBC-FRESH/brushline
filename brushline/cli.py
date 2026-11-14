@@ -74,7 +74,10 @@ def main(
 def status() -> None:
     """Print the package version and its pre-alpha status."""
     typer.echo(f"brushline {__version__} (pre-alpha)")
-    typer.echo("Phase 1: contracts and prototype. No vegetation model or planner is available yet.")
+    typer.echo(
+        "Planning, monitoring, exchange, public demo, and studio are present. "
+        "See the release notes and known gaps before use."
+    )
 
 
 @app.command()

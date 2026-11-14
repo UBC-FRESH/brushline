@@ -1,6 +1,6 @@
-# Brushline 0.1.0 release notes
+# Brushline 0.1.1 release notes
 
-Status: release candidate prepared; tag and GitHub release require maintainer approval.
+Status: patch release for 0.1.0. It includes the real Three.js studio scene and corrects the stale CLI status text.
 
 ## What this is
 
@@ -31,6 +31,12 @@ studio.
 - P11: public synthetic demo portfolio, static portal, pilot brief, and validation.
 - P12: 16-criterion verification, BAU case, monitoring value, exchange, performance limit, replay, and
   release recommendation.
+
+## Patch changes
+
+- Replace the P10 canvas placeholder with a real Three.js/WebGL studio scene, instanced vegetation, orbit camera, forester POV walkthrough, and camera-preserving pre/post toggle.
+- Correct `brushline status` so it no longer claims the project is still at Phase 1.
+- Include the Three.js vendor files in the installed wheel.
 
 ## Known gaps
 
