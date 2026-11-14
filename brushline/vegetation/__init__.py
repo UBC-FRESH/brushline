@@ -53,6 +53,15 @@ from brushline.vegetation.treatment import (
     apply_treatment,
     validate_treatment_result,
 )
+from brushline.vegetation.validation import (
+    ValidationConfig,
+    ValidationDataset,
+    ValidationRecord,
+    VegetationValidationError,
+    VegetationValidationReport,
+    validate_vegetation,
+    validate_vegetation_validation,
+)
 
 __all__ = [
     "FUNCTIONAL_GROUP_PROFILES",
@@ -85,6 +94,11 @@ __all__ = [
     "TreatmentObservation",
     "TreatmentRequest",
     "TreatmentResult",
+    "ValidationConfig",
+    "ValidationDataset",
+    "ValidationRecord",
+    "VegetationValidationError",
+    "VegetationValidationReport",
     "apply_treatment",
     "assess_hazards",
     "calibrate_treatment",
@@ -96,4 +110,6 @@ __all__ = [
     "validate_state_projection",
     "validate_treatment_calibration",
     "validate_treatment_result",
+    "validate_vegetation",
+    "validate_vegetation_validation",
 ]

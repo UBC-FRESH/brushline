@@ -113,6 +113,10 @@ test suite. This page is the map.
      - ``brushline.hazards.v1``
      - ``validate_hazard_report``
      - Clearance, fall-in, fuel, access, reliability components and weights, unknown states, and caveats
+   * - Vegetation validation
+     - ``brushline.vegetation-validation.v1``
+     - ``validate_vegetation_validation``
+     - Spatial holdout, group error, interval coverage, time-lag sensitivity, candidate benchmark, and exclusions
 
 Error prefixes
 --------------
@@ -169,6 +173,8 @@ Error prefixes
      - Treatment calibration
    * - ``HAZARD-*``
      - Hazard and service indicators
+   * - ``VALIDATION-*``
+     - Vegetation validation
 
 Test layers
 -----------
@@ -206,6 +212,8 @@ Test layers
   and parameter application.
 - Hazard tests for clearance statuses, fall-in risk, fuel connectivity, access, reliability weighting,
   missing components, caveats, and validator errors.
+- Validation tests for spatial holdout, eligibility exclusions, group metrics, interval coverage, lag
+  sensitivity, candidate disagreement, and report validation.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

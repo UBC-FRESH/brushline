@@ -25,6 +25,7 @@
 - [Treatment transitions](reference/treatment-transitions.html): method and season priors, top-kill, resprouting, regrowth delay, cost hooks, and the post-delay trajectory.
 - [Treatment calibration](reference/treatment-calibration.html): before/after evidence, pooling, shrinkage, intervals, leave-one-out checks, and calibrated parameters.
 - [Hazard and service indicators](reference/hazard-indicators.html): clearance, fall-in, fuel connectivity, access, reliability weights, formulas, and caveats.
+- [Held-out vegetation validation](reference/vegetation-validation.html): spatial holdout, group error, interval coverage, time-lag sensitivity, and candidate benchmark.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -56,3 +57,4 @@
 - [Treatment API](api/treatment.html): the parameters, request/result models, transition, and validator.
 - [Treatment calibration API](api/treatment-calibration.html): the evidence/calibrated models, fitter, and validator.
 - [Hazards API](api/hazards.html): the input/config/indicator/report models and validator.
+- [Vegetation validation API](api/vegetation-validation.html): the dataset, metrics, lag and candidate summaries, and validator.

@@ -34,4 +34,5 @@ whenever you add a module to the project.
    treatment
    treatment-calibration
    hazards
+   vegetation-validation
    instance

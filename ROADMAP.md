@@ -205,8 +205,8 @@ and publish a model card.
   - [x] Brushing, mowing, herbicide, manual, and grazing evidence where available
 - [x] P4.5 Implement the hazard and service indicators
   - [x] Clearance, fall-in, fuel connectivity, access, and a reliability proxy
-- [ ] P4.6 Calibrate and validate against held-out plots and LiDAR
-  - [ ] Spatial holdout, time-lag sensitivity, benchmark against MEDFATE/FVS-FFE/Botequim-type curves
+- [x] P4.6 Calibrate and validate against held-out plots and LiDAR
+  - [x] Spatial holdout, time-lag sensitivity, benchmark against MEDFATE/FVS-FFE/Botequim-type curves
 - [ ] P4.7 Publish the model card and uncertainty contract
   - [ ] Model id, version, predictors, training data, validation, error, domain, licence, caveats
 

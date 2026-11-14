@@ -26,6 +26,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    treatment-transitions
    treatment-calibration
    hazard-indicators
+   vegetation-validation
    compiled-dataset
    corridor-contract
    state-contract
