@@ -44,6 +44,10 @@ test suite. This page is the map.
      - ``brushline.demo.v1``
      - ``validate_demo_manifest``
      - Slug, sources, licences, artifacts, caveats, publication status
+   * - Data catalogue and connectors
+     - ``brushline.catalogue.v1``
+     - ``validate_catalogue``
+     - Sources, licences, classifications, coverage, connectors, auth references, scope, outputs, audit, approval, secret scan
 
 Error prefixes
 --------------
@@ -70,6 +74,8 @@ Error prefixes
      - Operations timeline
    * - ``DEMO-*``
      - Demo manifest
+   * - ``CATALOGUE-*``
+     - Data catalogue and connectors
 
 Test layers
 -----------
@@ -77,6 +83,8 @@ Test layers
 - Unit tests for each model and validator.
 - Contract tests for the public interfaces.
 - Integration tests for the CLI (``validate``, ``build``, ``simulate``, ``prototype``).
+- Catalogue tests for licences, classifications, unknown references, connector scope, approval, and
+  the secret scan.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

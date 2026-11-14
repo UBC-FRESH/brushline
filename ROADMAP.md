@@ -134,11 +134,11 @@ build Brushline instances from a map-selected AOI. Do not create a second instan
   - [x] Version pin, entry points, compatibility policy, and a failing test if the API drifts
 - [x] P2.2 Add the Brushline instance template and rebuild spec
   - [x] Config, scenario, targets, data pointers, tests, runbooks, docs, evidence, and demo manifest
-- [ ] P2.3 Add the Brushline provider nodes
-  - [ ] `validate_aoi`, `segment_corridor`, `compile_dataset`, `seed_vegetation_state`,
+- [x] P2.3 Add the Brushline provider nodes
+  - [x] `validate_aoi`, `segment_corridor`, `compile_dataset`, `seed_vegetation_state`,
         `validate_scenario`, `build_demo`
-- [ ] P2.4 Add the data catalogue and connector registry
-  - [ ] Public sources, private connectors, licences, classifications, and allowlists
+- [x] P2.4 Add the data catalogue and connector registry
+  - [x] Public sources, private connectors, licences, classifications, and allowlists
 - [ ] P2.5 Add the fetch plan, materialization, coverage, and gap report
   - [ ] Plan-only preview, checksums, DataLad/annex pointers, coverage state, and gap report
 - [ ] P2.6 Add the agent capability contract and offline test harness

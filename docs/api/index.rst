@@ -19,4 +19,5 @@ whenever you add a module to the project.
    prototype
    femic
    freshforge
+   catalogue
    instance

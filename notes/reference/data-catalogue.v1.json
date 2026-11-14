@@ -1,0 +1,425 @@
+{
+  "schema_version": "brushline.catalogue.v1",
+  "name": "Brushline data catalogue",
+  "created_utc": "2026-11-14T00:00:00Z",
+  "sources": [
+    {
+      "id": "lidarbc",
+      "name": "LidarBC",
+      "provider": "BC Ministry of Forests",
+      "dataset": "Provincial LiDAR point clouds and derived terrain, canopy, and tree products",
+      "query": "tiles intersecting the AOI and the requested product list",
+      "vintage": "2015-2024, acquisition-dependent",
+      "crs": "native UTM zones; EPSG:3005 for provincial products",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "British Columbia; tile availability and acquisition year vary by area",
+      "access_method": "bulk_download",
+      "access_status": "available",
+      "url": "https://lidar.gov.bc.ca/",
+      "description": "Primary open LiDAR source. Tile discovery, checksums, and derived products are owned by FEMIC."
+    },
+    {
+      "id": "vri",
+      "name": "Vegetation Resources Inventory",
+      "provider": "BC Ministry of Forests",
+      "dataset": "VRI forest inventory polygons and attributes",
+      "query": "VRI polygons intersecting the AOI",
+      "vintage": "2025",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "Forested land in British Columbia; attributes reflect the inventory vintage and photo interpretation",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory",
+      "description": "Inventory context and site-index proxy; not a low-vegetation survey."
+    },
+    {
+      "id": "vdyp",
+      "name": "Variable Density Yield Projection",
+      "provider": "BC Ministry of Forests",
+      "dataset": "VDYP7 yield projections",
+      "query": "yield projection for the VRI stand and BEC unit",
+      "vintage": "VDYP7, 2024",
+      "crs": "not spatial",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "Managed and natural stands in British Columbia within the VDYP applicability domain",
+      "access_method": "manual",
+      "access_status": "request",
+      "url": "https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory/growth-and-yield-modelling",
+      "description": "Yield context and site-index comparison. No automated bulk interface is assumed."
+    },
+    {
+      "id": "sibec",
+      "name": "Site Index Biogeoclimatic Ecosystem Classification",
+      "provider": "BC Ministry of Forests",
+      "dataset": "SIBEC site-index means and standard errors",
+      "query": "BEC unit, site series, and species lookup",
+      "vintage": "2024",
+      "crs": "not spatial",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "British Columbia BEC units with SIBEC sampling coverage",
+      "access_method": "manual",
+      "access_status": "request",
+      "url": "https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory/growth-and-yield-modelling",
+      "description": "Site-index reconciliation input; missing units stay unknown."
+    },
+    {
+      "id": "dra",
+      "name": "Digital Road Atlas",
+      "provider": "BC Ministry of Transportation and Transit",
+      "dataset": "Digital Road Atlas road segments",
+      "query": "road segments within the AOI buffer",
+      "vintage": "2024",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "Public roads in British Columbia; private and industrial roads may be absent",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/data/geographic-data-services/topographic-data/roads",
+      "description": "Access context. Absence is a gap, not evidence that no access exists."
+    },
+    {
+      "id": "ften",
+      "name": "Forest Tenure",
+      "provider": "BC Ministry of Forests",
+      "dataset": "Forest tenure polygons and attributes",
+      "query": "tenure polygons intersecting the AOI",
+      "vintage": "2024",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "Forest tenures in British Columbia; attribution is administrative, not an access permission",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/industry/forestry/competitive-forest-industry/forest-tenures",
+      "description": "Tenure context for responsibility and notification; no operational access is inferred."
+    },
+    {
+      "id": "ntems",
+      "name": "National Terrestrial Ecosystem Monitoring System",
+      "provider": "Natural Resources Canada",
+      "dataset": "NTEMS land cover, change, and disturbance layers",
+      "query": "annual composite and change layers for the AOI years",
+      "vintage": "1984-2022",
+      "crs": "EPSG:3978",
+      "licence": "OGL-Canada",
+      "classification": "public",
+      "coverage": "Canada at 30 m; thematic accuracy varies by class and year",
+      "access_method": "stac",
+      "access_status": "available",
+      "url": "https://open.canada.ca/data/en/dataset/5c1c9d1e-3d7b-4a6f-9c3a-ntems",
+      "description": "Disturbance and recovery context at landscape scale; not a segment-level state observation."
+    },
+    {
+      "id": "climate",
+      "name": "ClimateNA and SilvR21",
+      "provider": "University of British Columbia",
+      "dataset": "Climate normals and future projections",
+      "query": "climate variables at AOI points or grid cells for the requested periods",
+      "vintage": "ClimateNA v7.4 and SilvR21",
+      "crs": "EPSG:4326",
+      "licence": "ClimateNA academic terms",
+      "classification": "public",
+      "coverage": "British Columbia and western North America; point or gridded products",
+      "access_method": "manual",
+      "access_status": "request",
+      "url": "https://climatewna.com/",
+      "description": "Climate modifiers for growth and risk. The licence is not an open-government licence; review before redistribution."
+    },
+    {
+      "id": "bec",
+      "name": "Biogeoclimatic Ecosystem Classification",
+      "provider": "BC Ministry of Forests",
+      "dataset": "BEC zone, subzone, and variant polygons",
+      "query": "BEC polygons intersecting the AOI",
+      "vintage": "2024",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "British Columbia; map-unit boundaries are not site boundaries",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory/biogeoclimatic-ecosystem-classification",
+      "description": "Site-series and climate context. Boundaries are interpreted, not surveyed."
+    },
+    {
+      "id": "ownership",
+      "name": "Crown Land Ownership",
+      "provider": "BC Ministry of Forests",
+      "dataset": "Land ownership polygons",
+      "query": "ownership polygons intersecting the AOI",
+      "vintage": "2024",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "British Columbia Crown and private ownership; parcel-level status may be generalized",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/data/geographic-data-services/land-use/land-ownership",
+      "description": "Owner and tenure context; confirm access with the owner."
+    },
+    {
+      "id": "protected-areas",
+      "name": "BC Protected Areas",
+      "provider": "BC Parks",
+      "dataset": "Parks and protected areas",
+      "query": "protected areas intersecting the AOI",
+      "vintage": "2024",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "Provincial parks, conservancies, and protected areas in British Columbia",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/environment/natural-resource-stewardship/natural-resource-orders",
+      "description": "Constraints and notification context; park boundaries do not grant access."
+    },
+    {
+      "id": "boundaries",
+      "name": "BC Administrative Boundaries",
+      "provider": "BC Ministry of Forests",
+      "dataset": "TSA, FMU, and regional boundaries",
+      "query": "TSA, FMU, and regional boundaries intersecting the AOI",
+      "vintage": "2024",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "British Columbia administrative and management boundaries",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory/administrative-boundaries",
+      "description": "Reporting and responsibility context; boundaries are administrative."
+    },
+    {
+      "id": "freshwater-atlas",
+      "name": "Freshwater Atlas",
+      "provider": "BC Ministry of Water, Land and Resource Stewardship",
+      "dataset": "Streams, lakes, wetlands, and watersheds",
+      "query": "streams, lakes, and wetlands within the AOI buffer",
+      "vintage": "2024",
+      "crs": "EPSG:3005",
+      "licence": "OGL-BC",
+      "classification": "public",
+      "coverage": "British Columbia freshwater features; small or ephemeral channels may be absent",
+      "access_method": "wfs",
+      "access_status": "available",
+      "url": "https://www2.gov.bc.ca/gov/content/data/geographic-data-services/topographic-data/freshwater",
+      "description": "Hydrology context and stream-crossing review; not a fish-habitat assessment."
+    }
+  ],
+  "connectors": [
+    {
+      "id": "asset-registry",
+      "name": "Asset registry",
+      "owner": "Utility or infrastructure owner",
+      "description": "Structures, conductors, and corridor assets used to anchor the segment model.",
+      "classification": "private",
+      "linked_source_ids": ["boundaries"],
+      "authentication_method": "environment",
+      "authentication_reference": "env:BRUSHLINE_ASSET_REGISTRY_TOKEN",
+      "read_scope": {
+        "tables": ["assets", "structures"],
+        "columns": {
+          "assets": ["asset_id", "corridor_id", "asset_type", "geometry"],
+          "structures": ["structure_id", "asset_id", "structure_type", "geometry"]
+        },
+        "row_filters": ["corridor_id in approved scope"],
+        "max_rows": 5000
+      },
+      "allowed_outputs": ["derived", "aggregate"],
+      "audit": {
+        "log_access": true,
+        "retention_days": 365,
+        "review_required": true,
+        "record_location": "owner audit log"
+      },
+      "test_connection": {
+        "method": "environment",
+        "reference": "env:BRUSHLINE_ASSET_REGISTRY_TOKEN",
+        "sample_metadata": {
+          "tables": ["assets", "structures"],
+          "row_count_class": "metadata_only"
+        }
+      },
+      "approval": null
+    },
+    {
+      "id": "treatment-history",
+      "name": "Treatment history",
+      "owner": "Utility or infrastructure owner",
+      "description": "Past vegetation treatments, methods, dates, and outcomes on the corridor.",
+      "classification": "private",
+      "linked_source_ids": ["vri"],
+      "authentication_method": "environment",
+      "authentication_reference": "env:BRUSHLINE_TREATMENT_HISTORY_TOKEN",
+      "read_scope": {
+        "tables": ["treatments"],
+        "columns": {
+          "treatments": ["treatment_id", "segment_id", "method", "year", "outcome"]
+        },
+        "row_filters": ["segment_id in approved scope"],
+        "max_rows": 2000
+      },
+      "allowed_outputs": ["derived", "aggregate"],
+      "audit": {
+        "log_access": true,
+        "retention_days": 365,
+        "review_required": true,
+        "record_location": "owner audit log"
+      },
+      "test_connection": {
+        "method": "environment",
+        "reference": "env:BRUSHLINE_TREATMENT_HISTORY_TOKEN",
+        "sample_metadata": {
+          "tables": ["treatments"],
+          "row_count_class": "metadata_only"
+        }
+      },
+      "approval": null
+    },
+    {
+      "id": "inspections",
+      "name": "Inspections and observations",
+      "owner": "Utility or infrastructure owner",
+      "description": "Inspection records and field observations that update the vegetation state.",
+      "classification": "private",
+      "linked_source_ids": ["vri"],
+      "authentication_method": "secret_store",
+      "authentication_reference": "secret_store:brushline/inspections-reader",
+      "read_scope": {
+        "tables": ["inspections", "observations"],
+        "columns": {
+          "inspections": ["inspection_id", "segment_id", "observed_utc", "method"],
+          "observations": ["observation_id", "segment_id", "height_m", "cover_pct"]
+        },
+        "row_filters": ["segment_id in approved scope", "observed_utc after approval start"],
+        "max_rows": 5000
+      },
+      "allowed_outputs": ["derived", "aggregate"],
+      "audit": {
+        "log_access": true,
+        "retention_days": 730,
+        "review_required": true,
+        "record_location": "owner audit log"
+      },
+      "test_connection": {
+        "method": "secret_store",
+        "reference": "secret_store:brushline/inspections-reader",
+        "sample_metadata": {
+          "tables": ["inspections", "observations"],
+          "row_count_class": "metadata_only"
+        }
+      },
+      "approval": null
+    },
+    {
+      "id": "costs",
+      "name": "Cost rates and contracts",
+      "owner": "Utility or infrastructure owner",
+      "description": "Contractor rates, contract terms, and cost history used to price treatment plans.",
+      "classification": "restricted",
+      "linked_source_ids": [],
+      "authentication_method": "managed_identity",
+      "authentication_reference": "managed_identity:brushline-costs-reader",
+      "read_scope": {
+        "tables": ["rates", "contracts"],
+        "columns": {
+          "rates": ["rate_id", "method", "unit", "rate", "currency"],
+          "contracts": ["contract_id", "contractor", "start_year", "end_year"]
+        },
+        "row_filters": ["contract_id in approved scope"],
+        "max_rows": 1000
+      },
+      "allowed_outputs": ["aggregate"],
+      "audit": {
+        "log_access": true,
+        "retention_days": 1095,
+        "review_required": true,
+        "record_location": "owner audit log"
+      },
+      "test_connection": {
+        "method": "managed_identity",
+        "reference": "managed_identity:brushline-costs-reader",
+        "sample_metadata": {
+          "tables": ["rates", "contracts"],
+          "row_count_class": "metadata_only"
+        }
+      },
+      "approval": null
+    },
+    {
+      "id": "contracts",
+      "name": "Contract and access restrictions",
+      "owner": "Utility or infrastructure owner",
+      "description": "Contract windows and access restrictions that constrain when and how work may occur.",
+      "classification": "private",
+      "linked_source_ids": ["dra", "boundaries"],
+      "authentication_method": "environment",
+      "authentication_reference": "env:BRUSHLINE_CONTRACTS_TOKEN",
+      "read_scope": {
+        "tables": ["contracts", "access_restrictions"],
+        "columns": {
+          "contracts": ["contract_id", "treatment_unit_id", "start_year", "end_year"],
+          "access_restrictions": ["restriction_id", "segment_id", "reason", "start_date", "end_date"]
+        },
+        "row_filters": ["treatment_unit_id in approved scope"],
+        "max_rows": 1000
+      },
+      "allowed_outputs": ["derived", "aggregate"],
+      "audit": {
+        "log_access": true,
+        "retention_days": 1095,
+        "review_required": true,
+        "record_location": "owner audit log"
+      },
+      "test_connection": {
+        "method": "environment",
+        "reference": "env:BRUSHLINE_CONTRACTS_TOKEN",
+        "sample_metadata": {
+          "tables": ["contracts", "access_restrictions"],
+          "row_count_class": "metadata_only"
+        }
+      },
+      "approval": null
+    },
+    {
+      "id": "access-restrictions",
+      "name": "Operational access restrictions",
+      "owner": "Utility or infrastructure owner",
+      "description": "Road, gate, season, and safety restrictions that limit treatment or monitoring access.",
+      "classification": "private",
+      "linked_source_ids": ["dra"],
+      "authentication_method": "environment",
+      "authentication_reference": "env:BRUSHLINE_ACCESS_RESTRICTIONS_TOKEN",
+      "read_scope": {
+        "tables": ["access_restrictions"],
+        "columns": {
+          "access_restrictions": ["restriction_id", "segment_id", "reason", "start_date", "end_date"]
+        },
+        "row_filters": ["segment_id in approved scope"],
+        "max_rows": 2000
+      },
+      "allowed_outputs": ["derived", "aggregate"],
+      "audit": {
+        "log_access": true,
+        "retention_days": 730,
+        "review_required": true,
+        "record_location": "owner audit log"
+      },
+      "test_connection": {
+        "method": "environment",
+        "reference": "env:BRUSHLINE_ACCESS_RESTRICTIONS_TOKEN",
+        "sample_metadata": {
+          "tables": ["access_restrictions"],
+          "row_count_class": "metadata_only"
+        }
+      },
+      "approval": null
+    }
+  ]
+}

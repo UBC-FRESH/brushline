@@ -11,6 +11,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    femic-boundary
    instance-template
    freshforge-provider
+   data-catalogue
    compiled-dataset
    corridor-contract
    state-contract
