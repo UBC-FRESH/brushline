@@ -1,0 +1,29 @@
+{
+  "schema_version": "brushline.tiny-optimum.v1",
+  "formulation_id": "p5-formulation-v1",
+  "weights": {
+    "present_cost": 0.25,
+    "service_risk": 0.25,
+    "service_attainment": 0.25,
+    "uncertainty": 0.25
+  },
+  "total_assignments": 324,
+  "feasible_assignments": 72,
+  "best_assignment": {
+    "0": 1,
+    "1": 1,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0
+  },
+  "objective": 25.08140164354313,
+  "objective_vector": {
+    "present_cost": 100.0,
+    "service_risk": 0.0003065741725211235,
+    "service_attainment": 1.0,
+    "uncertainty": 0.3253
+  },
+  "ties": 1,
+  "batch_agreement": true
+}

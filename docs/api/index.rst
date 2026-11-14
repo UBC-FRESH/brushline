@@ -36,4 +36,12 @@ whenever you add a module to the project.
    hazards
    vegetation-validation
    model-card
+   optimization-formulation
+   optimization-evaluator
+   optimization-operators
+   optimization-adapter
+   optimization-archive
+   optimization-validation
+   optimization-budget
+   optimization-telemetry
    instance

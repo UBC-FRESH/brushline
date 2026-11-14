@@ -27,6 +27,14 @@
 - [Hazard and service indicators](reference/hazard-indicators.html): clearance, fall-in, fuel connectivity, access, reliability weights, formulas, and caveats.
 - [Held-out vegetation validation](reference/vegetation-validation.html): spatial holdout, group error, interval coverage, time-lag sensitivity, and candidate benchmark.
 - [Low-vegetation model card](reference/low-vegetation-model-card.html): predictors, evidence, metrics, uncertainty, applicability domain, and out-of-domain rejection.
+- [Optimization formulation](reference/optimization-formulation.html): variables, treatment/monitoring options, constraints, and the four-objective vector.
+- [Optimization evaluator](reference/optimization-evaluator.html): exact replay, objectives, costs, violations, and the full-evaluation fallback.
+- [Optimization move operators](reference/optimization-operators.html): toggle, method, shift, swap, block, monitoring, destroy-repair, locks, access, and repair.
+- [Optimization adapter and replay](reference/optimization-adapter.html): the Fresh Solutions contract, scalarizations, search modes, checkpoints, and exact replay.
+- [Multi-objective archive](reference/optimization-archive.html): non-dominance, crowding, eviction, pareto.json, and promotion records.
+- [Tiny-instance validation](reference/optimization-validation.html): exhaustive enumeration, exact/batch agreement, known optimum, search gap, and replay.
+- [Search budget and performance](reference/optimization-budget.html): quality-versus-budget, seed variance, scaling, checkpoint cost, and the no-optimality statement.
+- [Studio telemetry](reference/optimization-telemetry.html): versioned progress events, SSE, archive references, and the compatibility check.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -60,3 +68,11 @@
 - [Hazards API](api/hazards.html): the input/config/indicator/report models and validator.
 - [Vegetation validation API](api/vegetation-validation.html): the dataset, metrics, lag and candidate summaries, and validator.
 - [Model card API](api/model-card.html): the card, domain check, evidence, uncertainty, and validator.
+- [Optimization formulation API](api/optimization-formulation.html): the formulation models, builder, and validator.
+- [Optimization evaluator API](api/optimization-evaluator.html): the exact evaluator, result, context, and incremental wrapper.
+- [Optimization move operators API](api/optimization-operators.html): typed moves, operators, and repair.
+- [Optimization adapter API](api/optimization-adapter.html): the adapter, scalarizations, search runs, and checkpoints.
+- [Multi-objective archive API](api/optimization-archive.html): the archive builder, writers, and promotion.
+- [Tiny-instance validation API](api/optimization-validation.html): exhaustive optimum, enumeration, and reports.
+- [Search budget API](api/optimization-budget.html): quality, scaling, checkpoint, and report models.
+- [Studio telemetry API](api/optimization-telemetry.html): event streams, writers, and studio compatibility.

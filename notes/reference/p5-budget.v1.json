@@ -1,0 +1,118 @@
+{
+  "schema_version": "brushline.optimization-budget-report.v1",
+  "quality": {
+    "schema_version": "brushline.optimization-budget.v1",
+    "instance_id": "tiny",
+    "mode": "local",
+    "scalarization": "balanced",
+    "optimum": 25.08140164354313,
+    "points": [
+      {
+        "budget": 1,
+        "runs": 2,
+        "feasible_runs": 0,
+        "best_objective": null,
+        "median_objective": null,
+        "worst_objective": null,
+        "reach_optimum": false,
+        "seed_results": [
+          {
+            "seed": 1,
+            "budget": 1,
+            "objective": 2000000000.2724454,
+            "feasible": false,
+            "evaluations": 2,
+            "replay_ok": true,
+            "stop_reason": "budget"
+          },
+          {
+            "seed": 2,
+            "budget": 1,
+            "objective": 2000000000.2724454,
+            "feasible": false,
+            "evaluations": 2,
+            "replay_ok": true,
+            "stop_reason": "budget"
+          }
+        ]
+      },
+      {
+        "budget": 10,
+        "runs": 2,
+        "feasible_runs": 1,
+        "best_objective": 25.08140164354313,
+        "median_objective": 25.08140164354313,
+        "worst_objective": 25.08140164354313,
+        "reach_optimum": true,
+        "seed_results": [
+          {
+            "seed": 1,
+            "budget": 10,
+            "objective": 1000000012.6587269,
+            "feasible": false,
+            "evaluations": 11,
+            "replay_ok": true,
+            "stop_reason": "budget"
+          },
+          {
+            "seed": 2,
+            "budget": 10,
+            "objective": 25.08140164354313,
+            "feasible": true,
+            "evaluations": 11,
+            "replay_ok": true,
+            "stop_reason": "budget"
+          }
+        ]
+      },
+      {
+        "budget": 100,
+        "runs": 2,
+        "feasible_runs": 2,
+        "best_objective": 25.08140164354313,
+        "median_objective": 25.08140164354313,
+        "worst_objective": 25.08140164354313,
+        "reach_optimum": true,
+        "seed_results": [
+          {
+            "seed": 1,
+            "budget": 100,
+            "objective": 25.08140164354313,
+            "feasible": true,
+            "evaluations": 101,
+            "replay_ok": true,
+            "stop_reason": "budget"
+          },
+          {
+            "seed": 2,
+            "budget": 100,
+            "objective": 25.08140164354313,
+            "feasible": true,
+            "evaluations": 101,
+            "replay_ok": true,
+            "stop_reason": "budget"
+          }
+        ]
+      }
+    ],
+    "no_optimality": "Brushline reports a search incumbent with its budget, seed, and stopping rule; it does not claim global optimality on realistic corridors.",
+    "created_utc": "2026-11-14T12:00:00Z"
+  },
+  "scaling": [
+    {
+      "name": "tiny",
+      "variables": 6,
+      "runs": 1,
+      "best_objective": 25.08140164354313,
+      "median_seconds": 0.21491847606375813,
+      "max_seconds": 0.21491847606375813,
+      "peak_bytes": 207781,
+      "replay_ok": true
+    }
+  ],
+  "checkpoint": null,
+  "adapter_version": "p5.4",
+  "fresh_solutions_version": "0.9.3",
+  "no_optimality": "Brushline reports a search incumbent with its budget, seed, and stopping rule; it does not claim global optimality on realistic corridors.",
+  "created_utc": "2026-11-14T12:00:00Z"
+}

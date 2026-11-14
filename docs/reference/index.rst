@@ -28,6 +28,14 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    hazard-indicators
    vegetation-validation
    low-vegetation-model-card
+   optimization-formulation
+   optimization-evaluator
+   optimization-operators
+   optimization-adapter
+   optimization-archive
+   optimization-validation
+   optimization-budget
+   optimization-telemetry
    compiled-dataset
    corridor-contract
    state-contract

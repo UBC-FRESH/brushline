@@ -1,0 +1,102 @@
+{
+  "schema_version": "brushline.pareto.v1",
+  "instance_id": "tiny",
+  "run_id": "tiny-run-1",
+  "objectives": [
+    {
+      "name": "present_cost",
+      "direction": "minimize",
+      "unit": "CAD"
+    },
+    {
+      "name": "service_risk",
+      "direction": "minimize",
+      "unit": "index"
+    },
+    {
+      "name": "service_attainment",
+      "direction": "maximize",
+      "unit": "fraction"
+    },
+    {
+      "name": "uncertainty",
+      "direction": "minimize",
+      "unit": "index"
+    }
+  ],
+  "scalarizations": [
+    {
+      "scalarization_id": "cost_first",
+      "weights": {
+        "present_cost": 0.7,
+        "service_risk": 0.1,
+        "service_attainment": 0.1,
+        "uncertainty": 0.1
+      },
+      "description": "Brushline cost_first scalarization"
+    },
+    {
+      "scalarization_id": "risk_first",
+      "weights": {
+        "present_cost": 0.1,
+        "service_risk": 0.7,
+        "service_attainment": 0.1,
+        "uncertainty": 0.1
+      },
+      "description": "Brushline risk_first scalarization"
+    },
+    {
+      "scalarization_id": "service_first",
+      "weights": {
+        "present_cost": 0.1,
+        "service_risk": 0.1,
+        "service_attainment": 0.7,
+        "uncertainty": 0.1
+      },
+      "description": "Brushline service_first scalarization"
+    },
+    {
+      "scalarization_id": "uncertainty_first",
+      "weights": {
+        "present_cost": 0.1,
+        "service_risk": 0.1,
+        "service_attainment": 0.1,
+        "uncertainty": 0.7
+      },
+      "description": "Brushline uncertainty_first scalarization"
+    },
+    {
+      "scalarization_id": "balanced",
+      "weights": {
+        "present_cost": 0.25,
+        "service_risk": 0.25,
+        "service_attainment": 0.25,
+        "uncertainty": 0.25
+      },
+      "description": "Brushline balanced scalarization"
+    }
+  ],
+  "members": [
+    {
+      "plan_id": "tiny-plan-001",
+      "plan_path": "plans/tiny-plan-001.json",
+      "objective": {
+        "present_cost": 100.0,
+        "service_risk": 0.0003,
+        "service_attainment": 1.0,
+        "uncertainty": 0.3253
+      },
+      "feasible": true,
+      "seed": 7,
+      "evidence_path": "evidence/tiny-plan-001.json",
+      "budget": 20,
+      "metadata": {
+        "crowding_distance": 1000000000.0,
+        "scalarization": "balanced"
+      }
+    }
+  ],
+  "eviction": "crowding-distance-v1",
+  "created_utc": "2026-11-14T12:00:00Z",
+  "created_by": "brushline.optimization.pareto"
+}

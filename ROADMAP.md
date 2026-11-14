@@ -15,8 +15,8 @@ exists and the maintainer approves it.
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
-| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | pr-open |
-| P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
+| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
+| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | pr-open |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
 | P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
@@ -190,7 +190,7 @@ Acceptance criteria:
 
 Parent issue: #41
 Branch: `feature/p4-vegetation`
-Status: pr-open
+Status: complete
 
 Goal: implement the low-vegetation state-transition model and the treatment transitions, calibrate them,
 and publish a model card.
@@ -220,29 +220,29 @@ Acceptance criteria:
 
 ## Phase 5: Optimization framework and Pareto search
 
-Parent issue: TBD
+Parent issue: #50
 Branch: `feature/p5-optimization`
-Status: planned
+Status: pr-open
 
 Goal: implement the Brushline adapter over Fresh Solutions, the multi-objective archive, and the exact
 small-instance validation.
 
-- [ ] P5.1 Formulate the decision variables, constraints, and objective vector
-  - [ ] Treatment and monitoring actions, budget, capacity, access, service levels, risk, uncertainty
-- [ ] P5.2 Implement the exact evaluator and the incremental path
-  - [ ] Simulator-backed evaluation, delta accounting, and batch fallback
-- [ ] P5.3 Implement the move operators
-  - [ ] Toggle, shift, swap, block/segment moves, monitoring moves, and repair
-- [ ] P5.4 Integrate Fresh Solutions and exact replay
-  - [ ] Adapter, local search, population, hybrid, checkpoints, seeds, telemetry, and evidence
-- [ ] P5.5 Implement the multi-objective archive and `pareto.json`
-  - [ ] Scalarization portfolio, dominance, diversity, archive members, and promotion rule
-- [ ] P5.6 Validate on tiny instances
-  - [ ] Exhaustive enumeration, MIP/CP bound where practical, exact/batch agreement, and replay
-- [ ] P5.7 Certify the search budget and performance
-  - [ ] Quality-versus-budget curve, seed variance, scaling, and the no-optimality statement
-- [ ] P5.8 Freeze the archive and telemetry contract for the studio
-  - [ ] `pareto.json`, progress events, incumbent records, and evidence links
+- [x] P5.1 Formulate the decision variables, constraints, and objective vector (#51)
+  - [x] Treatment and monitoring actions, budget, capacity, access, service levels, risk, uncertainty
+- [x] P5.2 Implement the exact evaluator and the incremental path (#52)
+  - [x] Simulator-backed evaluation, full-recompute fallback, and batch evaluation
+- [x] P5.3 Implement the move operators (#53)
+  - [x] Toggle, shift, swap, block/segment moves, monitoring moves, and repair
+- [x] P5.4 Integrate Fresh Solutions and exact replay (#54)
+  - [x] Adapter, local search, population, hybrid, convergence, checkpoints, seeds, and evidence
+- [x] P5.5 Implement the multi-objective archive and `pareto.json` (#55)
+  - [x] Scalarization portfolio, dominance, diversity, archive members, and promotion rule
+- [x] P5.6 Validate on tiny instances (#56)
+  - [x] Exhaustive enumeration, exact/batch agreement, known optimum, and replay
+- [x] P5.7 Certify the search budget and performance (#57)
+  - [x] Quality-versus-budget curve, seed variance, scaling, and the no-optimality statement
+- [x] P5.8 Freeze the archive and telemetry contract for the studio (#58)
+  - [x] `pareto.json`, progress events, incumbent records, and evidence links
 
 Acceptance criteria:
 

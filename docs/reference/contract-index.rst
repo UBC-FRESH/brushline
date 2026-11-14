@@ -121,6 +121,46 @@ test suite. This page is the map.
      - ``brushline.low-vegetation-model-card.v1``
      - ``validate_model_card``
      - Predictors, training/validation evidence, metrics, candidates, uncertainty, domain, licence, citation, caveats, and decision boundary
+   * - Optimization formulation
+     - ``brushline.optimization-formulation.v1``
+     - ``validate_formulation``
+     - Stable variables, options, periods, targets, hard/soft constraints, and four objectives
+   * - Optimization evaluation
+     - ``brushline.optimization-evaluation.v1``
+     - ``EvaluationResult``
+     - Exact four-objective result, costs, feasibility, named violations, and period trail
+   * - Optimization search
+     - ``brushline.optimization-search.v1``
+     - ``SearchRun``
+     - Adapter, seed, budget, assignment, objective vector, evidence, checkpoint, and replay flag
+   * - Promotion record
+     - ``brushline.promotion.v1``
+     - ``PromotionRecord``
+     - Promoted plan, parent, reason, objective vector, time, and promoter
+   * - Tiny optimum
+     - ``brushline.tiny-optimum.v1``
+     - ``TinyOptimum``
+     - Enumerated assignment count, best assignment/vector, ties, and exact/batch agreement
+   * - Tiny validation
+     - ``brushline.tiny-validation.v1``
+     - ``TinyValidationReport``
+     - Optimum, optional search, gap, reach flag, replay, and expected-match evidence
+   * - Search budget
+     - ``brushline.optimization-budget.v1``
+     - ``QualityBudgetReport``
+     - Per-budget and per-seed objectives, feasibility, evaluations, replay, and no-optimality caveat
+   * - Budget report
+     - ``brushline.optimization-budget-report.v1``
+     - ``BudgetReport``
+     - Quality, scaling, checkpoint, adapter and Fresh Solutions versions, and caveat
+   * - Optimization event
+     - ``brushline.optimization-event.v1``
+     - ``TelemetryEvent``
+     - Progress event with run, seed, budget, payload, objective, plan, and evidence references
+   * - Optimization telemetry
+     - ``brushline.optimization-telemetry.v1``
+     - ``EventStream``
+     - Versioned run, model/data versions, archive path, and ordered events
 
 Error prefixes
 --------------
@@ -181,6 +221,18 @@ Error prefixes
      - Vegetation validation
    * - ``MODEL-CARD-*``
      - Low-vegetation model card
+   * - ``FORMULATION-*``
+     - Optimization formulation
+   * - ``EVALUATION-*``
+     - Optimization evaluation
+   * - ``MOVE-*``
+     - Optimization move validation
+   * - ``PROMOTION-*``
+     - Promotion record
+   * - ``TELEMETRY-*``
+     - Telemetry stream
+   * - ``STUDIO-*``
+     - Studio compatibility
 
 Test layers
 -----------
@@ -222,6 +274,22 @@ Test layers
   sensitivity, candidate disagreement, and report validation.
 - Model-card tests for predictor/domain ranges, evidence, metrics, candidates, uncertainty, domain checks,
   out-of-domain rejection, and card validation.
+- Formulation tests for stable indices, options, allowed methods, access constraints, objectives,
+  validation, and build reproduction.
+- Evaluator tests for exact growth/treatment replay, costs, budgets, capacity, access, service,
+  monitoring allocation, discounting, batch equality, scalarization, and apply/undo.
+- Operator tests for seeded determinism, every move kind, access and locks, move validation,
+  apply/undo, budget/capacity/monitoring/access/service repair, and non-repairable blocked models.
+- Adapter tests for the Fresh Solutions contract, scalarizations, random/mutation/crossover, single
+  and compound proposals, all search modes, checkpoint replay, and rejected non-replayable results.
+- Archive tests for dominance, duplicates, infeasible rejection, crowding, size eviction, round-trip,
+  invalid archives, and promotion records.
+- Tiny-validation tests for complete enumeration, the committed optimum, exact/batch agreement,
+  search gap, replay, infeasible instances, ties, and report round-trips.
+- Budget tests for every budget/seed point, feasible and infeasible runs, scaling timing and memory,
+  checkpoint save/replay, composed reports, and input guards.
+- Telemetry tests for committed stream/archive compatibility, run events, archive insertion, sequence
+  and order validation, missing/mismatched artifacts, SSE, and JSON round-trips.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

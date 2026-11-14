@@ -1,0 +1,321 @@
+{
+  "schema_version": "brushline.optimization-formulation.v1",
+  "formulation_id": "p5-formulation-v1",
+  "currency": "CAD",
+  "periods": [
+    {
+      "period_id": "p2026",
+      "start_year": 2026,
+      "end_year": 2026,
+      "budget": 100000.0,
+      "monitoring_budget": 10000.0,
+      "capacity_by_method": {
+        "mowing": 30.0,
+        "manual": 20.0
+      },
+      "season": "spring"
+    },
+    {
+      "period_id": "p2027",
+      "start_year": 2027,
+      "end_year": 2027,
+      "budget": 120000.0,
+      "monitoring_budget": 15000.0,
+      "capacity_by_method": {
+        "mowing": 35.0,
+        "manual": 25.0
+      },
+      "season": "spring"
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "s1",
+      "corridor_id": "c1",
+      "length_m": 100.0,
+      "treatment_unit_id": "tu1",
+      "service_standard_id": "std1",
+      "max_height_m": 4.0,
+      "min_clearance_m": 1.0,
+      "allowed_methods": [
+        "mowing",
+        "manual"
+      ],
+      "inaccessible_period_ids": []
+    },
+    {
+      "segment_id": "s2",
+      "corridor_id": "c1",
+      "length_m": 150.0,
+      "treatment_unit_id": "tu1",
+      "service_standard_id": "std1",
+      "max_height_m": 4.0,
+      "min_clearance_m": 1.0,
+      "allowed_methods": [
+        "mowing"
+      ],
+      "inaccessible_period_ids": [
+        "p2027"
+      ]
+    }
+  ],
+  "spans": [
+    {
+      "span_id": "sp1",
+      "corridor_id": "c1",
+      "segment_ids": [
+        "s1",
+        "s2"
+      ],
+      "monitoring_allowed": true
+    }
+  ],
+  "treatment_options": [
+    {
+      "option_id": "mow-l1",
+      "method": "mowing",
+      "intensity": 0.7,
+      "season": "spring",
+      "cost_per_ha": 500.0,
+      "fixed_cost": 0.0,
+      "label": "Mow light"
+    },
+    {
+      "option_id": "manual-l1",
+      "method": "manual",
+      "intensity": 0.5,
+      "season": "spring",
+      "cost_per_ha": 1200.0,
+      "fixed_cost": 0.0,
+      "label": "Manual light"
+    }
+  ],
+  "monitoring_options": [
+    {
+      "option_id": "lidar-annual",
+      "sensor": "lidar",
+      "sampling_intensity": 0.8,
+      "cost_per_span": 2000.0,
+      "label": "Annual LiDAR"
+    },
+    {
+      "option_id": "field-sample",
+      "sensor": "field",
+      "sampling_intensity": 0.5,
+      "cost_per_span": 1000.0,
+      "label": "Field sample"
+    }
+  ],
+  "variables": [
+    {
+      "index": 0,
+      "kind": "treatment",
+      "target_id": "s1",
+      "period_id": "p2026",
+      "option_ids": [
+        "none",
+        "mow-l1",
+        "manual-l1"
+      ]
+    },
+    {
+      "index": 1,
+      "kind": "treatment",
+      "target_id": "s1",
+      "period_id": "p2027",
+      "option_ids": [
+        "none",
+        "mow-l1",
+        "manual-l1"
+      ]
+    },
+    {
+      "index": 2,
+      "kind": "treatment",
+      "target_id": "s2",
+      "period_id": "p2026",
+      "option_ids": [
+        "none",
+        "mow-l1"
+      ]
+    },
+    {
+      "index": 3,
+      "kind": "treatment",
+      "target_id": "s2",
+      "period_id": "p2027",
+      "option_ids": [
+        "none",
+        "mow-l1"
+      ]
+    },
+    {
+      "index": 4,
+      "kind": "monitoring",
+      "target_id": "sp1",
+      "period_id": "p2026",
+      "option_ids": [
+        "none",
+        "lidar-annual",
+        "field-sample"
+      ]
+    },
+    {
+      "index": 5,
+      "kind": "monitoring",
+      "target_id": "sp1",
+      "period_id": "p2027",
+      "option_ids": [
+        "none",
+        "lidar-annual",
+        "field-sample"
+      ]
+    }
+  ],
+  "constraints": [
+    {
+      "constraint_id": "budget:p2026",
+      "kind": "budget",
+      "scope": "period",
+      "target_id": "p2026",
+      "period_id": "p2026",
+      "value": 100000.0,
+      "unit": "CAD",
+      "hard": true,
+      "description": "Treatment budget for the period."
+    },
+    {
+      "constraint_id": "monitoring-budget:p2026",
+      "kind": "monitoring_budget",
+      "scope": "period",
+      "target_id": "p2026",
+      "period_id": "p2026",
+      "value": 10000.0,
+      "unit": "CAD",
+      "hard": true,
+      "description": "Monitoring budget for the period."
+    },
+    {
+      "constraint_id": "capacity:p2026:mowing",
+      "kind": "capacity",
+      "scope": "period",
+      "target_id": "mowing",
+      "period_id": "p2026",
+      "value": 30.0,
+      "unit": "ha",
+      "hard": true,
+      "description": "Capacity for mowing in the period."
+    },
+    {
+      "constraint_id": "capacity:p2026:manual",
+      "kind": "capacity",
+      "scope": "period",
+      "target_id": "manual",
+      "period_id": "p2026",
+      "value": 20.0,
+      "unit": "ha",
+      "hard": true,
+      "description": "Capacity for manual in the period."
+    },
+    {
+      "constraint_id": "budget:p2027",
+      "kind": "budget",
+      "scope": "period",
+      "target_id": "p2027",
+      "period_id": "p2027",
+      "value": 120000.0,
+      "unit": "CAD",
+      "hard": true,
+      "description": "Treatment budget for the period."
+    },
+    {
+      "constraint_id": "monitoring-budget:p2027",
+      "kind": "monitoring_budget",
+      "scope": "period",
+      "target_id": "p2027",
+      "period_id": "p2027",
+      "value": 15000.0,
+      "unit": "CAD",
+      "hard": true,
+      "description": "Monitoring budget for the period."
+    },
+    {
+      "constraint_id": "capacity:p2027:mowing",
+      "kind": "capacity",
+      "scope": "period",
+      "target_id": "mowing",
+      "period_id": "p2027",
+      "value": 35.0,
+      "unit": "ha",
+      "hard": true,
+      "description": "Capacity for mowing in the period."
+    },
+    {
+      "constraint_id": "capacity:p2027:manual",
+      "kind": "capacity",
+      "scope": "period",
+      "target_id": "manual",
+      "period_id": "p2027",
+      "value": 25.0,
+      "unit": "ha",
+      "hard": true,
+      "description": "Capacity for manual in the period."
+    },
+    {
+      "constraint_id": "service:s1",
+      "kind": "service",
+      "scope": "segment",
+      "target_id": "s1",
+      "period_id": null,
+      "value": 4.0,
+      "unit": "m",
+      "hard": true,
+      "description": "Service maximum height."
+    },
+    {
+      "constraint_id": "access:s2:p2027",
+      "kind": "access",
+      "scope": "segment",
+      "target_id": "s2",
+      "period_id": "p2027",
+      "value": 0.0,
+      "unit": "boolean",
+      "hard": true,
+      "description": "Segment has no access in the period."
+    },
+    {
+      "constraint_id": "service:s2",
+      "kind": "service",
+      "scope": "segment",
+      "target_id": "s2",
+      "period_id": null,
+      "value": 4.0,
+      "unit": "m",
+      "hard": true,
+      "description": "Service maximum height."
+    }
+  ],
+  "objectives": [
+    {
+      "name": "present_cost",
+      "direction": "minimize",
+      "unit": "CAD"
+    },
+    {
+      "name": "service_risk",
+      "direction": "minimize",
+      "unit": "index"
+    },
+    {
+      "name": "service_attainment",
+      "direction": "maximize",
+      "unit": "fraction"
+    },
+    {
+      "name": "uncertainty",
+      "direction": "minimize",
+      "unit": "index"
+    }
+  ],
+  "created_utc": "2026-11-14T00:00:00Z"
+}
