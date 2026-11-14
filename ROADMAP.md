@@ -19,7 +19,7 @@ exists and the maintainer approves it.
 | P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | complete |
 | P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | complete |
 | P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | complete |
-| P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | active |
+| P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | pr-open |
 | P9 Plan and bid exchange | TBD | `feature/p9-plan-exchange` | planned |
 | P10 Interactive planning studio | TBD | `feature/p10-studio` | planned |
 | P11 Demo portal and pilot onboarding | TBD | `feature/p11-demo-portal` | planned |
@@ -319,7 +319,7 @@ Acceptance criteria:
 
 Parent issue: #78
 Branch: `feature/p8-monitoring`
-Status: active
+Status: pr-open
 
 Goal: implement the observation model, the UAV/LiDAR mission simulation, value of information, and the
 recalibration and replanning loop.
