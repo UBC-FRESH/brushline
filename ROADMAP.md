@@ -261,8 +261,8 @@ Status: active
 Goal: implement the 10-to-30-year strategic plan: budget, service levels, risk appetite, monitoring
 policy, and the business-as-usual comparison.
 
-- [ ] P6.1 Implement the single-segment dynamic program
-  - [ ] State classes, actions, transition probabilities, discounting, and a policy
+- [x] P6.1 Implement the single-segment dynamic program (#61)
+  - [x] State classes, actions, transition probabilities, discounting, and a policy
 - [ ] P6.2 Implement the network portfolio search
   - [ ] Budget, service levels, risk, spatial continuity, and contractor capacity at strategic scale
 - [ ] P6.3 Implement the monitoring policy

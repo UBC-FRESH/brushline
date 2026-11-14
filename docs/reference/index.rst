@@ -36,6 +36,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    optimization-validation
    optimization-budget
    optimization-telemetry
+   strategic-dynamic-program
    compiled-dataset
    corridor-contract
    state-contract

@@ -44,4 +44,5 @@ whenever you add a module to the project.
    optimization-validation
    optimization-budget
    optimization-telemetry
+   strategic-dynamic-program
    instance

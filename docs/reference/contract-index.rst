@@ -161,6 +161,14 @@ test suite. This page is the map.
      - ``brushline.optimization-telemetry.v1``
      - ``EventStream``
      - Versioned run, model/data versions, archive path, and ordered events
+   * - Strategic dynamic program
+     - ``brushline.strategic-dp.v1``
+     - ``validate_dynamic_program``
+     - States, actions, transitions, weights, horizon, discount, and terminal values
+   * - Strategic DP result
+     - ``brushline.strategic-dp-result.v1``
+     - ``DynamicProgramResult``
+     - Policy, value table, expected cost, service, risk, and uncertainty
 
 Error prefixes
 --------------
@@ -231,6 +239,8 @@ Error prefixes
      - Promotion record
    * - ``TELEMETRY-*``
      - Telemetry stream
+   * - ``DP-*``
+     - Strategic dynamic program
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -290,6 +300,8 @@ Test layers
   checkpoint save/replay, composed reports, and input guards.
 - Telemetry tests for committed stream/archive compatibility, run events, archive insertion, sequence
   and order validation, missing/mismatched artifacts, SSE, and JSON round-trips.
+- Dynamic-program tests for the committed policy, transition/availability validation, tie-breaking,
+  terminal values, expected outcomes, and invalid models.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
