@@ -11,7 +11,7 @@ exists and the maintainer approves it.
 
 | Phase | Parent issue | Branch | Status |
 | --- | --- | --- | --- |
-| P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | pr-open |
+| P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
 | P1 Contracts and prototype | TBD | `feature/p1-contracts-prototype` | planned |
 | P2 FEMIC-extended instance builder | TBD | `feature/p2-instance-builder` | planned |
 | P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
@@ -51,7 +51,7 @@ exists and the maintainer approves it.
 
 Parent issue: #1
 Branch: `feature/p0-bootstrap`
-Status: pr-open
+Status: complete
 
 Goal: give Brushline its identity, package, operating contract, product scope, architecture, decisions,
 and phase map, and queue a reviewable close-out.
@@ -526,7 +526,7 @@ Acceptance criteria:
 
 ## Detailed Next Steps Notes
 
-1. P0 is active on `feature/p0-bootstrap`. P0.1 to P0.4 and P0.12 are complete. P0.5 is this roadmap.
+1. P0 is complete: pull request #14 squash-merged as `0a6778c`, the branch was deleted, and parent issue #1 is closed. The close-out report is `notes/reports/p0-closeout.md`.
 2. Complete P0.6 to P0.11: the UI, optimization, LiDAR, instance-builder, and demo-portal design notes,
    the design documentation index, the changelog, the close-out report, and the phase pull request.
 3. Queue the P0 close-out and wait for the maintainer's approval. Do not merge the pull request, close
