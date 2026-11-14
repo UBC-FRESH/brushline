@@ -2,7 +2,7 @@
 
 This file is the working contract for coding agents in Brushline.
 
-Brushline is a decision support system for optimal vegetation management along linear infrastructure corridors in forested landscapes. It couples shrub and young-tree growth, treatment transitions, multi-scale planning, and adaptive remote monitoring so asset owners and contractors can converge on transparent, defensible plans and bids.
+Brushline is a decision support system for optimal vegetation management along linear infrastructure corridors in forested landscapes. It couples shrub and young-tree growth, treatment transitions, strategic, tactical, and operational planning, adaptive remote monitoring, a multi-objective metaheuristic search, and an interactive planning studio for asset owners and contractors.
 
 Keep this file short. Each rule below either checks itself or points to the page that explains it.
 The workflow rules come from the UBC-FRESH dev workflow, which this project was seeded from. Project-
@@ -55,7 +55,7 @@ gate, the workflow validator, and the docs build with warnings as errors.
   fail, and each one asserts a specific behavior.
 - Keep the layers: unit tests for each function, contract tests for public interfaces, integration
   tests for the command-line tools, property tests for invariants, and the self-check.
-- The coverage gate is 95 percent branch coverage of `scripts/`. Aim near 100 percent, with tests that
+- The coverage gate is 95 percent branch coverage of `brushline/` and `scripts/`. Aim near 100 percent, with tests that
   assert something.
 
 ## Embedded agent capabilities
@@ -119,4 +119,43 @@ Record the result in the changelog entry for the milestone.
 
 ## Project-specific rules
 
-Add domain guardrails here, each with its reason. Keep shared workflow rules out of this section.
+- **A corridor is a graph of segments, and the segment is the decision unit.** Spans and treatment
+  units are runtime aggregates built from segments. Reason: treatments and monitoring happen along
+  linear features, and compiling at an operational grouping would bake one contractor's layout into
+  the data.
+- **Vegetation state carries its uncertainty.** A state is a distribution over interpretable classes
+  with continuous summaries, and every plan states the state version and interval. Reason: a point
+  estimate hides the risk that should trigger monitoring or treatment.
+- **Treatments are transitions, not deletions.** Every treatment moves a segment to a new state with
+  method-specific efficacy, selectivity, and regrowth. Reason: resprouting and regrowth are the
+  dynamics being managed; a reset-to-zero model biases every interval.
+- **Monitoring is a decision variable.** Flight frequency, route, sensor, and sampling intensity are
+  chosen with their expected value of information. Reason: data collection is part of the budget, and
+  a fixed calendar cannot be optimal for every corridor.
+- **One versioned plan artifact serves the owner and the contractor.** A bid is an annotated plan with
+  a line-item cost build-up, assumptions, and provenance, not a separate spreadsheet. Reason: both
+  sides must inspect and compare the same object.
+- **Optimization is an adapter over `fresh-solutions`.** Brushline supplies variables, options, the
+  exact evaluator, moves, and undo; `fresh-solutions` supplies search, population, checkpoints, seeds,
+  telemetry, and replay. Never fork or copy its engine. Reason: one reusable, tested search framework
+  and one replay contract.
+- **Every reported incumbent is exactly replayable.** Record the adapter version, `fresh-solutions`
+  version, data and model versions, configuration, and seed. Reason: a schedule that cannot be
+  replayed is not evidence.
+- **The studio reads artifacts; it does not own model state.** The FastAPI service and static shell
+  read the run directory, plan, schedule, account series, Pareto archive, and operations timeline.
+  Skins are checked manifests, and a read-only skin cannot carry a mutating action. Reason: one source
+  of truth and a small, auditable service boundary.
+- **Strategic, tactical, and operational plans share one scenario contract.** The scales differ in
+  horizon, resolution, and constraints, not in vocabulary or data versions. Reason: three
+  incompatible truths are worse than one coarse truth.
+- **WS4, FHOPS, and the urban-forest lab are reached through adapters.** Do not copy their internals
+  into Brushline. Reason: their release cycles and provenance remain theirs, and Brushline stays
+  installable without them.
+- **No safety-critical autonomy.** Brushline is decision support. Field verification, qualified
+  judgment, and the asset owner's work-control rules govern any treatment near energised lines,
+  pipelines, or roads. Reason: the consequences of a wrong clearance decision are physical.
+- **Record units, CRS, data versions, model versions, and seeds.** Every dataset and run manifest names
+  them. Reason: vegetation and cost results are meaningless without them.
+- **Keep third-party provenance out of the repository.** Use original descriptions and neutral
+  vocabulary. Reason: the project must stand on its own.
