@@ -5,4 +5,5 @@ Geo points, timeline configuration, operation events, and the deterministic time
 
 .. automodule:: brushline.tactical.timeline
    :members:
+   :noindex:
    :show-inheritance:

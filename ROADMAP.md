@@ -304,8 +304,8 @@ Goal: turn the strategic policy into a 1-to-5-year treatment program and a work-
   - [x] Brushline treatment unit to FHOPS scenario; return productivity, cost, and timeline
 - [x] P7.6 Build the operations timeline and 3D data contract (#75)
   - [x] Timestamped events, crew/machine ids, segments, actions, and cost
-- [ ] P7.7 Validate tactical and operational feasibility
-  - [ ] Capacity, access, seasonality, and a dry-run work plan
+- [x] P7.7 Validate tactical and operational feasibility (#76)
+  - [x] Capacity, access, seasonality, and a dry-run work plan
 
 Acceptance criteria:
 

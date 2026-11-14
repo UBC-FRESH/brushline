@@ -221,6 +221,10 @@ test suite. This page is the map.
      - ``brushline.tactical-timeline.v1``
      - ``OperationsTimeline``
      - Start/finish events, source work orders, segments, positions, cost, and unknown-position count
+   * - Tactical validation
+     - ``brushline.tactical-validation.v1``
+     - ``TacticalValidationResult``
+     - Capacity, access, seasonality, traceability, FHOPS dry-run, and timeline checks
 
 Error prefixes
 --------------
@@ -398,6 +402,8 @@ Test layers
 - FHOPS tests for mapping, deterministic dry-run, boundary pin, optional-version reporting, and guards.
 - Timeline tests for start/finish events, known/unknown positions, segment/crew traceability, ordering,
   and model guards.
+- Tactical validation tests for the synthetic case, every named check, fixture loading, writers, and
+  model guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

@@ -49,6 +49,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    tactical-operations
    tactical-fhops
    tactical-timeline
+   tactical-validation
    compiled-dataset
    corridor-contract
    state-contract
