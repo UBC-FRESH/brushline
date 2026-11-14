@@ -15,8 +15,8 @@ exists and the maintainer approves it.
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
 | P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
-| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | pr-open |
-| P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
+| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | complete |
+| P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | active |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
 | P8 Monitoring and adaptive replanning | TBD | `feature/p8-monitoring` | planned |
@@ -220,15 +220,15 @@ Acceptance criteria:
 
 ## Phase 5: Optimization framework and Pareto search
 
-Parent issue: TBD
+Parent issue: #50
 Branch: `feature/p5-optimization`
-Status: planned
+Status: active
 
 Goal: implement the Brushline adapter over Fresh Solutions, the multi-objective archive, and the exact
 small-instance validation.
 
-- [ ] P5.1 Formulate the decision variables, constraints, and objective vector
-  - [ ] Treatment and monitoring actions, budget, capacity, access, service levels, risk, uncertainty
+- [x] P5.1 Formulate the decision variables, constraints, and objective vector (#51)
+  - [x] Treatment and monitoring actions, budget, capacity, access, service levels, risk, uncertainty
 - [ ] P5.2 Implement the exact evaluator and the incremental path
   - [ ] Simulator-backed evaluation, delta accounting, and batch fallback
 - [ ] P5.3 Implement the move operators

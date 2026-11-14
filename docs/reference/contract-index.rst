@@ -121,6 +121,10 @@ test suite. This page is the map.
      - ``brushline.low-vegetation-model-card.v1``
      - ``validate_model_card``
      - Predictors, training/validation evidence, metrics, candidates, uncertainty, domain, licence, citation, caveats, and decision boundary
+   * - Optimization formulation
+     - ``brushline.optimization-formulation.v1``
+     - ``validate_formulation``
+     - Stable variables, options, periods, targets, hard/soft constraints, and four objectives
 
 Error prefixes
 --------------
@@ -181,6 +185,8 @@ Error prefixes
      - Vegetation validation
    * - ``MODEL-CARD-*``
      - Low-vegetation model card
+   * - ``FORMULATION-*``
+     - Optimization formulation
 
 Test layers
 -----------
@@ -222,6 +228,8 @@ Test layers
   sensitivity, candidate disagreement, and report validation.
 - Model-card tests for predictor/domain ranges, evidence, metrics, candidates, uncertainty, domain checks,
   out-of-domain rejection, and card validation.
+- Formulation tests for stable indices, options, allowed methods, access constraints, objectives,
+  validation, and build reproduction.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

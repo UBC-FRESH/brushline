@@ -36,4 +36,5 @@ whenever you add a module to the project.
    hazards
    vegetation-validation
    model-card
+   optimization-formulation
    instance
