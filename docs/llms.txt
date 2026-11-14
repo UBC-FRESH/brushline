@@ -120,3 +120,5 @@
 - [Demo portal](reference/demo-portal.html): public synthetic portfolio, static builder, instance pages, pilot brief, and read-only validation.
 
 - [Verification and BAU](reference/verification.html): 16 criteria, measured BAU/monitoring/exchange evidence, scale gap, replay, and recommendation.
+
+- [Release 0.1.0](reference/release.html): release notes, known gaps, artifact build, clean install, demo, and approval gate.

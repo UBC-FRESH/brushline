@@ -60,6 +60,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    studio
    demo-portal
    verification
+   release
    compiled-dataset
    corridor-contract
    state-contract
