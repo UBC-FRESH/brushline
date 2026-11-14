@@ -13,8 +13,8 @@ exists and the maintainer approves it.
 | --- | --- | --- | --- |
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
-| P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | pr-open |
-| P3 State, LiDAR, and terrain | TBD | `feature/p3-state-lidar` | planned |
+| P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
+| P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | active |
 | P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
 | P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
@@ -125,7 +125,7 @@ Acceptance criteria:
 
 Parent issue: #24
 Branch: `feature/p2-instance-builder`
-Status: pr-open
+Status: complete
 
 Goal: extend FEMIC's instance, rebuild-spec, FreshForge, catalogue, DataLad, and preflight surfaces to
 build Brushline instances from a map-selected AOI. Do not create a second instance-builder package.
@@ -157,9 +157,9 @@ Acceptance criteria:
 
 ## Phase 3: State, LiDAR, and terrain
 
-Parent issue: TBD
+Parent issue: #33
 Branch: `feature/p3-state-lidar`
-Status: planned
+Status: active
 
 Goal: initialize the segment state from validated open LiDAR, terrain, canopy, inventory, and field data,
 with coverage and applicability made explicit.
