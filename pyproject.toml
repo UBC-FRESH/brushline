@@ -69,6 +69,14 @@ include = ["brushline*"]
 
 [tool.setuptools.package-data]
 "brushline.web" = ["static/*", "static/vendor/*", "skins/*"]
+"brushline.resources.instance" = [
+  "*.md",
+  "config/*.yaml",
+  "config/brushline/*.yaml",
+  "runbooks/*.md",
+  "evidence/*.md",
+  "tests/*.md",
+]
 
 # Tool configuration for the green dashboard (scripts/dashboard.py). Each gate configured
 # here is also a CI check and a pre-commit hook.

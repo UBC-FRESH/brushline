@@ -132,8 +132,8 @@ build Brushline instances from a map-selected AOI. Do not create a second instan
 
 - [x] P2.1 Record and pin the FEMIC extension boundary and provider API
   - [x] Version pin, entry points, compatibility policy, and a failing test if the API drifts
-- [ ] P2.2 Add the Brushline instance template and rebuild spec
-  - [ ] Config, scenario, targets, data pointers, tests, runbooks, docs, evidence, and demo manifest
+- [x] P2.2 Add the Brushline instance template and rebuild spec
+  - [x] Config, scenario, targets, data pointers, tests, runbooks, docs, evidence, and demo manifest
 - [ ] P2.3 Add the Brushline provider nodes
   - [ ] `validate_aoi`, `segment_corridor`, `compile_dataset`, `seed_vegetation_state`,
         `validate_scenario`, `build_demo`

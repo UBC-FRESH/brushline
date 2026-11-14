@@ -16,6 +16,7 @@ import typer
 from brushline import __version__
 from brushline.build.compiler import compile_fixture
 from brushline.fixtures.synthetic import DEFAULT_SEED, generate_fixture
+from brushline.instance_template import install_instance_template
 from brushline.model.schema import validate_dataset
 from brushline.sim.engine import simulate_dataset
 
@@ -106,6 +107,47 @@ def fixture(
     typer.echo(f"fixture: {result.root}")
     typer.echo(f"artifacts: {len(result.artifacts)}")
     typer.echo(f"content_digest: {result.content_digest}")
+
+
+instance_app = typer.Typer(
+    help="Manage Brushline instance templates.",
+    no_args_is_help=True,
+)
+
+
+@instance_app.command("template")
+def instance_template(
+    instance_root: Annotated[
+        Path,
+        typer.Option("--instance-root", help="FEMIC instance root."),
+    ],
+    force: Annotated[
+        bool,
+        typer.Option("--force", help="Overwrite existing template files."),
+    ] = False,
+) -> None:
+    """Install the Brushline template overlay on a FEMIC instance.
+
+    Parameters
+    ----------
+    instance_root : Path
+        FEMIC instance root. It is created when it does not exist.
+    force : bool, optional
+        Overwrite existing template files. Defaults to ``False``.
+
+    Raises
+    ------
+    typer.Exit
+        With status 1 when the packaged template is missing.
+    """
+    try:
+        result = install_instance_template(instance_root, force=force)
+    except FileNotFoundError as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"instance: {result.root}")
+    typer.echo(f"written: {len(result.written)}")
+    typer.echo(f"skipped: {len(result.skipped)}")
 
 
 @app.command()
@@ -315,3 +357,6 @@ def validate(
         typer.echo("VALID" if report.is_valid else "INVALID")
     if not report.is_valid:
         raise typer.Exit(code=1)
+
+
+app.add_typer(instance_app, name="instance")

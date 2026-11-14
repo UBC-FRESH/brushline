@@ -1,0 +1,5 @@
+schema_version: "brushline.standards.v1"
+
+# One entry per service standard. The corridor contract carries the standard id
+# on each segment; this table is the canonical definition.
+service_standards: []

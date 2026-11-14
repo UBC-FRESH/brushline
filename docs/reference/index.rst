@@ -9,6 +9,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
 
    contract-index
    femic-boundary
+   instance-template
    compiled-dataset
    corridor-contract
    state-contract
