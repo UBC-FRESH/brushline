@@ -1,0 +1,11 @@
+{
+  "schema_version": "brushline.exchange-validation.v1",
+  "plan_id": "p9-plan",
+  "same_artifact": true,
+  "cost_reproduced": true,
+  "bid_attributable": true,
+  "within_fair_range": true,
+  "approval_reviewer": "reviewer-1",
+  "checks_passed": true,
+  "created_utc": "2026-11-14T00:00:00Z"
+}

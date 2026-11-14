@@ -112,3 +112,5 @@
 - [Recalibration](reference/recalibration.html): posterior state, uncertainty, parameter, and model record.
 - [Replan trigger](reference/replan.html): forecast-error/uncertainty trigger and new plan version.
 - [Monitoring validation](reference/monitoring-validation.html): adaptive versus fixed calendar, recalibration, and replan.
+
+- [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.

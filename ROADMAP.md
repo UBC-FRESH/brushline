@@ -19,8 +19,8 @@ exists and the maintainer approves it.
 | P5 Optimization framework and Pareto search | #50 | `feature/p5-optimization` | complete |
 | P6 Strategic planning and monitoring policy | #60 | `feature/p6-strategic` | complete |
 | P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | complete |
-| P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | pr-open |
-| P9 Plan and bid exchange | TBD | `feature/p9-plan-exchange` | planned |
+| P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
+| P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | pr-open |
 | P10 Interactive planning studio | TBD | `feature/p10-studio` | planned |
 | P11 Demo portal and pilot onboarding | TBD | `feature/p11-demo-portal` | planned |
 | P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
@@ -319,7 +319,7 @@ Acceptance criteria:
 
 Parent issue: #78
 Branch: `feature/p8-monitoring`
-Status: pr-open
+Status: complete
 
 Goal: implement the observation model, the UAV/LiDAR mission simulation, value of information, and the
 recalibration and replanning loop.
@@ -327,15 +327,15 @@ recalibration and replanning loop.
 - [x] P8.1 Implement the observation model (#79)
   - [x] Coverage, detection, measurement error, classification confusion, and latency
 - [x] P8.2 Implement the UAV/LiDAR mission simulation
-  - [ ] Corridor graph, travel, endurance, sensor footprint, weather windows, and cost
+  - [x] Corridor graph, travel, endurance, sensor footprint, weather windows, and cost
 - [x] P8.3 Implement coverage and value of information
-  - [ ] Expected decision loss, monitoring cost, and a tractable approximation
+  - [x] Expected decision loss, monitoring cost, and a tractable approximation
 - [x] P8.4 Implement recalibration
-  - [ ] State update, parameter update, uncertainty update, and a model-card record
+  - [x] State update, parameter update, uncertainty update, and a model-card record
 - [x] P8.5 Implement the adaptive replanning trigger
-  - [ ] Forecast error, uncertainty, and a new plan version
+  - [x] Forecast error, uncertainty, and a new plan version
 - [x] P8.6 Validate the monitoring policy against a fixed calendar
-  - [ ] Regret per monitoring dollar on a synthetic case, with the assumptions stated
+  - [x] Regret per monitoring dollar on a synthetic case, with the assumptions stated
 
 Acceptance criteria:
 
@@ -348,24 +348,24 @@ Acceptance criteria:
 
 ## Phase 9: Plan and bid exchange
 
-Parent issue: TBD
+Parent issue: #86
 Branch: `feature/p9-plan-exchange`
-Status: planned
+Status: pr-open
 
 Goal: make one versioned plan artifact the shared surface for the owner and the contractor, with a
 traceable cost build-up and a fair-bid comparison.
 
-- [ ] P9.1 Implement the plan schema and cost build-up
+- [x] P9.1 Implement the plan schema and cost build-up
   - [ ] Header, segments, actions, quantities, rates, assumptions, risk, provenance, and approval
-- [ ] P9.2 Build the owner view
+- [x] P9.2 Build the owner view
   - [ ] Budget, service levels, risk, portfolio, and BAU comparison
-- [ ] P9.3 Build the contractor bid view
+- [x] P9.3 Build the contractor bid view
   - [ ] Quantities, access, schedule, productivity, cost build-up, and assumptions
-- [ ] P9.4 Build the bid normalization and comparison
+- [x] P9.4 Build the bid normalization and comparison
   - [ ] Named assumptions, rate differences, scope differences, and a fair-price range
-- [ ] P9.5 Add the audit trail and approval record
+- [x] P9.5 Add the audit trail and approval record
   - [ ] Data/model/plan versions, reviewer, and approval status
-- [ ] P9.6 Validate the exchange on a synthetic owner-contractor case
+- [x] P9.6 Validate the exchange on a synthetic owner-contractor case
   - [ ] Same artifact, same cost total, every difference attributable
 
 Acceptance criteria:
