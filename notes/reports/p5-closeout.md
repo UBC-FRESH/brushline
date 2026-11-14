@@ -2,9 +2,9 @@
 
 Phase: P5 Optimization framework and Pareto search
 Parent issue: #50
-Pull request: pending
-Evidence head: `25c186e`, the head that the gates and local verification below cover
-Report commit: this commit, plus the pull-request number update
+Pull request: #59, `feature/p5-optimization` into `main`
+Evidence head: `c4a0aaa`, the head that the gates and local verification below cover
+Report commit: this commit, a report-only update after the evidence head
 Date: 2026-11-14
 Status: queued for approval. Not merged.
 
@@ -112,7 +112,7 @@ and 96% for `adapter.py`.
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | pending | pending | CI runs on the pull request; the pull-request number and run will be recorded after opening it |
+| 43577813483 | `c4a0aaa` | success | Quality gates, Pre-commit parity, and Green dashboard summary passed; this report-only update follows |
 | n/a | branch pushes | not run | CI runs on pull requests and `main`, not on plain feature-branch pushes |
 
 ## 6. Next phase
