@@ -23,8 +23,8 @@ exists and the maintainer approves it.
 | P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
 | P10 Interactive planning studio | #94 | `feature/p10-studio` | complete |
 | P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | complete |
-| P12 Verification and the BAU case | #112 | `feature/p12-verify` | pr-open |
-| P13 Release and deploy | TBD | `feature/p13-release` | planned |
+| P12 Verification and the BAU case | #112 | `feature/p12-verify` | complete |
+| P13 Release and deploy | #121 | `feature/p13-release` | active |
 | P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
 
 ## Lifecycle Map
@@ -447,7 +447,7 @@ Acceptance criteria:
 
 Parent issue: #112
 Branch: `feature/p12-verify`
-Status: pr-open
+Status: complete
 
 Goal: show that the build meets its acceptance criteria, with evidence, and demonstrate the
 optimal-versus-business-as-usual value proposition.
@@ -477,9 +477,9 @@ Acceptance criteria:
 
 ## Phase 13: Release and deploy
 
-Parent issue: TBD
+Parent issue: #121
 Branch: `feature/p13-release`
-Status: planned
+Status: active
 
 Goal: tag a release, publish the package and docs, and verify the published release from a clean
 checkout.
