@@ -239,8 +239,8 @@ small-instance validation.
   - [x] Scalarization portfolio, dominance, diversity, archive members, and promotion rule
 - [x] P5.6 Validate on tiny instances (#56)
   - [x] Exhaustive enumeration, exact/batch agreement, known optimum, and replay
-- [ ] P5.7 Certify the search budget and performance
-  - [ ] Quality-versus-budget curve, seed variance, scaling, and the no-optimality statement
+- [x] P5.7 Certify the search budget and performance (#57)
+  - [x] Quality-versus-budget curve, seed variance, scaling, and the no-optimality statement
 - [ ] P5.8 Freeze the archive and telemetry contract for the studio
   - [ ] `pareto.json`, progress events, incumbent records, and evidence links
 

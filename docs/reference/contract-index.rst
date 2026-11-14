@@ -145,6 +145,14 @@ test suite. This page is the map.
      - ``brushline.tiny-validation.v1``
      - ``TinyValidationReport``
      - Optimum, optional search, gap, reach flag, replay, and expected-match evidence
+   * - Search budget
+     - ``brushline.optimization-budget.v1``
+     - ``QualityBudgetReport``
+     - Per-budget and per-seed objectives, feasibility, evaluations, replay, and no-optimality caveat
+   * - Budget report
+     - ``brushline.optimization-budget-report.v1``
+     - ``BudgetReport``
+     - Quality, scaling, checkpoint, adapter and Fresh Solutions versions, and caveat
 
 Error prefixes
 --------------
@@ -266,6 +274,8 @@ Test layers
   invalid archives, and promotion records.
 - Tiny-validation tests for complete enumeration, the committed optimum, exact/batch agreement,
   search gap, replay, infeasible instances, ties, and report round-trips.
+- Budget tests for every budget/seed point, feasible and infeasible runs, scaling timing and memory,
+  checkpoint save/replay, composed reports, and input guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

@@ -42,4 +42,5 @@ whenever you add a module to the project.
    optimization-adapter
    optimization-archive
    optimization-validation
+   optimization-budget
    instance
