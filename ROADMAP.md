@@ -21,8 +21,8 @@ exists and the maintainer approves it.
 | P7 Tactical and operational planning | #69 | `feature/p7-tactical-operational` | complete |
 | P8 Monitoring and adaptive replanning | #78 | `feature/p8-monitoring` | complete |
 | P9 Plan and bid exchange | #86 | `feature/p9-plan-exchange` | complete |
-| P10 Interactive planning studio | #94 | `feature/p10-studio` | pr-open |
-| P11 Demo portal and pilot onboarding | TBD | `feature/p11-demo-portal` | planned |
+| P10 Interactive planning studio | #94 | `feature/p10-studio` | complete |
+| P11 Demo portal and pilot onboarding | #104 | `feature/p11-demo-portal` | active |
 | P12 Verification and the BAU case | TBD | `feature/p12-verify` | planned |
 | P13 Release and deploy | TBD | `feature/p13-release` | planned |
 | P14 Operate and maintain | TBD | `feature/p14-operate` | planned |
@@ -380,7 +380,7 @@ Acceptance criteria:
 
 Parent issue: #94
 Branch: `feature/p10-studio`
-Status: pr-open
+Status: complete
 
 Goal: deliver the optional FastAPI service and static browser shell with the 2D map, 3D scene, seven
 skins, live search, Pareto explorer, and animated operations.
@@ -416,9 +416,9 @@ Acceptance criteria:
 
 ## Phase 11: Demo portal and pilot onboarding
 
-Parent issue: TBD
+Parent issue: #104
 Branch: `feature/p11-demo-portal`
-Status: planned
+Status: active
 
 Goal: publish a public-data-only, read-only demo portal with curated instances and a pilot-request path.
 
