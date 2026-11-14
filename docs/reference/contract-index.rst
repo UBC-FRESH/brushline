@@ -105,6 +105,10 @@ test suite. This page is the map.
      - ``brushline.treatment.v1``
      - ``validate_treatment_result``
      - Method/season efficacy, top-kill, residual, resprouting, delay, cost, trajectory, and monotonicity
+   * - Treatment calibration
+     - ``brushline.treatment-calibration.v1``
+     - ``validate_treatment_calibration``
+     - Evidence, pooling, shrinkage, intervals, sample sizes, source ids, and leave-one-out checks
 
 Error prefixes
 --------------
@@ -157,6 +161,8 @@ Error prefixes
      - Growth model
    * - ``TREATMENT-*``
      - Treatment transitions
+   * - ``CALIBRATION-*``
+     - Treatment calibration
 
 Test layers
 -----------
@@ -190,6 +196,8 @@ Test layers
   domain blocking, uncertainty, conversion, and validator errors.
 - Treatment tests for method/season effects, immediate residual, resprouting, delay, trajectory,
   cost, conversion, and validator errors.
+- Calibration tests for exact/pooled/prior levels, shrinkage, intervals, holdout checks, model validation,
+  and parameter application.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

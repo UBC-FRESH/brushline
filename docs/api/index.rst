@@ -32,4 +32,5 @@ whenever you add a module to the project.
    state-space
    growth
    treatment
+   treatment-calibration
    instance

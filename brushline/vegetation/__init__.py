@@ -2,6 +2,14 @@
 
 from __future__ import annotations
 
+from brushline.vegetation.calibration import (
+    TreatmentCalibrationConfig,
+    TreatmentCalibrationError,
+    TreatmentCalibrationReport,
+    TreatmentObservation,
+    calibrate_treatment,
+    validate_treatment_calibration,
+)
 from brushline.vegetation.growth import (
     GROWTH_PARAMETERS,
     GrowthConfig,
@@ -59,15 +67,21 @@ __all__ = [
     "StateSpaceConfig",
     "StateStratum",
     "StateVariable",
+    "TreatmentCalibrationConfig",
+    "TreatmentCalibrationError",
+    "TreatmentCalibrationReport",
     "TreatmentConfig",
     "TreatmentError",
+    "TreatmentObservation",
     "TreatmentRequest",
     "TreatmentResult",
     "apply_treatment",
+    "calibrate_treatment",
     "classify_state",
     "grow",
     "project_state",
     "validate_growth_result",
     "validate_state_projection",
+    "validate_treatment_calibration",
     "validate_treatment_result",
 ]

@@ -23,6 +23,7 @@
 - [Low-vegetation state space](reference/state-space.html): functional groups, variables, discretization, class probabilities, uncertainty, and projection to the state contract.
 - [Growth model](reference/growth-model.html): saturating group-specific growth, site/climate/competition modifiers, uncertainty, and the out-of-domain rule.
 - [Treatment transitions](reference/treatment-transitions.html): method and season priors, top-kill, resprouting, regrowth delay, cost hooks, and the post-delay trajectory.
+- [Treatment calibration](reference/treatment-calibration.html): before/after evidence, pooling, shrinkage, intervals, leave-one-out checks, and calibrated parameters.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -52,3 +53,4 @@
 - [State space API](api/state-space.html): the profiles, distributions, observation projection, and validator.
 - [Growth API](api/growth.html): the parameters, request/result models, growth step, and validator.
 - [Treatment API](api/treatment.html): the parameters, request/result models, transition, and validator.
+- [Treatment calibration API](api/treatment-calibration.html): the evidence/calibrated models, fitter, and validator.

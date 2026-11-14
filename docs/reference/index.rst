@@ -24,6 +24,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    state-space
    growth-model
    treatment-transitions
+   treatment-calibration
    compiled-dataset
    corridor-contract
    state-contract
