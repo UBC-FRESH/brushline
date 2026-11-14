@@ -1163,7 +1163,7 @@ def create_app(store: ModelBuilderStore | None = None) -> FastAPI:
     builder = store or ModelBuilderStore()
     app = FastAPI(
         title="Brushline model builder",
-        version="0.1.3",
+        version="0.1.4",
         description="Map-to-instance prototype: plan, approve, dry-run, review, and hand off.",
     )
     app.state.model_builder = builder

@@ -1,6 +1,6 @@
-# Brushline 0.1.3 release notes
+# Brushline 0.1.4 release notes
 
-Status: patch release adding the multi-instance studio selector and three observed UBC public-data blocks.
+Status: patch release adding the P14 operations and maintenance tooling.
 
 ## What this is
 
@@ -33,6 +33,8 @@ studio.
   release recommendation.
 
 ## Patch changes
+
+- Add the monthly review cadence, dependency/pin audit, model/data governance register, maintainer handover guide, and synthetic pilot evidence.
 
 - Add a model-instance selector: synthetic planning corridor plus three observed UBC public-data blocks.
 - Each instance switches its block list, map, 3D scene, and summary.
