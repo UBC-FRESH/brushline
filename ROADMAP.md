@@ -267,8 +267,8 @@ policy, and the business-as-usual comparison.
   - [x] Budget, service levels, risk, spatial continuity, and contractor capacity at strategic scale
 - [x] P6.3 Implement the monitoring policy (#63)
   - [x] Frequency, route, sensor, sampling intensity, and value-of-information approximation
-- [ ] P6.4 Implement the business-as-usual baseline
-  - [ ] Fixed cycle, current policy, and like-for-like simulation
+- [x] P6.4 Implement the business-as-usual baseline (#64)
+  - [x] Fixed cycle, current policy, and like-for-like simulation
 - [ ] P6.5 Build the strategic reports
   - [ ] Budget and cash forecast, service trajectory, risk trajectory, monitoring cost, and caveats
 - [ ] P6.6 Add the scenario archive and reproducibility record

@@ -1,5 +1,14 @@
 """Strategic planning: dynamic programs, portfolios, monitoring, BAU, reports, and scenarios."""
 
+from brushline.strategic.bau import (
+    BAU_SCHEMA_VERSION,
+    BauComparison,
+    BauConfig,
+    BauError,
+    BauPlan,
+    build_bau_plan,
+    compare_bau,
+)
 from brushline.strategic.dynamic_program import (
     DP_SCHEMA_VERSION,
     DPState,
@@ -40,9 +49,14 @@ from brushline.strategic.portfolio import (
 )
 
 __all__ = [
+    "BAU_SCHEMA_VERSION",
     "DP_SCHEMA_VERSION",
     "MONITORING_SCHEMA_VERSION",
     "PORTFOLIO_SCHEMA_VERSION",
+    "BauComparison",
+    "BauConfig",
+    "BauError",
+    "BauPlan",
     "DPState",
     "DynamicProgram",
     "DynamicProgramError",
@@ -66,8 +80,10 @@ __all__ = [
     "StrategicAction",
     "StrategicPortfolio",
     "Transition",
+    "build_bau_plan",
     "build_monitoring_policy",
     "build_strategic_portfolio",
+    "compare_bau",
     "solve_dynamic_program",
     "validate_dynamic_program",
     "validate_monitoring_inputs",

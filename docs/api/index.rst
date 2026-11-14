@@ -47,4 +47,5 @@ whenever you add a module to the project.
    strategic-dynamic-program
    strategic-portfolio
    strategic-monitoring
+   strategic-bau
    instance

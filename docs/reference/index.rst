@@ -39,6 +39,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    strategic-dynamic-program
    strategic-portfolio
    strategic-monitoring
+   strategic-bau
    compiled-dataset
    corridor-contract
    state-contract

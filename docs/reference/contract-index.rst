@@ -177,6 +177,10 @@ test suite. This page is the map.
      - ``brushline.strategic-monitoring.v1``
      - ``MonitoringPolicy``
      - Span decisions, frequency, route, sensor, cost, value of information, and reductions
+   * - Strategic BAU
+     - ``brushline.strategic-bau.v1``
+     - ``BauPlan``
+     - Fixed-cycle selections, period summaries, outcomes, baselines, and budget/capacity flags
 
 Error prefixes
 --------------
@@ -253,6 +257,8 @@ Error prefixes
      - Strategic portfolio
    * - ``MONITORING-*``
      - Strategic monitoring
+   * - ``BAU-*``
+     - Business-as-usual baseline
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -318,6 +324,8 @@ Test layers
   empty options, and invalid references.
 - Monitoring tests for value-ranked selection, intervals/event years, budget/value floors, empty options,
   invalid references, and model guards.
+- BAU tests for annual and multi-year cycles, budget truncation and unenforced violations, capacity,
+  action filters, empty/invalid inputs, and like-for-like comparison.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
