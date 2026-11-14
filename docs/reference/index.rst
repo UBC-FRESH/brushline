@@ -14,6 +14,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    data-catalogue
    fetch-plan
    agent-capabilities
+   model-builder
    compiled-dataset
    corridor-contract
    state-contract

@@ -143,8 +143,8 @@ build Brushline instances from a map-selected AOI. Do not create a second instan
   - [x] Plan-only preview, checksums, DataLad/annex pointers, coverage state, and gap report
 - [x] P2.6 Add the agent capability contract and offline test harness
   - [x] Prompt, tool allowlist, validator, retry budget, fake provider, and evidence record
-- [ ] P2.7 Build the map-to-instance prototype and review screen
-  - [ ] AOI draw/select, data availability, approvals, progress, gap report, and instance handoff
+- [x] P2.7 Build the map-to-instance prototype and review screen
+  - [x] AOI draw/select, data availability, approvals, progress, gap report, and instance handoff
 
 Acceptance criteria:
 

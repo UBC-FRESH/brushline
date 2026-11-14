@@ -64,6 +64,11 @@ test suite. This page is the map.
      - ``brushline.capabilities.v1``, ``brushline.capability-outcome.v1``
      - ``validate_capability_registry``, ``validate_capability_outcome``
      - Six capabilities, prompt ids, tool allowlists, validators, retry budgets, private markers, authority fields, sanitized outcomes
+   * - Model builder session
+     - ``brushline.model-builder-session.v1``, ``brushline.model-builder-review.v1``,
+       ``brushline.handoff.v1``
+     - ``BuilderSession``, ``ReviewSummary``, ``HandoffRecord``
+     - AOI, plan preview, availability, approvals, stages, review, handoff, and dry-run artifacts
 
 Error prefixes
 --------------
@@ -113,6 +118,8 @@ Test layers
   the six coverage states, and the gap decision.
 - Capability tests for the six prompts, tool allowlists, validator failure, retry budget, fake provider,
   private markers, authoritative fields, and sanitized records.
+- Model-builder tests for the static shell, plan preview, approvals, blocked builds, dry-run artifacts,
+  progress SSE, review, handoff, and custom AOI gaps.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

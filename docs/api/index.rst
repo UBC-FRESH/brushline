@@ -22,4 +22,5 @@ whenever you add a module to the project.
    catalogue
    fetch
    capabilities
+   model-builder
    instance
