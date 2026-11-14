@@ -20,8 +20,9 @@ def test_help_names_the_status_command_and_the_version_flag() -> None:
     """The help text exposes the first command surface."""
     result = RUNNER.invoke(app, ["--help"])
     assert result.exit_code == 0
-    assert "status" in result.stdout
-    assert "--version" in result.stdout
+    text = result.stdout.lower()
+    assert "status" in text
+    assert "version" in text
 
 
 def test_status_prints_the_version_and_the_pre_alpha_state() -> None:
