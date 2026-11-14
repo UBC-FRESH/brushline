@@ -66,4 +66,5 @@ whenever you add a module to the project.
    monitoring-validation
    plan-exchange
    studio
+   demo-portal
    instance

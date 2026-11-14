@@ -116,3 +116,5 @@
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 
 - [Planning studio](reference/studio.html): artifact endpoints, 2D map, 3D walkthrough/pre-post, skins, Pareto, timeline, and SSE.
+
+- [Demo portal](reference/demo-portal.html): public synthetic portfolio, static builder, instance pages, pilot brief, and read-only validation.

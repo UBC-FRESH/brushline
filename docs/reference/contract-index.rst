@@ -237,6 +237,10 @@ test suite. This page is the map.
      - ``brushline.scene.v1``
      - ``Studio``
      - Artifact-backed block scene with pre/post variants and unknown-position labels
+   * - Demo portfolio
+     - ``brushline.demo.v1``
+     - ``DemoManifest``
+     - Public synthetic instances, licences, caveats, artifacts, and pilot link
 
 Error prefixes
 --------------
