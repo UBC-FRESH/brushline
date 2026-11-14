@@ -151,3 +151,13 @@ Settings changes, each with its exact command, wait for approval:
 
 - [ ] Approve as written.
 - [ ] Approve with the changes stated here: <changes>.
+
+## 8. Post-closeout settings
+
+The maintainer approved the settings changes after the close-out was queued:
+
+- Repository visibility: private to public.
+- GitHub Pages: enabled with `build_type=workflow`.
+- Published documentation: <https://ubc-fresh.github.io/brushline/>.
+- Docs run `43543313202`: build and deploy passed.
+- Verified pages: home, `/design/`, `/api/`, and `/api/brushline.html` return HTTP 200.
