@@ -265,8 +265,8 @@ policy, and the business-as-usual comparison.
   - [x] State classes, actions, transition probabilities, discounting, and a policy
 - [x] P6.2 Implement the network portfolio search (#62)
   - [x] Budget, service levels, risk, spatial continuity, and contractor capacity at strategic scale
-- [ ] P6.3 Implement the monitoring policy
-  - [ ] Frequency, route, sensor, sampling intensity, and value-of-information approximation
+- [x] P6.3 Implement the monitoring policy (#63)
+  - [x] Frequency, route, sensor, sampling intensity, and value-of-information approximation
 - [ ] P6.4 Implement the business-as-usual baseline
   - [ ] Fixed cycle, current policy, and like-for-like simulation
 - [ ] P6.5 Build the strategic reports

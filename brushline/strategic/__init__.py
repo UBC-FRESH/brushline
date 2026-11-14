@@ -12,6 +12,18 @@ from brushline.strategic.dynamic_program import (
     solve_dynamic_program,
     validate_dynamic_program,
 )
+from brushline.strategic.monitoring import (
+    MONITORING_SCHEMA_VERSION,
+    MonitoringConfig,
+    MonitoringDecision,
+    MonitoringError,
+    MonitoringOption,
+    MonitoringPolicy,
+    MonitoringSpan,
+    MonitoringViolation,
+    build_monitoring_policy,
+    validate_monitoring_inputs,
+)
 from brushline.strategic.portfolio import (
     PORTFOLIO_SCHEMA_VERSION,
     PeriodSummary,
@@ -29,11 +41,19 @@ from brushline.strategic.portfolio import (
 
 __all__ = [
     "DP_SCHEMA_VERSION",
+    "MONITORING_SCHEMA_VERSION",
     "PORTFOLIO_SCHEMA_VERSION",
     "DPState",
     "DynamicProgram",
     "DynamicProgramError",
     "DynamicProgramResult",
+    "MonitoringConfig",
+    "MonitoringDecision",
+    "MonitoringError",
+    "MonitoringOption",
+    "MonitoringPolicy",
+    "MonitoringSpan",
+    "MonitoringViolation",
     "PeriodSummary",
     "PolicyDecision",
     "PortfolioConfig",
@@ -46,8 +66,10 @@ __all__ = [
     "StrategicAction",
     "StrategicPortfolio",
     "Transition",
+    "build_monitoring_policy",
     "build_strategic_portfolio",
     "solve_dynamic_program",
     "validate_dynamic_program",
+    "validate_monitoring_inputs",
     "validate_portfolio_inputs",
 ]

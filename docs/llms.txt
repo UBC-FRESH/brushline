@@ -37,6 +37,7 @@
 - [Studio telemetry](reference/optimization-telemetry.html): versioned progress events, SSE, archive references, and the compatibility check.
 - [Strategic dynamic program](reference/strategic-dynamic-program.html): state/action transitions, reward, backward induction, policy, and expected outcomes.
 - [Strategic portfolio](reference/strategic-portfolio.html): budget, capacity, service/risk targets, continuity, and deterministic selection.
+- [Strategic monitoring](reference/strategic-monitoring.html): frequency, route, sensor, sampling, cost, and value of information.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -80,3 +81,4 @@
 - [Studio telemetry API](api/optimization-telemetry.html): event streams, writers, and studio compatibility.
 - [Strategic dynamic program API](api/strategic-dynamic-program.html): the DP models, solver, and validation.
 - [Strategic portfolio API](api/strategic-portfolio.html): portfolio models, builder, and validation.
+- [Strategic monitoring API](api/strategic-monitoring.html): monitoring policy models and selection.
