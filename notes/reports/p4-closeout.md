@@ -2,9 +2,9 @@
 
 Phase: P4 Vegetation dynamics and treatments
 Parent issue: #41
-Pull request: queued on `feature/p4-vegetation` into `main`
+Pull request: #49, `feature/p4-vegetation` into `main`
 Evidence head: `bde5ff4`, the head that the gates and local verification below cover
-Report commit: the commit that adds this report. Its CI run is posted on the pull request.
+Report commit: `0cbc7b5`, with the PR number update in the next commit. CI runs on pull request #49.
 Date: 2026-11-14
 Status: queued for approval. Not merged.
 
@@ -12,7 +12,7 @@ Status: queued for approval. Not merged.
 
 Approve these actions. The agent carries them out in this order, and reads back each result.
 
-1. Squash-merge the P4 pull request, and delete the branch `feature/p4-vegetation`.
+1. Squash-merge pull request #49, and delete the branch `feature/p4-vegetation`.
 2. Close parent issue #41 with a closeout comment that cites the merge commit.
 3. Launch P5 (Optimization framework and Pareto search): create its branch, set the phase statuses in
    `ROADMAP.md`, create its child issues as sub-issues, and start P5.1.
@@ -97,7 +97,7 @@ The final local dashboard at the evidence head is `OVERALL: GREEN`. The workflow
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | `bde5ff4` plus the report | in progress | CI runs on the pull request; the result is posted on the PR |
+| pending | `bde5ff4` plus the report | in progress | CI runs on pull request #49; the result is posted on the PR |
 | n/a | branch pushes | not run | CI runs on pull requests and `main`, not on plain feature-branch pushes |
 
 ## 6. Next phase
