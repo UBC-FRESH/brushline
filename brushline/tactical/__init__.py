@@ -55,6 +55,14 @@ from brushline.tactical.resources import (
     ResourceViolation,
     build_resource_plan,
 )
+from brushline.tactical.timeline import (
+    TIMELINE_SCHEMA_VERSION,
+    GeoPoint,
+    OperationEvent,
+    OperationsTimeline,
+    TimelineConfig,
+    build_operations_timeline,
+)
 
 __all__ = [
     "ACCESS_SCHEMA_VERSION",
@@ -65,6 +73,7 @@ __all__ = [
     "PROGRAM_SCHEMA_VERSION",
     "RESOURCE_SCHEMA_VERSION",
     "ROAD_STATUSES",
+    "TIMELINE_SCHEMA_VERSION",
     "AccessError",
     "AccessPlan",
     "AccessResult",
@@ -76,8 +85,11 @@ __all__ = [
     "FhopsError",
     "FhopsRequest",
     "FhopsResult",
+    "GeoPoint",
+    "OperationEvent",
     "OperationsConfig",
     "OperationsPlan",
+    "OperationsTimeline",
     "OperationsViolation",
     "ResourceError",
     "ResourcePlan",
@@ -89,10 +101,12 @@ __all__ = [
     "TacticalError",
     "TacticalProgram",
     "TacticalViolation",
+    "TimelineConfig",
     "TreatmentUnit",
     "WorkOrder",
     "build_access_plan",
     "build_operations_plan",
+    "build_operations_timeline",
     "build_resource_plan",
     "build_tactical_program",
     "dry_run",

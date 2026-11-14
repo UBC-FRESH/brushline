@@ -56,4 +56,5 @@ whenever you add a module to the project.
    tactical-access
    tactical-operations
    tactical-fhops
+   tactical-timeline
    instance

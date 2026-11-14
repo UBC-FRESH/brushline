@@ -67,6 +67,8 @@ class WorkOrder(BaseModel):
         Cost.
     status : str
         Status.
+    segment_ids : list of str, optional
+        Source segment ids.
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -83,6 +85,7 @@ class WorkOrder(BaseModel):
     method: str
     cost: float = Field(ge=0)
     status: str = "ready"
+    segment_ids: list[str] = Field(default_factory=list)
 
 
 class OperationsViolation(BaseModel):
@@ -210,6 +213,7 @@ def build_operations_plan(
             continue
         crew = rules.crew_ids[index % len(rules.crew_ids)]
         day = rules.start_day + index // rules.max_orders_per_day
+        unit = next((item for item in program.units if item.unit_id == action.unit_id), None)
         orders.append(
             WorkOrder(
                 work_order_id=f"wo-{action.action_id}",
@@ -223,6 +227,7 @@ def build_operations_plan(
                 season=action.season,
                 method=action.method,
                 cost=action.cost,
+                segment_ids=list(unit.segment_ids) if unit else [],
             )
         )
     return OperationsPlan(

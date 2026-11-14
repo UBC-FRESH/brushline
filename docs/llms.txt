@@ -47,6 +47,7 @@
 - [Tactical access](reference/tactical-access.html): source-preserving road status, windows, route length, and no invented open/closed verdict.
 - [Operational work plan](reference/tactical-operations.html): work orders, crew/day assignment, access gates, and traceability.
 - [FHOPS adapter](reference/tactical-fhops.html): pinned optional boundary, tactical mapping, dry-run productivity/cost, and explicit no-live-run notes.
+- [Operations timeline](reference/tactical-timeline.html): timestamped events, crew/machine/segment ids, known/unknown positions, and cost.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -100,3 +101,4 @@
 - [Tactical access API](api/tactical-access.html): road links, windows, decisions, and access plans.
 - [Operational work plan API](api/tactical-operations.html): work orders and the operations builder.
 - [FHOPS adapter API](api/tactical-fhops.html): boundary, requests, dry-run, and results.
+- [Operations timeline API](api/tactical-timeline.html): events, positions, and timeline builder.
