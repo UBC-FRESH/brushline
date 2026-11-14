@@ -55,4 +55,5 @@ whenever you add a module to the project.
    tactical-resources
    tactical-access
    tactical-operations
+   tactical-fhops
    instance

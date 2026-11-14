@@ -300,8 +300,8 @@ Goal: turn the strategic policy into a 1-to-5-year treatment program and a work-
   - [x] fresh-road/ALSroads, route length, access windows, and no invented open/closed verdict
 - [x] P7.4 Generate the operational work plan (#73)
   - [x] Work order, sequence, assignment, and daily schedule
-- [ ] P7.5 Build the FHOPS adapter
-  - [ ] Brushline treatment unit to FHOPS scenario; return productivity, cost, and timeline
+- [x] P7.5 Build the FHOPS adapter (#74)
+  - [x] Brushline treatment unit to FHOPS scenario; return productivity, cost, and timeline
 - [ ] P7.6 Build the operations timeline and 3D data contract
   - [ ] Timestamped events, crew/machine ids, segments, actions, and cost
 - [ ] P7.7 Validate tactical and operational feasibility

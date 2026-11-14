@@ -13,6 +13,19 @@ from brushline.tactical.access import (
     RoadLink,
     build_access_plan,
 )
+from brushline.tactical.fhops import (
+    FHOPS_PACKAGE,
+    FHOPS_PINNED_VERSION,
+    FHOPS_SCHEMA_VERSION,
+    FhopsBoundary,
+    FhopsConfig,
+    FhopsError,
+    FhopsRequest,
+    FhopsResult,
+    dry_run,
+    fhops_version,
+    request_from_action,
+)
 from brushline.tactical.operations import (
     OPERATIONS_SCHEMA_VERSION,
     OperationsConfig,
@@ -45,6 +58,9 @@ from brushline.tactical.resources import (
 
 __all__ = [
     "ACCESS_SCHEMA_VERSION",
+    "FHOPS_PACKAGE",
+    "FHOPS_PINNED_VERSION",
+    "FHOPS_SCHEMA_VERSION",
     "OPERATIONS_SCHEMA_VERSION",
     "PROGRAM_SCHEMA_VERSION",
     "RESOURCE_SCHEMA_VERSION",
@@ -55,6 +71,11 @@ __all__ = [
     "AccessWindow",
     "ContractorProfile",
     "CostLine",
+    "FhopsBoundary",
+    "FhopsConfig",
+    "FhopsError",
+    "FhopsRequest",
+    "FhopsResult",
     "OperationsConfig",
     "OperationsPlan",
     "OperationsViolation",
@@ -74,5 +95,8 @@ __all__ = [
     "build_operations_plan",
     "build_resource_plan",
     "build_tactical_program",
+    "dry_run",
+    "fhops_version",
+    "request_from_action",
     "validate_tactical_inputs",
 ]

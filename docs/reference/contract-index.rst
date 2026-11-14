@@ -213,6 +213,10 @@ test suite. This page is the map.
      - ``brushline.tactical-operations.v1``
      - ``OperationsPlan``
      - Work orders, source action, crew/day, cost, access gates, and violations
+   * - Tactical FHOPS
+     - ``brushline.tactical-fhops.v1``
+     - ``FhopsResult``
+     - Optional boundary, request mapping, dry-run machine hours/productivity/cost, and notes
 
 Error prefixes
 --------------
@@ -303,6 +307,8 @@ Error prefixes
      - Tactical access
    * - ``OPERATIONS-*``
      - Operational plan
+   * - ``FHOPS-*``
+     - Tactical FHOPS boundary
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -383,6 +389,7 @@ Test layers
 - Access tests for open/restricted/closed/unknown status, source preservation, route totals, missing
   links, duplicates, and model guards.
 - Operations tests for work-order traceability, crew/day assignment, blocked/missing access, and totals.
+- FHOPS tests for mapping, deterministic dry-run, boundary pin, optional-version reporting, and guards.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
