@@ -14,8 +14,8 @@ exists and the maintainer approves it.
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
-| P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | pr-open |
-| P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
+| P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
+| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | active |
 | P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
@@ -159,7 +159,7 @@ Acceptance criteria:
 
 Parent issue: #33
 Branch: `feature/p3-state-lidar`
-Status: pr-open
+Status: complete
 
 Goal: initialize the segment state from validated open LiDAR, terrain, canopy, inventory, and field data,
 with coverage and applicability made explicit.
@@ -188,9 +188,9 @@ Acceptance criteria:
 
 ## Phase 4: Vegetation dynamics and treatments
 
-Parent issue: TBD
+Parent issue: #41
 Branch: `feature/p4-vegetation`
-Status: planned
+Status: active
 
 Goal: implement the low-vegetation state-transition model and the treatment transitions, calibrate them,
 and publish a model card.
