@@ -38,6 +38,22 @@ def test_studio_endpoints_and_pov_variants() -> None:
     assert real.json()["schema_version"] == "brushline.real-scene.v1"
     assert real.json()["trees"]
     assert client.get("/api/studio/scene/ubc-real?variant=post").status_code == 404
+    instances = client.get("/api/studio/instances").json()["instances"]
+    assert {item["id"] for item in instances} == {
+        "synthetic-corridor",
+        "ubc-public-block",
+        "ubc-public-block-2",
+        "ubc-public-block-3",
+    }
+    for instance_id, block_id in (
+        ("ubc-public-block", "ubc-real"),
+        ("ubc-public-block-2", "ubc-real-2"),
+        ("ubc-public-block-3", "ubc-real-3"),
+    ):
+        blocks = client.get(f"/api/studio/blocks?instance_id={instance_id}").json()["blocks"]
+        assert blocks[0]["block_id"] == block_id
+        scene = client.get(f"/api/studio/scene/{block_id}?variant=pre&instance_id={instance_id}")
+        assert scene.status_code == 200
     stream = client.get("/api/studio/search/stream")
     assert stream.status_code == 200
     assert "event: start" in stream.text

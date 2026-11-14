@@ -10,3 +10,5 @@ The service does not own model state and does not invent positions. The forester
 `notes/design/brushline-forester-walkthrough.md`.
 
 The studio also includes an observed public-data UBC block: 538 tree records plus a 2 m DEM/CHM grid, with PDDL-1.0/Abacus attribution. It is shown as `ubc-real`; pre/post is disabled because it is observed state, not a modelled treatment scenario.
+
+The studio exposes four model instances: the synthetic planning corridor and three observed UBC public-data blocks. Each instance has its own block list and scene; observed blocks have no treatment plan or pre/post toggle.

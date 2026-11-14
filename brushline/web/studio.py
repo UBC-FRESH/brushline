@@ -20,7 +20,40 @@ from fastapi.staticfiles import StaticFiles
 STUDIO_SCHEMA_VERSION: Literal["brushline.studio.v1"] = "brushline.studio.v1"
 STATIC_ROOT = Path(__file__).resolve().with_name("static")
 DEFAULT_ARTIFACT_ROOT = Path(__file__).resolve().parents[2] / "examples" / "synthetic-corridor"
-REAL_SCENE_PATH = Path(__file__).resolve().parents[1] / "resources" / "ubc-real-block.json"
+REAL_SCENES: dict[str, tuple[str, str, str]] = {
+    "ubc-public-block": ("ubc-real", "ubc-real-block.json", "UBC public-data block"),
+    "ubc-public-block-2": ("ubc-real-2", "ubc-real-2.json", "UBC public-data block 2"),
+    "ubc-public-block-3": ("ubc-real-3", "ubc-real-3.json", "UBC public-data block 3"),
+}
+RESOURCE_ROOT = Path(__file__).resolve().parents[1] / "resources"
+INSTANCES: tuple[dict[str, object], ...] = (
+    {
+        "id": "synthetic-corridor",
+        "title": "Synthetic planning corridor",
+        "kind": "planning",
+        "description": (
+            "Five synthetic segments with a plan, Pareto archive, and treatment variants."
+        ),
+    },
+    {
+        "id": "ubc-public-block",
+        "title": "UBC public-data block",
+        "kind": "observed",
+        "description": "538 UBC tree records and a 2 m DEM/CHM terrain grid; observed state only.",
+    },
+    {
+        "id": "ubc-public-block-2",
+        "title": "UBC public-data block 2",
+        "kind": "observed",
+        "description": "254 UBC tree records in a second 200 m block; observed state only.",
+    },
+    {
+        "id": "ubc-public-block-3",
+        "title": "UBC public-data block 3",
+        "kind": "observed",
+        "description": "231 UBC tree records in a third 200 m block; observed state only.",
+    },
+)
 SKINS: tuple[dict[str, Any], ...] = (
     {"id": "model-builder", "workspaces": ["build", "data"], "read_only": False},
     {"id": "owner-strategic", "workspaces": ["map", "plan", "results", "data"], "read_only": False},
@@ -90,21 +123,6 @@ def _blocks(root: Path, plan: dict[str, Any]) -> list[dict[str, Any]]:
                 "variant_available": bool(actions.get(segment_id)),
             }
         )
-    if REAL_SCENE_PATH.exists():
-        real = json.loads(REAL_SCENE_PATH.read_text(encoding="utf-8"))
-        blocks.append(
-            {
-                "block_id": "ubc-real",
-                "block_kind": "real_block",
-                "segment_ids": [],
-                "height_m": None,
-                "cover_pct": None,
-                "actions": [],
-                "variant_available": False,
-                "label": "UBC public-data block",
-                "tree_count": len(real.get("trees", [])),
-            }
-        )
     return blocks
 
 
@@ -126,12 +144,21 @@ def _segment_geometry(root: Path, block_id: str) -> dict[str, Any]:
 
 
 def _scene(root: Path, block_id: str, variant: str) -> dict[str, Any]:
-    if block_id == "ubc-real":
+    real_entry = next(
+        (
+            (instance, filename)
+            for instance, (block, filename, _title) in REAL_SCENES.items()
+            if block == block_id
+        ),
+        None,
+    )
+    if real_entry is not None:
         if variant != "pre":
             raise StudioError("the observed UBC block has no modelled post-treatment state")
-        if not REAL_SCENE_PATH.exists():
+        path = RESOURCE_ROOT / real_entry[1]
+        if not path.exists():
             raise StudioError("real block scene is missing")
-        return dict(json.loads(REAL_SCENE_PATH.read_text(encoding="utf-8")))
+        return dict(json.loads(path.read_text(encoding="utf-8")))
     plan = _plan_for(root, "current")
     blocks = _blocks(root, plan)
     block = next((item for item in blocks if item["block_id"] == block_id), None)
@@ -191,9 +218,16 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     root = Path(artifact_root or DEFAULT_ARTIFACT_ROOT).resolve()
     app = FastAPI(title="Brushline studio", version="0.1.2")
 
-    def safe_json(relative: str) -> Any:  # noqa: ANN401
+    def root_for(instance_id: str) -> Path:
+        if instance_id == "synthetic-corridor":
+            return root
+        if instance_id in REAL_SCENES:
+            return root
+        raise HTTPException(status_code=404, detail=f"unknown instance {instance_id}")
+
+    def safe_json(path_root: Path, relative: str) -> Any:  # noqa: ANN401
         try:
-            return _read_json(root, relative)
+            return _read_json(path_root, relative)
         except (StudioError, json.JSONDecodeError) as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -205,12 +239,32 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     def studio() -> FileResponse:
         return FileResponse(STATIC_ROOT / "studio.html")
 
+    @app.get("/api/studio/instances")
+    def instances() -> dict[str, Any]:
+        return {"instances": list(INSTANCES)}
+
     @app.get("/api/studio/summary")
-    def summary() -> dict[str, Any]:
-        run = safe_json("run.json")
-        plan = safe_json("plan.json")
+    def summary(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
+        root_for(instance_id)
+        if instance_id in REAL_SCENES:
+            _block, filename, title = REAL_SCENES[instance_id]
+            real = json.loads((RESOURCE_ROOT / filename).read_text(encoding="utf-8"))
+            return {
+                "schema_version": STUDIO_SCHEMA_VERSION,
+                "instance_id": instance_id,
+                "title": title,
+                "kind": "observed",
+                "tree_count": len(real.get("trees", [])),
+                "blocks": 1,
+                "status": "observed",
+            }
+        run = safe_json(root, "run.json")
+        plan = safe_json(root, "plan.json")
         return {
             "schema_version": STUDIO_SCHEMA_VERSION,
+            "instance_id": instance_id,
+            "title": "Synthetic planning corridor",
+            "kind": "planning",
             "run_id": run["run_id"],
             "plan_id": plan["header"]["plan_id"],
             "currency": plan["header"]["currency"],
@@ -223,37 +277,71 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
         }
 
     @app.get("/api/studio/plan/{plan_id}")
-    def plan(plan_id: str) -> dict[str, Any]:
+    def plan(
+        plan_id: str, instance_id: str = Query(default="synthetic-corridor")
+    ) -> dict[str, Any]:
+        root_for(instance_id)
+        if instance_id in REAL_SCENES:
+            raise HTTPException(status_code=404, detail="observed block has no plan")
         try:
             return _plan_for(root, plan_id)
         except StudioError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @app.get("/api/studio/pareto")
-    def pareto() -> dict[str, Any]:
-        return dict(safe_json("pareto.json"))
+    def pareto(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
+        root_for(instance_id)
+        if instance_id in REAL_SCENES:
+            return {"members": []}
+        return dict(safe_json(root, "pareto.json"))
 
     @app.get("/api/studio/timeline")
-    def timeline() -> dict[str, Any]:
+    def timeline(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
+        root_for(instance_id)
+        if instance_id in REAL_SCENES:
+            return {"events": []}
         return {"events": _read_jsonl(root, "operations_timeline.jsonl")}
 
     @app.get("/api/studio/blocks")
-    def blocks() -> dict[str, Any]:
-        plan = safe_json("plan.json")
+    def blocks(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
+        root_for(instance_id)
+        if instance_id in REAL_SCENES:
+            block_id, filename, title = REAL_SCENES[instance_id]
+            real = json.loads((RESOURCE_ROOT / filename).read_text(encoding="utf-8"))
+            return {
+                "blocks": [
+                    {
+                        "block_id": block_id,
+                        "block_kind": "real_block",
+                        "segment_ids": [],
+                        "height_m": None,
+                        "cover_pct": None,
+                        "actions": [],
+                        "variant_available": False,
+                        "label": title,
+                        "tree_count": len(real.get("trees", [])),
+                    }
+                ]
+            }
+        plan = safe_json(root, "plan.json")
         return {"blocks": _blocks(root, plan)}
 
     @app.get("/api/studio/scene/{block_id}")
     def scene(
         block_id: str,
         variant: str = Query(default="pre", pattern="^(pre|post)$"),
+        instance_id: str = Query(default="synthetic-corridor"),
     ) -> dict[str, Any]:
+        root_for(instance_id)
         try:
             return _scene(root, block_id, variant)
         except StudioError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @app.get("/api/studio/search/stream")
-    def search_stream() -> StreamingResponse:
+    def search_stream(instance_id: str = Query(default="synthetic-corridor")) -> StreamingResponse:
+        root_for(instance_id)
+
         def events() -> Iterator[str]:
             for sequence, event_type in enumerate(("start", "incumbent", "finish")):
                 data = json.dumps(
