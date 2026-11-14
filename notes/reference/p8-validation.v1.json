@@ -1,0 +1,17 @@
+{
+  "schema_version": "brushline.monitoring-validation.v1",
+  "instance_id": "synthetic-monitoring",
+  "adaptive_value": 40.0,
+  "fixed_value": 5.0,
+  "adaptive_regret_per_dollar": 5.0,
+  "fixed_regret_per_dollar": 1.3333333333333333,
+  "beats_calendar": true,
+  "posterior_confidence": 0.8500000000000001,
+  "replan_triggered": true,
+  "caveats": [
+    "Synthetic expected-loss reduction; not field-calibrated.",
+    "The fixed calendar is a deterministic baseline, not the owner's actual calendar.",
+    "Value of information is an approximation."
+  ],
+  "created_utc": "2026-11-14T00:00:00Z"
+}

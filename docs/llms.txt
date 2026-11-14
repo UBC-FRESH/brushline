@@ -49,6 +49,7 @@
 - [FHOPS adapter](reference/tactical-fhops.html): pinned optional boundary, tactical mapping, dry-run productivity/cost, and explicit no-live-run notes.
 - [Operations timeline](reference/tactical-timeline.html): timestamped events, crew/machine/segment ids, known/unknown positions, and cost.
 - [Tactical validation](reference/tactical-validation.html): capacity, access, seasonality, traceability, FHOPS dry-run, and timeline checks.
+- [Observation model](reference/observation-model.html): coverage, detection, confusion, error, and latency.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -104,3 +105,10 @@
 - [FHOPS adapter API](api/tactical-fhops.html): boundary, requests, dry-run, and results.
 - [Operations timeline API](api/tactical-timeline.html): events, positions, and timeline builder.
 - [Tactical validation API](api/tactical-validation.html): the synthetic case and named checks.
+- [Observation API](api/observation-model.html): settings, requests, results, and simulation.
+
+- [Mission simulation](reference/mission.html): corridor graph, endurance, footprint, weather, and cost.
+- [Monitoring value](reference/monitoring-value.html): expected loss reduction, cost, and regret per dollar.
+- [Recalibration](reference/recalibration.html): posterior state, uncertainty, parameter, and model record.
+- [Replan trigger](reference/replan.html): forecast-error/uncertainty trigger and new plan version.
+- [Monitoring validation](reference/monitoring-validation.html): adaptive versus fixed calendar, recalibration, and replan.

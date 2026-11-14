@@ -50,6 +50,12 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    tactical-fhops
    tactical-timeline
    tactical-validation
+   observation-model
+   mission
+   monitoring-value
+   recalibration
+   replan
+   monitoring-validation
    compiled-dataset
    corridor-contract
    state-contract
