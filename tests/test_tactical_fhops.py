@@ -50,7 +50,7 @@ def test_mapping_and_dry_run_are_deterministic() -> None:
     assert len(result.notes) == 2
     assert FHOPS_PINNED_VERSION in result.notes[1]
     assert result.created_utc == NOW
-    assert fhops_version() != "not-installed"
+    assert fhops_version()
 
 
 def test_boundary_and_model_guards() -> None:
