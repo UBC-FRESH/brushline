@@ -3,7 +3,7 @@
 Phase: P2 FEMIC-extended instance builder
 Parent issue: #24
 Pull request: #32, `feature/p2-instance-builder` into `main`
-Evidence head: `01cb725`, the docs-fix head that the CI run below covers
+Evidence head: `ffb946b`, the CI-evidence head that the final run below covers
 Report commit: the commit that adds this report and the CI result. CI runs on pull request #32.
 Date: 2026-11-14
 Status: queued for approval. Not merged.
@@ -81,6 +81,7 @@ Settings changes, each with its exact command. Each one runs only after its own 
 | `e3cbdfb` | P2.6 | dashboard | green; 406 passed, 96.82% coverage |
 | `8283827` | P2.7 | dashboard | green; 424 passed, 96.99% coverage |
 | `01cb725` | P2.7 docs fix | dashboard | green; 424 passed, 96.99% coverage |
+| `ffb946b` | P2 CI evidence | dashboard | green; 424 passed, 96.99% coverage |
 
 The integration modules are at 100% statement and branch coverage:
 `brushline/integrations/catalogue.py`, `fetch.py`, and `capabilities.py`. The model builder is at 98%.
@@ -105,7 +106,7 @@ The required local dry run used the committed synthetic AOI and a temporary runt
 | --- | --- | --- | --- |
 | 43561909308 | `56ad065` | failure | Docs build failed on the optional FastAPI autodoc import; fixed in `01cb725` |
 | 43562164209 | `01cb725` | success | Quality gates, Pre-commit parity, and Green dashboard summary all passed |
-| pending | report-only commit | in progress | The report update triggers a final CI run; the result is posted on PR #32 |
+| 43562314387 | `ffb946b` | success | Quality gates, Pre-commit parity, and Green dashboard summary all passed; the report-only update follows |
 | n/a | branch pushes | not run | CI runs on pull requests and `main`, not on plain feature-branch pushes |
 
 ## 6. Next phase
