@@ -5,4 +5,6 @@
 ## Start here
 
 - [Home](index.html): the documentation home for the project.
+- [Design record](design/index.html): the scope, architecture, optimization, UI, LiDAR, instance-builder, demo-portal, and literature review decisions.
 - [API reference](api/index.html): every public function, with its parameters, types, and return values.
+- [brushline package](api/brushline.html): the package root and the command line.

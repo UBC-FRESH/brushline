@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the repository."
+title: "Brushline: vegetation management decision support for linear infrastructure corridors"
+abstract: "A decision support system for optimal vegetation management along linear infrastructure corridors in forested landscapes. It couples shrub and young-tree growth, treatment transitions, strategic, tactical, and operational planning, adaptive remote monitoring, a multi-objective metaheuristic search, and an interactive planning studio for asset owners and contractors."
+authors:
+  - name: "UBC FRESH Lab"
+repository-code: "https://github.com/UBC-FRESH/brushline"
+url: "https://github.com/UBC-FRESH/brushline"
+license: "Apache-2.0"
+version: "0.1.0"
