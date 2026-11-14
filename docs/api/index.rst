@@ -40,4 +40,5 @@ whenever you add a module to the project.
    optimization-evaluator
    optimization-operators
    optimization-adapter
+   optimization-archive
    instance

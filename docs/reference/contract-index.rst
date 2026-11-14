@@ -133,6 +133,10 @@ test suite. This page is the map.
      - ``brushline.optimization-search.v1``
      - ``SearchRun``
      - Adapter, seed, budget, assignment, objective vector, evidence, checkpoint, and replay flag
+   * - Promotion record
+     - ``brushline.promotion.v1``
+     - ``PromotionRecord``
+     - Promoted plan, parent, reason, objective vector, time, and promoter
 
 Error prefixes
 --------------
@@ -199,6 +203,8 @@ Error prefixes
      - Optimization evaluation
    * - ``MOVE-*``
      - Optimization move validation
+   * - ``PROMOTION-*``
+     - Promotion record
 
 Test layers
 -----------
@@ -248,6 +254,8 @@ Test layers
   apply/undo, budget/capacity/monitoring/access/service repair, and non-repairable blocked models.
 - Adapter tests for the Fresh Solutions contract, scalarizations, random/mutation/crossover, single
   and compound proposals, all search modes, checkpoint replay, and rejected non-replayable results.
+- Archive tests for dominance, duplicates, infeasible rejection, crowding, size eviction, round-trip,
+  invalid archives, and promotion records.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

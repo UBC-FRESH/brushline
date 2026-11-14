@@ -235,8 +235,8 @@ small-instance validation.
   - [x] Toggle, shift, swap, block/segment moves, monitoring moves, and repair
 - [x] P5.4 Integrate Fresh Solutions and exact replay (#54)
   - [x] Adapter, local search, population, hybrid, convergence, checkpoints, seeds, and evidence
-- [ ] P5.5 Implement the multi-objective archive and `pareto.json`
-  - [ ] Scalarization portfolio, dominance, diversity, archive members, and promotion rule
+- [x] P5.5 Implement the multi-objective archive and `pareto.json` (#55)
+  - [x] Scalarization portfolio, dominance, diversity, archive members, and promotion rule
 - [ ] P5.6 Validate on tiny instances
   - [ ] Exhaustive enumeration, MIP/CP bound where practical, exact/batch agreement, and replay
 - [ ] P5.7 Certify the search budget and performance

@@ -31,6 +31,7 @@
 - [Optimization evaluator](reference/optimization-evaluator.html): exact replay, objectives, costs, violations, and the full-evaluation fallback.
 - [Optimization move operators](reference/optimization-operators.html): toggle, method, shift, swap, block, monitoring, destroy-repair, locks, access, and repair.
 - [Optimization adapter and replay](reference/optimization-adapter.html): the Fresh Solutions contract, scalarizations, search modes, checkpoints, and exact replay.
+- [Multi-objective archive](reference/optimization-archive.html): non-dominance, crowding, eviction, pareto.json, and promotion records.
 - [Compiled dataset contract](reference/compiled-dataset.html): the manifest, table, column, and validation contract.
 - [Corridor graph contract](reference/corridor-contract.html): corridors, segments, spans, treatment units, access, structures, and service standards.
 - [State and treatment contract](reference/state-contract.html): vegetation states, treatments, transitions, observations, ranges, and referential checks.
@@ -68,3 +69,4 @@
 - [Optimization evaluator API](api/optimization-evaluator.html): the exact evaluator, result, context, and incremental wrapper.
 - [Optimization move operators API](api/optimization-operators.html): typed moves, operators, and repair.
 - [Optimization adapter API](api/optimization-adapter.html): the adapter, scalarizations, search runs, and checkpoints.
+- [Multi-objective archive API](api/optimization-archive.html): the archive builder, writers, and promotion.

@@ -5,4 +5,5 @@ The Fresh Solutions adapter, scalarizations, search settings, replayable runs, a
 
 .. automodule:: brushline.optimization.adapter
    :members:
+   :noindex:
    :show-inheritance:
