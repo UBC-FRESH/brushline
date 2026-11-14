@@ -1,6 +1,6 @@
-# Brushline 0.1.1 release notes
+# Brushline 0.1.2 release notes
 
-Status: patch release for 0.1.0. It includes the real Three.js studio scene and corrects the stale CLI status text.
+Status: patch release adding the observed public-data UBC 3D block and retaining the 0.1.1 Three.js fix.
 
 ## What this is
 
@@ -33,6 +33,8 @@ studio.
   release recommendation.
 
 ## Patch changes
+
+- Add `ubc-real`: 538 UBC campus tree records plus a 2 m UBC 2021 DEM/CHM terrain grid, with PDDL-1.0 / Abacus attribution. The block is observed state; pre/post is disabled.
 
 - Replace the P10 canvas placeholder with a real Three.js/WebGL studio scene, instanced vegetation, orbit camera, forester POV walkthrough, and camera-preserving pre/post toggle.
 - Correct `brushline status` so it no longer claims the project is still at Phase 1.
