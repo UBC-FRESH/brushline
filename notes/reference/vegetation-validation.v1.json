@@ -1,0 +1,352 @@
+{
+  "config": {
+    "candidate_disagreement_tolerance": 0.25,
+    "holdout_blocks": [
+      "b"
+    ],
+    "include_out_of_domain": false,
+    "interval_z": 1.96,
+    "max_lag_years": 5,
+    "min_coverage_pct": 50
+  },
+  "records": [
+    {
+      "candidates": [
+        {
+          "cover_pct": 36,
+          "density_per_ha": 1100,
+          "height_m": 2.4000000000000004,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 31,
+          "density_per_ha": 1100,
+          "height_m": 2.7,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "",
+      "functional_group": "shrub",
+      "in_domain": true,
+      "observation_id": "v01",
+      "observed_cover_pct": 30,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 1000,
+      "observed_height_m": 2.0,
+      "predicted_cover_pct": 33,
+      "predicted_cover_sd": 5,
+      "predicted_density_per_ha": 1100,
+      "predicted_density_sd": 100,
+      "predicted_height_m": 2.2,
+      "predicted_height_sd": 0.3,
+      "prediction_year": 2026,
+      "segment_id": "seg-v01",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "a",
+      "treatment_history": []
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 41,
+          "density_per_ha": 900,
+          "height_m": 5.7,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 36,
+          "density_per_ha": 900,
+          "height_m": 6.0,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "",
+      "functional_group": "conifer",
+      "in_domain": true,
+      "observation_id": "v02",
+      "observed_cover_pct": 40,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 800,
+      "observed_height_m": 6.0,
+      "predicted_cover_pct": 38,
+      "predicted_cover_sd": 6,
+      "predicted_density_per_ha": 900,
+      "predicted_density_sd": 80,
+      "predicted_height_m": 5.5,
+      "predicted_height_sd": 0.8,
+      "prediction_year": 2025,
+      "segment_id": "seg-v02",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "b",
+      "treatment_history": [
+        "mowing-2024"
+      ]
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 31,
+          "density_per_ha": 950,
+          "height_m": 2.0,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 26,
+          "density_per_ha": 950,
+          "height_m": 2.3,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "",
+      "functional_group": "shrub",
+      "in_domain": true,
+      "observation_id": "v03",
+      "observed_cover_pct": 25,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 900,
+      "observed_height_m": 1.5,
+      "predicted_cover_pct": 28,
+      "predicted_cover_sd": 5,
+      "predicted_density_per_ha": 950,
+      "predicted_density_sd": 60,
+      "predicted_height_m": 1.8,
+      "predicted_height_sd": 0.25,
+      "prediction_year": 2026,
+      "segment_id": "seg-v03",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "a",
+      "treatment_history": []
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 15,
+          "density_per_ha": null,
+          "height_m": 0.55,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 10,
+          "density_per_ha": null,
+          "height_m": 0.85,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "",
+      "functional_group": "grass_herb",
+      "in_domain": true,
+      "observation_id": "v04",
+      "observed_cover_pct": 10,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": null,
+      "observed_height_m": 0.3,
+      "predicted_cover_pct": 12,
+      "predicted_cover_sd": 3,
+      "predicted_density_per_ha": null,
+      "predicted_density_sd": 0,
+      "predicted_height_m": 0.35,
+      "predicted_height_sd": 0.1,
+      "prediction_year": 2024,
+      "segment_id": "seg-v04",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "b",
+      "treatment_history": []
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 33,
+          "density_per_ha": 980,
+          "height_m": 2.2,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 28,
+          "density_per_ha": 980,
+          "height_m": 2.5,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "",
+      "functional_group": "shrub",
+      "in_domain": true,
+      "observation_id": "v05",
+      "observed_cover_pct": 31,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 1000,
+      "observed_height_m": 2.1,
+      "predicted_cover_pct": 30,
+      "predicted_cover_sd": 5,
+      "predicted_density_per_ha": 980,
+      "predicted_density_sd": 80,
+      "predicted_height_m": 2.0,
+      "predicted_height_sd": 0.3,
+      "prediction_year": 2026,
+      "segment_id": "seg-v05",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "c",
+      "treatment_history": []
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 37,
+          "density_per_ha": 1200,
+          "height_m": 2.7,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 32,
+          "density_per_ha": 1200,
+          "height_m": 3.0,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 20,
+      "domain_reason": "",
+      "functional_group": "shrub",
+      "in_domain": true,
+      "observation_id": "v06",
+      "observed_cover_pct": 30,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 1000,
+      "observed_height_m": 2.0,
+      "predicted_cover_pct": 34,
+      "predicted_cover_sd": 6,
+      "predicted_density_per_ha": 1200,
+      "predicted_density_sd": 100,
+      "predicted_height_m": 2.5,
+      "predicted_height_sd": 0.4,
+      "prediction_year": 2026,
+      "segment_id": "seg-v06",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "b",
+      "treatment_history": []
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 35,
+          "density_per_ha": 1100,
+          "height_m": 2.4000000000000004,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 30,
+          "density_per_ha": 1100,
+          "height_m": 2.7,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "outside the calibration region",
+      "functional_group": "shrub",
+      "in_domain": false,
+      "observation_id": "v07",
+      "observed_cover_pct": 30,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 1000,
+      "observed_height_m": 2.0,
+      "predicted_cover_pct": 32,
+      "predicted_cover_sd": 5,
+      "predicted_density_per_ha": 1100,
+      "predicted_density_sd": 100,
+      "predicted_height_m": 2.2,
+      "predicted_height_sd": 0.3,
+      "prediction_year": 2026,
+      "segment_id": "seg-v07",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "b",
+      "treatment_history": []
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 39,
+          "density_per_ha": 720,
+          "height_m": 4.4,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 34,
+          "density_per_ha": 720,
+          "height_m": 4.7,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "",
+      "functional_group": "conifer",
+      "in_domain": true,
+      "observation_id": "v08",
+      "observed_cover_pct": 35,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 700,
+      "observed_height_m": 4.0,
+      "predicted_cover_pct": 36,
+      "predicted_cover_sd": 5,
+      "predicted_density_per_ha": 720,
+      "predicted_density_sd": 60,
+      "predicted_height_m": 4.2,
+      "predicted_height_sd": 0.5,
+      "prediction_year": 2018,
+      "segment_id": "seg-v08",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "b",
+      "treatment_history": []
+    },
+    {
+      "candidates": [
+        {
+          "cover_pct": 32,
+          "density_per_ha": 980,
+          "height_m": 2.1,
+          "name": "medfate"
+        },
+        {
+          "cover_pct": 27,
+          "density_per_ha": 980,
+          "height_m": 2.4,
+          "name": "fvs_ffe"
+        }
+      ],
+      "coverage_pct": 100,
+      "domain_reason": "",
+      "functional_group": "shrub",
+      "in_domain": true,
+      "observation_id": "v09",
+      "observed_cover_pct": 28,
+      "observed_date": "2026-06-01",
+      "observed_density_per_ha": 950,
+      "observed_height_m": 1.8,
+      "predicted_cover_pct": 29,
+      "predicted_cover_sd": 5,
+      "predicted_density_per_ha": 980,
+      "predicted_density_sd": 70,
+      "predicted_height_m": 1.9,
+      "predicted_height_sd": 0.3,
+      "prediction_year": 2026,
+      "segment_id": "seg-v09",
+      "source": "synthetic-validation",
+      "source_version": "2026",
+      "spatial_block": "b",
+      "treatment_history": [
+        "mowing-2024"
+      ]
+    }
+  ],
+  "schema_version": "brushline.vegetation-validation.v1"
+}

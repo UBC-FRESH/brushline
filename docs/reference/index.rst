@@ -21,6 +21,13 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    state-initialization
    lidar-coverage
    lidar-benchmark
+   state-space
+   growth-model
+   treatment-transitions
+   treatment-calibration
+   hazard-indicators
+   vegetation-validation
+   low-vegetation-model-card
    compiled-dataset
    corridor-contract
    state-contract

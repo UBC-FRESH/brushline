@@ -14,8 +14,8 @@ exists and the maintainer approves it.
 | P0 Bootstrap and scope | #1 | `feature/p0-bootstrap` | complete |
 | P1 Contracts and prototype | #15 | `feature/p1-contracts-prototype` | complete |
 | P2 FEMIC-extended instance builder | #24 | `feature/p2-instance-builder` | complete |
-| P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | pr-open |
-| P4 Vegetation dynamics and treatments | TBD | `feature/p4-vegetation` | planned |
+| P3 State, LiDAR, and terrain | #33 | `feature/p3-state-lidar` | complete |
+| P4 Vegetation dynamics and treatments | #41 | `feature/p4-vegetation` | pr-open |
 | P5 Optimization framework and Pareto search | TBD | `feature/p5-optimization` | planned |
 | P6 Strategic planning and monitoring policy | TBD | `feature/p6-strategic` | planned |
 | P7 Tactical and operational planning | TBD | `feature/p7-tactical-operational` | planned |
@@ -159,7 +159,7 @@ Acceptance criteria:
 
 Parent issue: #33
 Branch: `feature/p3-state-lidar`
-Status: pr-open
+Status: complete
 
 Goal: initialize the segment state from validated open LiDAR, terrain, canopy, inventory, and field data,
 with coverage and applicability made explicit.
@@ -188,27 +188,27 @@ Acceptance criteria:
 
 ## Phase 4: Vegetation dynamics and treatments
 
-Parent issue: TBD
+Parent issue: #41
 Branch: `feature/p4-vegetation`
-Status: planned
+Status: pr-open
 
 Goal: implement the low-vegetation state-transition model and the treatment transitions, calibrate them,
 and publish a model card.
 
-- [ ] P4.1 Define functional groups and state discretization
-  - [ ] Shrub, deciduous sprout, conifer, grass/herb; height, cover, density, age, and uncertainty
-- [ ] P4.2 Implement the growth model
-  - [ ] Saturating height/cover curves, site and climate modifiers, competition, and functional groups
-- [ ] P4.3 Implement the treatment transitions
-  - [ ] Method, season, efficacy, selectivity, resprouting, regrowth delay, and cost hooks
-- [ ] P4.4 Calibrate the treatment efficacy and resprouting
-  - [ ] Brushing, mowing, herbicide, manual, and grazing evidence where available
-- [ ] P4.5 Implement the hazard and service indicators
-  - [ ] Clearance, fall-in, fuel connectivity, access, and a reliability proxy
-- [ ] P4.6 Calibrate and validate against held-out plots and LiDAR
-  - [ ] Spatial holdout, time-lag sensitivity, benchmark against MEDFATE/FVS-FFE/Botequim-type curves
-- [ ] P4.7 Publish the model card and uncertainty contract
-  - [ ] Model id, version, predictors, training data, validation, error, domain, licence, caveats
+- [x] P4.1 Define functional groups and state discretization
+  - [x] Shrub, deciduous sprout, conifer, grass/herb; height, cover, density, age, and uncertainty
+- [x] P4.2 Implement the growth model
+  - [x] Saturating height/cover curves, site and climate modifiers, competition, and functional groups
+- [x] P4.3 Implement the treatment transitions
+  - [x] Method, season, efficacy, selectivity, resprouting, regrowth delay, and cost hooks
+- [x] P4.4 Calibrate the treatment efficacy and resprouting
+  - [x] Brushing, mowing, herbicide, manual, and grazing evidence where available
+- [x] P4.5 Implement the hazard and service indicators
+  - [x] Clearance, fall-in, fuel connectivity, access, and a reliability proxy
+- [x] P4.6 Calibrate and validate against held-out plots and LiDAR
+  - [x] Spatial holdout, time-lag sensitivity, benchmark against MEDFATE/FVS-FFE/Botequim-type curves
+- [x] P4.7 Publish the model card and uncertainty contract
+  - [x] Model id, version, predictors, training data, validation, error, domain, licence, caveats
 
 Acceptance criteria:
 

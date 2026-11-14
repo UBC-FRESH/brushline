@@ -93,6 +93,34 @@ test suite. This page is the map.
      - ``brushline.lidar-benchmark-request.v1``, ``brushline.lidar-benchmark.v1``
      - ``validate_lidar_benchmark``
      - Bundle pin, shared contract, absolute/relative tolerance, missing values, case statuses, and bundle hash
+   * - Low-vegetation state space
+     - ``brushline.state-space.v1``
+     - ``validate_state_projection``
+     - Functional groups, variables, thresholds, coverage states, class probabilities, uncertainty, and state-contract conversion
+   * - Growth
+     - ``brushline.growth.v1``
+     - ``validate_growth_result``
+     - Group curves, site/climate/competition modifiers, monotonicity, asymptotes, age, uncertainty, and domain
+   * - Treatment transitions
+     - ``brushline.treatment.v1``
+     - ``validate_treatment_result``
+     - Method/season efficacy, top-kill, residual, resprouting, delay, cost, trajectory, and monotonicity
+   * - Treatment calibration
+     - ``brushline.treatment-calibration.v1``
+     - ``validate_treatment_calibration``
+     - Evidence, pooling, shrinkage, intervals, sample sizes, source ids, and leave-one-out checks
+   * - Hazard and service indicators
+     - ``brushline.hazards.v1``
+     - ``validate_hazard_report``
+     - Clearance, fall-in, fuel, access, reliability components and weights, unknown states, and caveats
+   * - Vegetation validation
+     - ``brushline.vegetation-validation.v1``
+     - ``validate_vegetation_validation``
+     - Spatial holdout, group error, interval coverage, time-lag sensitivity, candidate benchmark, and exclusions
+   * - Low-vegetation model card
+     - ``brushline.low-vegetation-model-card.v1``
+     - ``validate_model_card``
+     - Predictors, training/validation evidence, metrics, candidates, uncertainty, domain, licence, citation, caveats, and decision boundary
 
 Error prefixes
 --------------
@@ -139,6 +167,20 @@ Error prefixes
      - LiDAR coverage and applicability
    * - ``BENCHMARK-*``
      - LiDAR benchmark
+   * - ``STATE-SPACE-*``
+     - Low-vegetation state space
+   * - ``GROWTH-*``
+     - Growth model
+   * - ``TREATMENT-*``
+     - Treatment transitions
+   * - ``CALIBRATION-*``
+     - Treatment calibration
+   * - ``HAZARD-*``
+     - Hazard and service indicators
+   * - ``VALIDATION-*``
+     - Vegetation validation
+   * - ``MODEL-CARD-*``
+     - Low-vegetation model card
 
 Test layers
 -----------
@@ -166,6 +208,20 @@ Test layers
   domain reasons, next actions, and stop/continue.
 - Benchmark tests for the committed fixture, absolute and relative tolerance, contract mismatch,
   required/optional/unexplained missing values, duplicate keys, and report consistency.
+- State-space tests for every class, coverage state, strata, probabilities, config validation, unknown
+  and partial projection, and state-contract conversion.
+- Growth tests for monotonicity, asymptotes, all functional groups, site/climate/competition modifiers,
+  domain blocking, uncertainty, conversion, and validator errors.
+- Treatment tests for method/season effects, immediate residual, resprouting, delay, trajectory,
+  cost, conversion, and validator errors.
+- Calibration tests for exact/pooled/prior levels, shrinkage, intervals, holdout checks, model validation,
+  and parameter application.
+- Hazard tests for clearance statuses, fall-in risk, fuel connectivity, access, reliability weighting,
+  missing components, caveats, and validator errors.
+- Validation tests for spatial holdout, eligibility exclusions, group metrics, interval coverage, lag
+  sensitivity, candidate disagreement, and report validation.
+- Model-card tests for predictor/domain ranges, evidence, metrics, candidates, uncertainty, domain checks,
+  out-of-domain rejection, and card validation.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 

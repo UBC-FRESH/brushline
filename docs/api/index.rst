@@ -29,4 +29,11 @@ whenever you add a module to the project.
    state-init
    lidar-coverage
    lidar-benchmark
+   state-space
+   growth
+   treatment
+   treatment-calibration
+   hazards
+   vegetation-validation
+   model-card
    instance
