@@ -27,6 +27,16 @@ from brushline.model.schema import (
     validate_dataset,
     write_manifest,
 )
+from brushline.model.state import (
+    Observation,
+    StateContract,
+    StateValidation,
+    TreatmentAction,
+    TreatmentTransition,
+    Uncertainty,
+    VegetationState,
+    validate_state_contract,
+)
 
 __all__ = [
     "DATASET_SCHEMA_VERSION",
@@ -38,16 +48,24 @@ __all__ = [
     "CorridorValidation",
     "DatasetManifest",
     "DatasetValidation",
+    "Observation",
     "Provenance",
     "Segment",
     "ServiceStandard",
     "Span",
+    "StateContract",
+    "StateValidation",
     "Structure",
     "TableSpec",
+    "TreatmentAction",
+    "TreatmentTransition",
     "TreatmentUnit",
+    "Uncertainty",
+    "VegetationState",
     "file_sha256",
     "load_manifest",
     "validate_corridor_network",
     "validate_dataset",
+    "validate_state_contract",
     "write_manifest",
 ]

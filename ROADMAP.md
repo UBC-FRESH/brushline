@@ -102,8 +102,8 @@ prototype that exercises them on synthetic data.
   - [x] Tables, keys, units, CRS, schema version, validator, and manifest
 - [x] P1.2 Define the corridor, segment, span, and treatment-unit contract
   - [x] Graph, linear referencing, geometry, access, structures, and service standards
-- [ ] P1.3 Define the vegetation state, treatment, and observation contract
-  - [ ] Functional groups, state classes, distributions, treatment actions, observation records
+- [x] P1.3 Define the vegetation state, treatment, and observation contract
+  - [x] Functional groups, state classes, distributions, treatment actions, observation records
 - [ ] P1.4 Define the plan, run, Pareto archive, operations timeline, and demo manifest contracts
   - [ ] JSON/CSV/Parquet shapes, provenance fields, versioning, and examples
 - [ ] P1.5 Build a synthetic corridor fixture
