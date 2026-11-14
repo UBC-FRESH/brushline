@@ -12,6 +12,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    instance-template
    freshforge-provider
    data-catalogue
+   fetch-plan
    compiled-dataset
    corridor-contract
    state-contract

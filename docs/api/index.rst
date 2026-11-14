@@ -20,4 +20,5 @@ whenever you add a module to the project.
    femic
    freshforge
    catalogue
+   fetch
    instance

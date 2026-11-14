@@ -48,6 +48,18 @@ test suite. This page is the map.
      - ``brushline.catalogue.v1``
      - ``validate_catalogue``
      - Sources, licences, classifications, coverage, connectors, auth references, scope, outputs, audit, approval, secret scan
+   * - Fetch plan
+     - ``brushline.fetch-plan.v1``
+     - ``validate_fetch_plan``
+     - Items, estimates, licences, access, materialization pointers, bulk approvals, catalogue drift
+   * - Materialization
+     - ``brushline.materialization.v1``
+     - ``validate_materialization``
+     - Checksums, sizes, paths, containment, licences, pointers, retrieval time, missing reasons
+   * - Coverage and gaps
+     - ``brushline.coverage.v1``, ``brushline.gap-report.v1``
+     - ``validate_coverage``, ``validate_gap_report``
+     - Six coverage states, evidence, reasons, next action, and stop/continue
 
 Error prefixes
 --------------
@@ -76,6 +88,12 @@ Error prefixes
      - Demo manifest
    * - ``CATALOGUE-*``
      - Data catalogue and connectors
+   * - ``FETCH-*``
+     - Fetch plan
+   * - ``MATERIALIZATION-*``
+     - Materialization manifest
+   * - ``COVERAGE-*``, ``GAP-*``
+     - Coverage and gap report
 
 Test layers
 -----------
@@ -85,6 +103,8 @@ Test layers
 - Integration tests for the CLI (``validate``, ``build``, ``simulate``, ``prototype``).
 - Catalogue tests for licences, classifications, unknown references, connector scope, approval, and
   the secret scan.
+- Fetch tests for estimates, bulk approval, catalogue drift, materialization checksums and containment,
+  the six coverage states, and the gap decision.
 - Property tests for duplicate detection, dominance, corridor length conservation, and range checks.
 - The self-check that the planning surfaces pass the workflow validator.
 
