@@ -38,10 +38,12 @@ from brushline.strategic.portfolio import (
     StrategicPortfolio,
     build_strategic_portfolio,
 )
+from brushline.strategic.scenario_optimization import optimize_scenarios
 from brushline.strategic.stateful import (
     StatefulConfig,
     StatefulMethod,
     StatefulPeriod,
+    StatefulPlan,
     StatefulSegment,
     build_stateful_plan,
 )
@@ -1295,6 +1297,7 @@ def _summary(
     scalability: list[dict[str, Any]],
     bid: dict[str, Any],
     uncertainty: dict[str, Any],
+    scenario_optimization: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1401,8 +1404,31 @@ def _summary(
             "",
             "| Metric | P10 | P50 | P90 | Probability of shortfall |",
             "|---|---:|---:|---:|---:|",
-            f"| Total cost | {uncertainty['cost_band']['p10']:.0f} | {uncertainty['cost_band']['p50']:.0f} | {uncertainty['cost_band']['p90']:.0f} | {uncertainty['probability_budget_exceeded']:.1%} budget |",
-            f"| Crew-hours | {uncertainty['hours_band']['p10']:.0f} | {uncertainty['hours_band']['p50']:.0f} | {uncertainty['hours_band']['p90']:.0f} | {uncertainty['probability_capacity_shortfall']:.1%} capacity |",
+            f"| 5-year total cost | {uncertainty['cost_band']['p10']:.0f} | {uncertainty['cost_band']['p50']:.0f} | {uncertainty['cost_band']['p90']:.0f} | {uncertainty['probability_budget_exceeded']:.1%} budget |",
+            f"| 5-year crew-hours | {uncertainty['hours_band']['p10']:.0f} | {uncertainty['hours_band']['p50']:.0f} | {uncertainty['hours_band']['p90']:.0f} | {uncertainty['probability_capacity_shortfall']:.1%} capacity |",
+            "",
+            "## Hindsight adaptive planning",
+            "",
+            f"{scenario_optimization['scenarios']} exact scenario re-solves. The fixed plan is the "
+            "balanced MILP plan; the adaptive policy re-solves with each scenario's costs, hours, "
+            "and capacity. This is a hindsight upper bound, not a deployable adaptive policy.",
+            "",
+            "| Policy | 5-year cost P10-P90 | Mean risk | Budget violation | Capacity violation |",
+            "|---|---:|---:|---:|---:|",
+            f"| Fixed balanced plan | {scenario_optimization['fixed_cost_band']['p10']:.0f}-"
+            f"{scenario_optimization['fixed_cost_band']['p90']:.0f} | "
+            f"{scenario_optimization['fixed_risk_band']['mean']:.4f} | "
+            f"{scenario_optimization['fixed_budget_violation_probability']:.1%} | "
+            f"{scenario_optimization['fixed_capacity_violation_probability']:.1%} |",
+            f"| Scenario-optimized | {scenario_optimization['adaptive_cost_band']['p10']:.0f}-"
+            f"{scenario_optimization['adaptive_cost_band']['p90']:.0f} | "
+            f"{scenario_optimization['adaptive_risk_band']['mean']:.4f} | 0.0% | 0.0% |",
+            "",
+            f"Risk-equivalent objective: fixed {scenario_optimization['mean_fixed_objective']:.4f}, "
+            f"adaptive {scenario_optimization['mean_adaptive_objective']:.4f}, mean regret "
+            f"{scenario_optimization['mean_regret']:.4f}. Adaptive improved "
+            f"{scenario_optimization['probability_adaptation_improves']:.1%} of scenarios under this "
+            "scoring rule, which includes a normalized budget/capacity penalty for the fixed plan.",
             "",
             "## Caveats",
             "",
@@ -1410,6 +1436,7 @@ def _summary(
             "- Costs, hours, productivity, access, and contractor capacities are explicit demo assumptions.",
             "- The MILP is exact for the declared linear risk state, not for a full nonlinear vegetation model.",
             "- The BAU row is a fixed five-year mowing cycle, not a like-for-like comparison of every strategy.",
+            "- Scenario-optimized planning is a hindsight upper bound: it re-solves after seeing each sampled scenario and is not an executable forecast-update policy.",
             "- No asset-owner clearance standard, outage constraint, or safety certification is claimed.",
         ]
     )
@@ -1555,6 +1582,36 @@ def main() -> None:
         config=UncertaintyConfig(samples=500, seed=7),
         created_utc=CREATED,
     )
+    scenario_methods = [
+        StatefulMethod(
+            method=method,
+            cost_per_ha=params["cost_ha"],
+            hours_per_ha=params["hours_ha"],
+            risk_reduction=params["risk_reduction"],
+        )
+        for method, params in METHODS.items()
+    ]
+    fixed_plan = StatefulPlan.model_validate(milp_balanced["plan"])
+    scenario_optimization = optimize_scenarios(
+        instance_id="bc-hydro-network-2026",
+        segments=[
+            StatefulSegment(
+                segment_id=segment["segment_id"],
+                span_id=segment["unit_id"],
+                length_m=segment["length_m"],
+                area_ha=segment["length_m"] * segment["width_m"] / 10000,
+                initial_risk=segment["base_risk"],
+            )
+            for segment in segments
+        ],
+        methods=scenario_methods,
+        periods=tactical_periods,
+        fixed=fixed_plan,
+        config=StatefulConfig(risk_weight=1.0, max_seconds=30),
+        scenarios=30,
+        seed=7,
+        created_utc=CREATED,
+    )
     bid = _bid(tactical.actions, units, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
@@ -1664,6 +1721,7 @@ def main() -> None:
         ("workforce.json", workforce),
         ("bid.json", bid),
         ("uncertainty.json", uncertainty.model_dump(mode="json")),
+        ("scenario-optimization.json", scenario_optimization.model_dump(mode="json")),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -1679,6 +1737,7 @@ def main() -> None:
             scalability,
             bid,
             uncertainty.model_dump(mode="json"),
+            scenario_optimization.model_dump(mode="json"),
         ),
         encoding="utf-8",
     )

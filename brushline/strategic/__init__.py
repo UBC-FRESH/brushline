@@ -81,6 +81,14 @@ from brushline.strategic.scenario import (
     write_scenario,
     write_scenario_archive,
 )
+from brushline.strategic.scenario_optimization import (
+    SCENARIO_OPTIMIZATION_SCHEMA_VERSION,
+    ScenarioBand,
+    ScenarioOptimizationError,
+    ScenarioOptimizationResult,
+    ScenarioOutcome,
+    optimize_scenarios,
+)
 from brushline.strategic.stateful import (
     STATEFUL_SCHEMA_VERSION,
     StatefulAction,
@@ -123,6 +131,7 @@ __all__ = [
     "PORTFOLIO_SCHEMA_VERSION",
     "REPORT_SCHEMA_VERSION",
     "SCENARIO_ARCHIVE_SCHEMA_VERSION",
+    "SCENARIO_OPTIMIZATION_SCHEMA_VERSION",
     "SCENARIO_SCHEMA_VERSION",
     "STATEFUL_SCHEMA_VERSION",
     "UNCERTAINTY_SCHEMA_VERSION",
@@ -156,7 +165,11 @@ __all__ = [
     "PortfolioViolation",
     "ReportError",
     "ScenarioArchive",
+    "ScenarioBand",
     "ScenarioError",
+    "ScenarioOptimizationError",
+    "ScenarioOptimizationResult",
+    "ScenarioOutcome",
     "ScenarioReplay",
     "ScenarioVersions",
     "SensitivityCase",
@@ -198,6 +211,7 @@ __all__ = [
     "load_scenario_archive",
     "load_strategic_report",
     "load_validation",
+    "optimize_scenarios",
     "repair_stateful_clusters",
     "replay_scenario",
     "solve_dynamic_program",

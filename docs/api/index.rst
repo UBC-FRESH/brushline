@@ -69,6 +69,7 @@ whenever you add a module to the project.
    replan
    monitoring-validation
    uncertainty
+   scenario-optimization
    shift-scheduling
    field
    field-comparison

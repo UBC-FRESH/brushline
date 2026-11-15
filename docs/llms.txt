@@ -114,6 +114,7 @@
 - [Field comparison API](api/field-comparison.html): comparison rows, unit summaries, calibration suggestions, and report writer.
 - [Shift scheduling API](api/shift-scheduling.html): work items, crews, machines, assignments, utilization, and violations.
 - [Uncertainty API](api/uncertainty.html): uncertainty config, bands, sampled outcomes, and sensitivity cases.
+- [Scenario optimization API](api/scenario-optimization.html): fixed versus re-solved scenario plans, bands, feasibility penalties, and regret.
 
 - [Mission simulation](reference/mission.html): corridor graph, endurance, footprint, weather, and cost.
 - [Monitoring value](reference/monitoring-value.html): expected loss reduction, cost, and regret per dollar.
@@ -124,6 +125,7 @@
 - [Field comparison](reference/field-comparison.html): observed-versus-LiDAR residuals, unit bias, sample gates, and non-applied review multipliers.
 - [Shift scheduling](reference/shift-scheduling.html): crew/machine skills, daily shift capacity, travel, split work, utilization, and limits.
 - [Uncertainty and sensitivity](reference/uncertainty.html): seeded cost/productivity/capacity bands, budget and shortfall probabilities, and one-at-a-time stresses.
+- [Scenario-optimized planning](reference/scenario-optimization.html): hindsight adaptive MILP re-solves, fixed-plan budget/capacity feasibility, cost/risk bands, and regret.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

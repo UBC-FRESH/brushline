@@ -14,8 +14,8 @@ The uncertainty sampler held the balanced tactical plan fixed and varied:
 
 | Metric | P10 | P50 | P90 | Mean |
 |---|---:|---:|---:|---:|
-| Total cost | 231,034 | 296,536 | 373,432 | 301,582 |
-| Crew-hours | 4,090 | 5,014 | 5,956 | 5,016 |
+| 5-year total cost | 231,034 | 296,536 | 373,432 | 301,582 |
+| 5-year crew-hours | 4,090 | 5,014 | 5,956 | 5,016 |
 
 - Budget-exceedance probability: **48.4%**
 - Crew-hour capacity shortfall probability: **0.0%**

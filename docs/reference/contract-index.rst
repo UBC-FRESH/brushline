@@ -245,6 +245,10 @@ test suite. This page is the map.
      - ``brushline.uncertainty.v1``
      - ``evaluate_uncertainty``
      - Seeded cost/productivity/capacity sampling, percentile bands, budget/capacity/contractor shortfall probabilities, and one-at-a-time sensitivities
+   * - Scenario optimization
+     - ``brushline.scenario-optimization.v1``
+     - ``optimize_scenarios``
+     - Hindsight scenario re-solves, fixed/adaptive cost/hour/risk bands, budget and capacity violation probabilities, normalized feasibility penalty, and regret
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

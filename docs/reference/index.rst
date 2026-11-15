@@ -61,6 +61,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    replan
    monitoring-validation
    uncertainty
+   scenario-optimization
    field-validation
    shift-scheduling
    field-comparison
