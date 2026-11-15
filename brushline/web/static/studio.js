@@ -94,11 +94,19 @@ async function selectBlock(id){
  $("#map-hint").textContent=b?.block_kind==="network_block"?`${b.label} · ${b.line_names?.length||0} mapped features · ${b.tree_count} VRI stand clumps · ${b.towers?.length||0} mapped towers` : b?.block_kind==="powerline_block"?`${b.label} · ${b.voltage_kv} kV · ${b.height_m} m max canopy · ${b.cover_pct}% cover >3 m · ${b.tree_count} tree clumps · ${b.understory_patch_count} shrubs (${b.understory_corridor_count} in corridor)`:`${id} · ${b?.height_m??"?"} m · ${b?.cover_pct??"?"}% cover · ${b?.actions?.length||0} treatment action(s)`;
  $("#toggle").disabled=!b?.variant_available;
  const s=await api(`api/studio/scene/${id}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;state.schedule=s.treatment_schedule||state.schedule;
- configureYear();drawProvenance();drawMap();drawSchedule();drawScene();
+ configureYear();drawProvenance();drawMap();drawSchedule();drawTimeline();drawScene();
  setTimeout(()=>window.brushline3d?.setYear(state.year),80);
 }
 
 function configureYear(){
+ if(state.network){
+  const rows=state.network.strategic?.stateful_scenarios?.[0]?.rows||[];
+  if(!rows.length){$("#time-control").hidden=true;return;}
+  const min=rows[0].year,max=rows[rows.length-1].year;
+  state.year=Math.max(min,Math.min(max,state.year));
+  const input=$("#year");input.min=min;input.max=max;input.step=1;input.value=state.year;input.disabled=false;
+  $("#time-control").hidden=false;updateNetworkYear();return;
+ }
  const s=state.schedule;
  if(!s){$("#time-control").hidden=true;return;}
  const axis=s.time_axis||[s.baseline_year||2026];
@@ -106,6 +114,11 @@ function configureYear(){
  state.year=Math.max(min,Math.min(max,state.year));
  const input=$("#year");input.min=min;input.max=max;input.step=1;input.value=state.year;input.disabled=false;
  $("#time-control").hidden=false;updateYearLabel();
+}
+function updateNetworkYear(){
+ if(!state.network)return;
+ $("#year-label").textContent=`${state.year} modelled`;
+ $("#variant").textContent="network prototype";
 }
 function yearText(){
  const s=state.schedule;if(!s)return "";
@@ -118,6 +131,10 @@ function updateYearLabel(){
  $("#variant").textContent=label;
 }
 function setYear(year){
+ if(state.network){
+  state.year=Number(year);$("#year").value=state.year;updateNetworkYear();drawSchedule();drawTimeline();
+  return;
+ }
  if(!state.schedule)return;
  state.year=Number(year);$("#year").value=state.year;updateYearLabel();drawSchedule();drawMap();
  window.brushline3d?.setYear(state.year);
@@ -127,14 +144,16 @@ function drawSchedule(){
   $("#schedule-heading").textContent="Strategic budget and treatment schedule";
   const strategic=state.network.strategic||{};
   const tactical=state.network.tactical||{};
-  const portfolios=strategic.portfolios||[];
+  const portfolios=strategic.stateful_scenarios||strategic.portfolios||[];
   const scenarioRows=portfolios.map(p=>`<tr><td>${esc(p.name)}</td><td>${p.annual_budget.toFixed(0)}</td><td>${p.five_year_cost.toFixed(0)}</td><td>${p.mean_service.toFixed(3)}</td><td>${p.mean_risk.toFixed(3)}</td><td>${p.mean_annual_hours.toFixed(0)}</td></tr>`).join("");
-  const bau=strategic.bau;
-  const bauCost=bau?(bau.period_summary||[]).reduce((sum,row)=>sum+row.cost,0):0;
+  const bau=strategic.stateful_bau||strategic.bau;
   const capacity=(state.network.network?.assumptions?.contractor_capacity||[]).reduce((sum,value)=>sum+value,0);
-  const balanced=portfolios.find(p=>p.name==="balanced");
+  const balanced=portfolios.find(p=>p.name.includes("balanced"))||portfolios[0];
   const utilization=balanced&&capacity?`${balanced.mean_annual_hours.toFixed(0)} h/yr balanced demand (${(balanced.mean_annual_hours/capacity*100).toFixed(0)}% of modelled capacity)`:"no capacity estimate";
-  $("#schedule").innerHTML=`<p class="schedule-note">Strategic budget scenarios from public line geometry and VRI-derived stand pressure. Costs, hours, access, and contractor capacity are demo assumptions. Modelled contractor capacity: ${capacity.toFixed(0)} h/yr; ${utilization}.</p><table><tr><th>Scenario</th><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${scenarioRows}${bau?`<tr><td>BAU 5-year mowing</td><td>0</td><td>${bauCost.toFixed(0)}</td><td>${bau.service_attainment.toFixed(3)}</td><td>${bau.risk.toFixed(3)}</td><td>${((bau.period_summary||[]).reduce((sum,row)=>sum+(row.capacity_used?.mowing||0),0)/5).toFixed(0)}</td></tr>`:""}</table><p class="schedule-note">Tactical selected actions: ${tactical.actions?.length||0}; tactical cost: ${(tactical.total_cost||0).toFixed(0)}; work orders: ${state.network.operations?.work_orders?.length||0}.</p>`;
+  const selectedScenario=portfolios.find(p=>p.name.includes("balanced"))||portfolios[0];
+  const selectedRow=selectedScenario?.rows?.find(row=>row.year===state.year);
+  const annual=selectedRow?`<p class="schedule-note">${state.year} selected-year projection: ${selectedRow.actions} actions; ${selectedRow.cost.toFixed(0)} cost; ${selectedRow.hours.toFixed(0)} crew-hours; service ${selectedRow.service.toFixed(3)}; risk ${selectedRow.risk.toFixed(3)}.</p>`:"";
+  $("#schedule").innerHTML=`<p class="schedule-note">Stateful budget scenarios from public line geometry and VRI-derived stand pressure. Costs, hours, access, and contractor capacity are demo assumptions. Modelled contractor capacity: ${capacity.toFixed(0)} h/yr; ${utilization}.</p><table><tr><th>Scenario</th><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${scenarioRows}${bau?`<tr><td>BAU 5-year mowing</td><td>0</td><td>${(bau.five_year_cost||0).toFixed(0)}</td><td>${(bau.mean_service??0).toFixed(3)}</td><td>${(bau.mean_risk??0).toFixed(3)}</td><td>${(bau.mean_annual_hours||0).toFixed(0)}</td></tr>`:""}</table>${annual}<p class="schedule-note">Tactical selected actions: ${tactical.actions?.length||0}; tactical cost: ${(tactical.total_cost||0).toFixed(0)}; work orders: ${state.network.operations?.work_orders?.length||0}.</p>`;
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";
@@ -163,7 +182,7 @@ async function toggleVariant(){const b=state.blocks.find(x=>x.block_id===state.s
 function drawPareto(){
  if(state.network){
   $("#pareto-heading").textContent="Treatment-cycle tradeoff";
-  const rows=(state.network.strategic?.cycle_tradeoffs||[]).map(item=>`<tr><td>${esc(item.method)}</td><td>${item.cycle_years}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_annual_hours.toFixed(0)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
+  const rows=(state.network.strategic?.stateful_cycles||[]).map(item=>`<tr><td>${esc(item.method)}</td><td>${item.cycle_years}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_annual_hours.toFixed(0)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
   $("#pareto").innerHTML=`<p class="schedule-note">Fixed-cycle tradeoff: more frequent or intensive work costs more but lowers mean risk.</p><table><tr><th>Method</th><th>Cycle</th><th>5-year cost</th><th>Hours/yr</th><th>Mean risk</th></tr>${rows}</table>`;
   return;
  }
@@ -172,7 +191,7 @@ function drawPareto(){
 }
 function drawTimeline(){
  if(state.network){
-  const orders=state.network.operations?.work_orders||[];
+  const orders=(state.network.operations?.work_orders||[]).filter(order=>order.year===state.year);
   $("#timeline").innerHTML=orders.length?`<table><tr><th>Year</th><th>Seq. day</th><th>Unit</th><th>Method</th><th>Crew</th><th>Cost</th></tr>${orders.slice(0,20).map(o=>`<tr><td>${o.year}</td><td>${o.day}</td><td>${esc(o.unit_id)}</td><td>${esc(o.method)}</td><td>${esc(o.crew_id)}</td><td>${o.cost.toFixed(0)}</td></tr>`).join("")}</table>`:"<p>No work orders.</p>";
   return;
  }

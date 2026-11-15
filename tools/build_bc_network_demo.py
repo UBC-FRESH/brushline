@@ -385,6 +385,178 @@ def _cycle_tradeoff(segments: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return results
 
 
+def _grow_risk(risk: float) -> float:
+    """Apply one year of unreported vegetation growth to a risk index."""
+    return min(0.95, risk + 0.015 + 0.03 * (1.0 - risk))
+
+
+def _stateful_scenario(
+    segments: list[dict[str, Any]],
+    *,
+    name: str,
+    annual_budget: float,
+    risk_weight: float,
+    capacity_hours: float = 6000.0,
+    policy: str = "risk",
+) -> dict[str, Any]:
+    """Simulate a budget-constrained treatment policy with state carry-over.
+
+    The policy is a deterministic risk-per-dollar heuristic, not an exact
+    multi-period optimizer. The state does carry treatment benefits and growth
+    forward, unlike the static portfolio screening model.
+    """
+    state = {segment["segment_id"]: float(segment["base_risk"]) for segment in segments}
+    rows = []
+    actions = []
+    total_cost = 0.0
+    total_hours = 0.0
+    for offset in range(HORIZON):
+        year = START_YEAR + offset
+        for segment in segments:
+            sid = segment["segment_id"]
+            state[sid] = _grow_risk(state[sid])
+        selected: list[tuple[dict[str, Any], str, float, float, float]] = []
+        if policy == "bau-cycle":
+            if offset == 0:
+                for segment in segments:
+                    params = METHODS["mowing"]
+                    area = segment["length_m"] * segment["width_m"] / 10000
+                    selected.append(
+                        (
+                            segment,
+                            "mowing",
+                            area * params["cost_ha"],
+                            area * params["hours_ha"],
+                            state[segment["segment_id"]],
+                        )
+                    )
+        else:
+            candidates = []
+            for segment in segments:
+                sid = segment["segment_id"]
+                area = segment["length_m"] * segment["width_m"] / 10000
+                for method, params in METHODS.items():
+                    post = max(0.0, state[sid] - params["risk_reduction"])
+                    benefit = (state[sid] - post) * risk_weight
+                    score = benefit / max(area * params["cost_ha"], 1.0)
+                    candidates.append(
+                        (
+                            score,
+                            segment,
+                            method,
+                            area * params["cost_ha"],
+                            area * params["hours_ha"],
+                            post,
+                        )
+                    )
+            candidates.sort(key=lambda item: (-item[0], item[1]["segment_id"], item[2]))
+            used: set[str] = set()
+            spent = 0.0
+            hours = 0.0
+            for _score, segment, method, cost, capacity, post in candidates:
+                sid = segment["segment_id"]
+                if sid in used or spent + cost > annual_budget or hours + capacity > capacity_hours:
+                    continue
+                used.add(sid)
+                selected.append((segment, method, cost, capacity, post))
+                spent += cost
+                hours += capacity
+        for segment, method, cost, capacity, post in selected:
+            sid = segment["segment_id"]
+            before = state[sid]
+            state[sid] = max(0.0, post)
+            actions.append(
+                {
+                    "year": year,
+                    "segment_id": sid,
+                    "unit_id": segment["unit_id"],
+                    "method": method,
+                    "cost": round(cost, 2),
+                    "hours": round(capacity, 1),
+                    "risk_before": round(before, 3),
+                    "risk_after": round(state[sid], 3),
+                }
+            )
+        total_cost += sum(item[2] for item in selected)
+        total_hours += sum(item[3] for item in selected)
+        weighted_total = sum(segment["length_m"] for segment in segments)
+        weighted_risk = sum(
+            state[segment["segment_id"]] * segment["length_m"] for segment in segments
+        ) / max(weighted_total, 1.0)
+        rows.append(
+            {
+                "year": year,
+                "cost": round(sum(item[2] for item in selected), 1),
+                "hours": round(sum(item[3] for item in selected), 1),
+                "actions": len(selected),
+                "service": round(1.0 - weighted_risk, 3),
+                "risk": round(weighted_risk, 3),
+            }
+        )
+    return {
+        "name": name,
+        "annual_budget": annual_budget,
+        "policy": policy,
+        "rows": rows,
+        "actions": actions,
+        "five_year_cost": round(total_cost, 1),
+        "mean_service": round(sum(row["service"] for row in rows) / HORIZON, 3),
+        "mean_risk": round(sum(row["risk"] for row in rows) / HORIZON, 3),
+        "mean_annual_hours": round(total_hours / HORIZON, 1),
+    }
+
+
+def _stateful_cycles(segments: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Run stateful fixed-cycle simulations for the cost-versus-risk table."""
+    results = []
+    for method, params in METHODS.items():
+        for cycle in (2, 3, 4, 5):
+            state = {segment["segment_id"]: float(segment["base_risk"]) for segment in segments}
+            rows = []
+            total_cost = 0.0
+            total_hours = 0.0
+            for offset in range(HORIZON):
+                for segment in segments:
+                    state[segment["segment_id"]] = _grow_risk(state[segment["segment_id"]])
+                treat = offset % cycle == 0
+                cost = 0.0
+                hours = 0.0
+                if treat:
+                    for segment in segments:
+                        area = segment["length_m"] * segment["width_m"] / 10000
+                        state[segment["segment_id"]] = max(
+                            0.0, state[segment["segment_id"]] - params["risk_reduction"]
+                        )
+                        cost += area * params["cost_ha"]
+                        hours += area * params["hours_ha"]
+                total_cost += cost
+                total_hours += hours
+                weighted = sum(segment["length_m"] for segment in segments)
+                risk = sum(
+                    state[segment["segment_id"]] * segment["length_m"] for segment in segments
+                ) / max(weighted, 1.0)
+                rows.append(
+                    {
+                        "year": START_YEAR + offset,
+                        "cost": round(cost, 1),
+                        "hours": round(hours, 1),
+                        "risk": round(risk, 3),
+                    }
+                )
+            results.append(
+                {
+                    "method": method,
+                    "cycle_years": cycle,
+                    "annual_cost": [row["cost"] for row in rows],
+                    "annual_hours": [row["hours"] for row in rows],
+                    "five_year_cost": round(total_cost, 1),
+                    "mean_annual_hours": round(total_hours / HORIZON, 1),
+                    "mean_risk": round(sum(row["risk"] for row in rows) / HORIZON, 3),
+                }
+            )
+    return results
+
+
 def _portfolio(
     segments: list[dict[str, Any]],
     periods: list[PortfolioPeriod],
@@ -425,35 +597,23 @@ def _portfolio(
 
 
 def _tactical(
-    portfolio: StrategicPortfolio,
+    source_actions: list[dict[str, Any]],
     segments: list[dict[str, Any]],
     units: list[dict[str, Any]],
     towers: list[dict[str, Any]],
 ) -> tuple[TacticalProgram, AccessPlan, ResourcePlan, OperationsPlan]:
-    """Turn a selected strategic portfolio into tactical and operational plans."""
-    selected = {}
-    for selection in portfolio.selections:
-        if selection.action_id == "none":
-            continue
-        year = int(selection.period_id.removeprefix("Y"))
-        selected.setdefault((selection.segment_id, year), []).append(selection)
-    segment_map = {segment["segment_id"]: segment for segment in segments}
-    unit_actions = []
-    for (segment_id, year), selections in selected.items():
-        segment = segment_map[segment_id]
-        for selection in selections:
-            area_ha = segment["length_m"] * segment["width_m"] / 10000
-            hours = area_ha * METHODS[selection.action_id]["hours_ha"]
-            unit_actions.append(
-                (
-                    segment["unit_id"],
-                    year,
-                    selection.action_id,
-                    selection.cost,
-                    hours,
-                    segment_id,
-                )
-            )
+    """Turn stateful strategic actions into tactical and operational plans."""
+    unit_actions = [
+        (
+            action["unit_id"],
+            int(action["year"]),
+            str(action["method"]),
+            float(action["cost"]),
+            float(action["hours"]),
+            str(action["segment_id"]),
+        )
+        for action in source_actions
+    ]
     grouped: dict[tuple[str, int, str], dict[str, Any]] = {}
     for unit_id, year, method, cost, hours, segment_id in unit_actions:
         key = (unit_id, year, method)
@@ -725,7 +885,7 @@ def _summary(
         "| Scenario | Budget/yr | Five-year cost | Mean service | Mean risk | Hours/yr |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    for scenario in strategic["portfolios"]:
+    for scenario in strategic["stateful_scenarios"]:
         lines.append(
             f"| {scenario['name']} | {scenario['annual_budget']:.0f} | "
             f"{scenario['five_year_cost']:.0f} | {scenario['mean_service']:.3f} | "
@@ -748,7 +908,7 @@ def _summary(
             "|---|---:|---:|---:|---:|",
         ]
     )
-    for item in strategic["cycle_tradeoffs"]:
+    for item in strategic["stateful_cycles"]:
         lines.append(
             f"| {item['method']} | {item['cycle_years']} | {item['five_year_cost']:.0f} | "
             f"{item['mean_annual_hours']:.0f} | {item['mean_risk']:.3f} |"
@@ -783,7 +943,7 @@ def _summary(
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
             "- Costs, hours, productivity, access, and contractor capacities are explicit demo assumptions.",
-            "- The strategic options are period-static; they do not yet carry treatment state forward through growth.",
+            "- The stateful policy is a deterministic risk-per-dollar heuristic, not an exact multi-period optimizer.",
             "- The BAU row is a fixed five-year mowing cycle, not a like-for-like comparison of every strategy.",
             "- No asset-owner clearance standard, outage constraint, or safety certification is claimed.",
         ]
@@ -835,6 +995,30 @@ def main() -> None:
                 ),
             }
         )
+    stateful_scenarios = [
+        _stateful_scenario(
+            segments,
+            name=name,
+            annual_budget=budget,
+            risk_weight=risk_weight,
+        )
+        for name, budget, risk_weight in (
+            ("stateful-constrained", 30000, 1.0),
+            ("stateful-balanced", 60000, 1.5),
+            ("stateful-risk-first", 100000, 3.0),
+        )
+    ]
+    stateful_balanced = next(
+        item for item in stateful_scenarios if item["name"] == "stateful-balanced"
+    )
+    stateful_bau = _stateful_scenario(
+        segments,
+        name="stateful-bau-5-year-mowing",
+        annual_budget=0,
+        risk_weight=1.0,
+        policy="bau-cycle",
+    )
+    stateful_cycles = _stateful_cycles(segments)
     bau = build_bau_plan(
         policy_id="bau-mowing-5",
         instance_id="bc-hydro-network-2026",
@@ -846,7 +1030,9 @@ def main() -> None:
     )
     portfolio_model = _portfolio(portfolio_segments, periods, options, 60000, 1.5)
     bau_comparison = compare_bau(portfolio_model, bau, created_utc=CREATED)
-    tactical, access, resources, operations = _tactical(portfolio_model, segments, units, towers)
+    tactical, access, resources, operations = _tactical(
+        stateful_balanced["actions"], segments, units, towers
+    )
     network = {
         "schema_version": "brushline.network-demo.v1",
         "instance_id": "bc-hydro-network-2026",
@@ -921,6 +1107,9 @@ def main() -> None:
         "instance_id": "bc-hydro-network-2026",
         "periods": [period.model_dump(mode="json") for period in periods],
         "portfolios": scenarios,
+        "stateful_scenarios": stateful_scenarios,
+        "stateful_bau": stateful_bau,
+        "stateful_cycles": stateful_cycles,
         "bau": bau.model_dump(mode="json"),
         "bau_comparison": bau_comparison.model_dump(mode="json"),
         "cycle_tradeoffs": _cycle_tradeoff(segments),

@@ -20,38 +20,37 @@ prototype assumptions for cost, productivity, access, and contractor capacity.
 
 ## Strategic examples
 
-The strategic model uses period-static segment options, five annual periods from 2027 to 2031,
-budget-constrained selection, and a risk/service objective. The scenarios are deliberately different
-budget-and-risk postures, not an asset-owner policy.
+The strategic model uses stateful segment risk, five annual periods from 2027 to 2031, budget and
+crew-hour constraints, and a deterministic risk-per-dollar treatment policy. The scenarios are
+deliberately different budget-and-risk postures, not an asset-owner policy.
 
 | Scenario | Annual budget | Five-year cost | Mean service | Mean risk | Hours/year |
 |---|---:|---:|---:|---:|---:|
-| Constrained | 30,000 | 149,895 | 0.745 | 0.257 | 640 |
-| Balanced | 60,000 | 299,375 | 0.793 | 0.211 | 1,295 |
-| Risk-first | 100,000 | 499,969 | 0.853 | 0.151 | 2,188 |
-| BAU five-year mowing | unpriced | 79,082 | 0.747 | 0.257 | 264 |
+| Stateful constrained | 30,000 | 147,399 | 0.881 | 0.119 | 491 |
+| Stateful balanced | 60,000 | 299,859 | 0.967 | 0.033 | 1,000 |
+| Stateful risk-first | 100,000 | 395,409 | 0.985 | 0.015 | 1,318 |
+| BAU five-year mowing | unpriced | 79,082 | 0.590 | 0.410 | 264 |
 
-The fixed-cycle tradeoff is more interpretable than the static portfolio for the frequency question:
+The stateful fixed-cycle tradeoff carries risk forward between treatments:
 
-- Mowing cycle 2: 237,245 five-year cost, 791 hours/year, mean risk 0.165.
-- Mowing cycle 5: 79,082 five-year cost, 264 hours/year, mean risk 0.306.
-- Manual cycle 2: 819,062 five-year cost, 3,615 hours/year, mean risk 0.132.
-- Manual cycle 5: 273,021 five-year cost, 1,205 hours/year, mean risk 0.295.
+- Mowing cycle 2: 237,245 five-year cost, 791 hours/year, mean risk 0.048.
+- Mowing cycle 5: 79,082 five-year cost, 264 hours/year, mean risk 0.159.
+- Manual cycle 2: 819,062 five-year cost, 3,615 hours/year, mean risk 0.018.
+- Manual cycle 5: 273,021 five-year cost, 1,205 hours/year, mean risk 0.087.
 
 These numbers support the intended argument: minimize cost by treating rarely, but pay with a higher
-cumulative risk. The current model does not yet carry the chosen treatment state forward as a
-period-to-period transition, so the strategic portfolio is a screening example rather than a final
-optimal policy.
+cumulative risk. The treatment policy is a deterministic risk-per-dollar heuristic, not an exact
+multi-period optimizer.
 
 ## Tactical and operational examples
 
-The balanced strategic scenario becomes a **25-action tactical program**:
+The stateful balanced scenario becomes a **75-action tactical program**:
 
-- Tactical cost: 299,375 CAD over five years.
-- Resource-plan cost: 347,840 CAD with modelling overheads.
+- Tactical cost: 299,859 CAD over five years.
+- Resource-plan cost: 276,103 CAD with modelling overheads.
 - Modelled contractor capacity: 9,200 hours/year.
-- Balanced demand: 1,295 hours/year, about 14 percent of modelled capacity.
-- Operations: 25 work-ready orders with crew assignments and sequence days.
+- Balanced demand: 1,000 hours/year, about 11 percent of modelled capacity.
+- Operations: 75 work-ready orders with crew assignments and sequence days.
 
 The resource comparison is useful in both directions: spare capacity can support recruitment
 headroom, while a capacity shortfall would trigger a contractor ramp-up or a different allocation.
@@ -68,7 +67,7 @@ context, strategic budget table, fixed-cycle risk tradeoff, and operational work
   assumptions.
 - Stand values are VRI attributes sampled to segment midpoints and VRI stand centroids, not a field
   survey or stem map.
-- The strategic options are period-static; growth and treatment carry-over are not yet coupled.
+- The strategic policy is a deterministic heuristic, not an exact multi-period optimizer.
 - No BC Hydro clearance standard, outage constraint, access permission, or safety certification is
   claimed.
 
