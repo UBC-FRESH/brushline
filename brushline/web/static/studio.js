@@ -181,9 +181,20 @@ function drawScene(){
 async function toggleVariant(){const b=state.blocks.find(x=>x.block_id===state.selected);if(!b?.variant_available)return;state.variant=state.variant==="pre"?"post":"pre";const s=await api(`api/studio/scene/${state.selected}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;drawScene();}
 function drawPareto(){
  if(state.network){
-  $("#pareto-heading").textContent="Treatment-cycle tradeoff";
-  const rows=(state.network.strategic?.stateful_cycles||[]).map(item=>`<tr><td>${esc(item.method)}</td><td>${item.cycle_years}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_annual_hours.toFixed(0)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
-  $("#pareto").innerHTML=`<p class="schedule-note">Fixed-cycle tradeoff: more frequent or intensive work costs more but lowers mean risk.</p><table><tr><th>Method</th><th>Cycle</th><th>5-year cost</th><th>Hours/yr</th><th>Mean risk</th></tr>${rows}</table>`;
+  $("#pareto-heading").textContent="Strategy frontier and cycle tradeoff";
+  const frontier=state.network.strategic?.pareto_frontier||[];
+  const costs=frontier.map(item=>item.five_year_cost);
+  const minCost=Math.min(...costs,0),maxCost=Math.max(...costs,1);
+  const maxRisk=Math.max(...frontier.map(item=>item.mean_risk),0.01);
+  const sx=(cost)=>50+(cost-minCost)/Math.max(1,maxCost-minCost)*520;
+  const sy=(risk)=>20+(maxRisk-risk)/Math.max(0.01,maxRisk)*165;
+  const points=frontier.map(item=>`${sx(item.five_year_cost).toFixed(1)},${sy(item.mean_risk).toFixed(1)}`).join(" ");
+  const dots=frontier.map(item=>`<circle cx="${sx(item.five_year_cost).toFixed(1)}" cy="${sy(item.mean_risk).toFixed(1)}" r="5" fill="#d9691f"><title>${esc(item.name)} · ${item.five_year_cost.toFixed(0)} cost · ${item.mean_risk.toFixed(3)} risk</title></circle>`).join("");
+  const chart=`<svg viewBox="0 0 620 230" role="img" aria-label="Cost versus risk frontier" style="width:100%;height:auto;background:#f4f7f2;border-radius:7px"><line x1="50" y1="185" x2="580" y2="185" stroke="#8b9a8d"/><line x1="50" y1="20" x2="50" y2="185" stroke="#8b9a8d"/><text x="50" y="205" font-size="10" fill="#59675c">lower cost → ${maxCost.toFixed(0)}</text><text x="8" y="20" font-size="10" fill="#59675c" transform="rotate(-90 8 20)">higher risk →</text><polyline points="${points}" fill="none" stroke="#d9691f" stroke-width="2" opacity=".7"/>${dots}</svg>`;
+  const frontierRows=frontier.map(item=>`<tr><td>${item.annual_budget.toFixed(0)}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_service.toFixed(3)}</td><td>${item.mean_risk.toFixed(3)}</td><td>${item.mean_annual_hours.toFixed(0)}</td></tr>`).join("");
+  const capacityRows=(state.network.strategic?.capacity_sensitivity||[]).map(item=>`<tr><td>${item.name.replace("capacity-","")}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_service.toFixed(3)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
+  const cycleRows=(state.network.strategic?.stateful_cycles||[]).map(item=>`<tr><td>${esc(item.method)}</td><td>${item.cycle_years}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_annual_hours.toFixed(0)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
+  $("#pareto").innerHTML=`<p class="schedule-note">Budget/risk frontier: non-dominated stateful planning outcomes. Capacity sensitivity holds the balanced budget at 100k/yr and varies crew-hours.</p>${chart}<table><tr><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${frontierRows}</table><p class="schedule-note">Contractor capacity sensitivity</p><table><tr><th>Capacity h/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th></tr>${capacityRows}</table><p class="schedule-note">Fixed-cycle tradeoff</p><table><tr><th>Method</th><th>Cycle</th><th>5-year cost</th><th>Hours/yr</th><th>Mean risk</th></tr>${cycleRows}</table>`;
   return;
  }
  $("#pareto-heading").textContent="Pareto archive";

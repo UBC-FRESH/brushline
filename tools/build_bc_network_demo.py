@@ -506,6 +506,18 @@ def _stateful_scenario(
     }
 
 
+def _stateful_frontier(scenarios: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Keep the non-dominated cost/risk points from a stateful budget sweep."""
+    ordered = sorted(scenarios, key=lambda item: (item["five_year_cost"], item["mean_risk"]))
+    frontier = []
+    best_risk = 1.1
+    for scenario in ordered:
+        if scenario["mean_risk"] < best_risk - 1e-9:
+            frontier.append(scenario)
+            best_risk = scenario["mean_risk"]
+    return frontier
+
+
 def _stateful_cycles(segments: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Run stateful fixed-cycle simulations for the cost-versus-risk table."""
     results = []
@@ -1011,6 +1023,26 @@ def main() -> None:
     stateful_balanced = next(
         item for item in stateful_scenarios if item["name"] == "stateful-balanced"
     )
+    budget_sweep = [
+        _stateful_scenario(
+            segments,
+            name=f"budget-{budget}",
+            annual_budget=budget,
+            risk_weight=1.5,
+        )
+        for budget in (20000, 30000, 45000, 60000, 80000, 100000, 125000)
+    ]
+    pareto_frontier = _stateful_frontier(budget_sweep)
+    capacity_sensitivity = [
+        _stateful_scenario(
+            segments,
+            name=f"capacity-{capacity}",
+            annual_budget=100000,
+            risk_weight=1.5,
+            capacity_hours=capacity,
+        )
+        for capacity in (300, 600, 1000, 1500, 2500)
+    ]
     stateful_bau = _stateful_scenario(
         segments,
         name="stateful-bau-5-year-mowing",
@@ -1110,6 +1142,8 @@ def main() -> None:
         "stateful_scenarios": stateful_scenarios,
         "stateful_bau": stateful_bau,
         "stateful_cycles": stateful_cycles,
+        "pareto_frontier": pareto_frontier,
+        "capacity_sensitivity": capacity_sensitivity,
         "bau": bau.model_dump(mode="json"),
         "bau_comparison": bau_comparison.model_dump(mode="json"),
         "cycle_tradeoffs": _cycle_tradeoff(segments),

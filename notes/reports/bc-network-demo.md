@@ -31,7 +31,10 @@ deliberately different budget-and-risk postures, not an asset-owner policy.
 | Stateful risk-first | 100,000 | 395,409 | 0.985 | 0.015 | 1,318 |
 | BAU five-year mowing | unpriced | 79,082 | 0.590 | 0.410 | 264 |
 
-The stateful fixed-cycle tradeoff carries risk forward between treatments:
+The budget sweep produces a non-dominated cost/risk frontier from about 98k (risk 0.200) to 395k
+(risk 0.015). Capacity sensitivity at a 100k budget shows the resource constraint: 300 h/year yields
+about 89k cost and risk 0.221; 1,000 h/year yields about 300k cost and risk 0.033; 1,500 h/year
+reaches risk 0.015. The stateful fixed-cycle tradeoff carries risk forward between treatments:
 
 - Mowing cycle 2: 237,245 five-year cost, 791 hours/year, mean risk 0.048.
 - Mowing cycle 5: 79,082 five-year cost, 264 hours/year, mean risk 0.159.
@@ -68,6 +71,7 @@ context, strategic budget table, fixed-cycle risk tradeoff, and operational work
 - Stand values are VRI attributes sampled to segment midpoints and VRI stand centroids, not a field
   survey or stem map.
 - The strategic policy is a deterministic heuristic, not an exact multi-period optimizer.
+- The frontier and capacity tables are screening tools for budget and contractor discussions.
 - No BC Hydro clearance standard, outage constraint, access permission, or safety certification is
   claimed.
 
