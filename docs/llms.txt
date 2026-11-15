@@ -94,6 +94,7 @@
 - [Strategic dynamic program API](api/strategic-dynamic-program.html): the DP models, solver, and validation.
 - [Stateful strategic MILP API](api/stateful-strategic.html): stateful segment risk, methods, periods, solver plan, and replay.
 - [Stateful heuristic API](api/stateful-heuristic.html): Fresh Solutions adapter, greedy seed, local search, and plan provenance.
+- [Stateful decomposition API](api/stateful-decomposition.html): cluster grouping, allocation, exact repair, and aggregate replay.
 - [Strategic portfolio API](api/strategic-portfolio.html): portfolio models, builder, and validation.
 - [Strategic monitoring API](api/strategic-monitoring.html): monitoring policy models and selection.
 - [Business-as-usual API](api/strategic-bau.html): the baseline and comparison models.

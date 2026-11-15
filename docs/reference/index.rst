@@ -39,6 +39,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    strategic-dynamic-program
    stateful-strategic
    stateful-heuristic
+   stateful-decomposition
    strategic-portfolio
    strategic-monitoring
    strategic-bau

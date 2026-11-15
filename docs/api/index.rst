@@ -47,6 +47,7 @@ whenever you add a module to the project.
    strategic-dynamic-program
    stateful-strategic
    stateful-heuristic
+   stateful-decomposition
    strategic-portfolio
    strategic-monitoring
    strategic-bau

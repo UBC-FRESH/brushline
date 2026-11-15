@@ -249,6 +249,10 @@ test suite. This page is the map.
      - ``brushline.stateful-heuristic.v1``
      - ``build_stateful_heuristic``
      - Fresh Solutions adapter, greedy seed, linear state replay, budget/capacity feasibility, seed, iterations, evaluations, and accepted moves
+   * - Stateful decomposition
+     - ``brushline.stateful-decomposition.v1``
+     - ``decompose_stateful``, ``repair_stateful_clusters``
+     - Cluster grouping, allocated budgets, exact cluster solves, baseline fallback, aggregate replay, and gap
    * - Shift plan
      - ``brushline.tactical-shifts.v1``
      - ``build_shift_plan``

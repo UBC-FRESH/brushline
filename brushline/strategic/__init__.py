@@ -9,6 +9,14 @@ from brushline.strategic.bau import (
     build_bau_plan,
     compare_bau,
 )
+from brushline.strategic.decomposition import (
+    DECOMPOSITION_SCHEMA_VERSION,
+    ClusterResult,
+    DecomposedPlan,
+    DecompositionError,
+    decompose_stateful,
+    repair_stateful_clusters,
+)
 from brushline.strategic.dynamic_program import (
     DP_SCHEMA_VERSION,
     DPState,
@@ -99,6 +107,7 @@ from brushline.strategic.validation import (
 
 __all__ = [
     "BAU_SCHEMA_VERSION",
+    "DECOMPOSITION_SCHEMA_VERSION",
     "DP_SCHEMA_VERSION",
     "MONITORING_SCHEMA_VERSION",
     "PORTFOLIO_SCHEMA_VERSION",
@@ -111,7 +120,10 @@ __all__ = [
     "BauConfig",
     "BauError",
     "BauPlan",
+    "ClusterResult",
     "DPState",
+    "DecomposedPlan",
+    "DecompositionError",
     "DynamicProgram",
     "DynamicProgramError",
     "DynamicProgramResult",
@@ -163,10 +175,12 @@ __all__ = [
     "build_synthetic_case",
     "canonical_digest",
     "compare_bau",
+    "decompose_stateful",
     "load_scenario",
     "load_scenario_archive",
     "load_strategic_report",
     "load_validation",
+    "repair_stateful_clusters",
     "replay_scenario",
     "solve_dynamic_program",
     "validate_dynamic_program",
