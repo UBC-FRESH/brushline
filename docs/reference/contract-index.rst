@@ -245,6 +245,10 @@ test suite. This page is the map.
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``
      - Linear risk state, treatment transitions, budget/capacity constraints, objective, annual outcomes, solver provenance, and replay
+   * - Shift plan
+     - ``brushline.tactical-shifts.v1``
+     - ``build_shift_plan``
+     - Crew/machine skills, contractor matching, daily shift hours, travel, split work, utilization, and violations
    * - Studio
      - ``brushline.scene.v1``
      - ``Studio``
@@ -357,6 +361,8 @@ Error prefixes
      - Field comparison
    * - ``STATEFUL-*``
      - Stateful strategic plan
+   * - ``SHIFT-*``
+     - Shift scheduling
    * - ``STUDIO-*``
      - Studio compatibility
 

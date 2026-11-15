@@ -48,6 +48,14 @@ from brushline.tactical.resources import (
     ResourceRequest,
     build_resource_plan,
 )
+from brushline.tactical.shifts import (
+    ShiftConfig,
+    ShiftCrew,
+    ShiftMachine,
+    ShiftPlan,
+    ShiftWorkItem,
+    build_shift_plan,
+)
 from pyproj import Transformer
 from rasterio.enums import Resampling
 from rasterio.warp import calculate_default_transform, reproject
@@ -716,8 +724,19 @@ def _tactical(
         item["hours"] += hours
         item["segments"].append(segment_id)
     actions = []
+    contractor_load: dict[tuple[str, int], float] = {}
     for index, ((unit_id, year, method), item) in enumerate(sorted(grouped.items()), start=1):
-        profile = next(profile for profile in CONTRACTORS if method in profile[1])
+        eligible = [profile for profile in CONTRACTORS if method in profile[1]]
+        profile = min(
+            eligible,
+            key=lambda candidate: (
+                contractor_load.get((candidate[0], year), 0.0) / candidate[3],
+                candidate[0],
+            ),
+        )
+        contractor_load[(profile[0], year)] = (
+            contractor_load.get((profile[0], year), 0.0) + item["hours"]
+        )
         actions.append(
             TacticalAction(
                 action_id=f"A{index:03d}",
@@ -960,12 +979,58 @@ def _scene(
     }
 
 
+def _shifts(actions: list[TacticalAction], instance_id: str) -> ShiftPlan:
+    """Build a deterministic crew and machine shift schedule for tactical actions."""
+    work_items = [
+        ShiftWorkItem(
+            work_order_id=f"wo-{action.action_id}",
+            unit_id=action.unit_id,
+            method=action.method,
+            year=action.year,
+            hours=action.capacity_units,
+            travel_hours=0.5,
+            contractor_id=action.contractor_id,
+            priority=1,
+        )
+        for action in actions
+    ]
+    crews = [
+        ShiftCrew(
+            crew_id=contractor_id,
+            methods=list(methods),
+            shift_hours=8.0,
+            contractor_id=contractor_id,
+        )
+        for contractor_id, methods, _crews, _capacity, _rate in CONTRACTORS
+    ]
+    machines = [
+        ShiftMachine(
+            machine_id=f"{contractor_id}-machine",
+            methods=[method for method in methods if method in {"mowing", "mechanical"}],
+            shift_hours=8.0,
+            contractor_id=contractor_id,
+        )
+        for contractor_id, methods, _crews, _capacity, _rate in CONTRACTORS
+    ]
+    machines = [machine for machine in machines if machine.methods]
+    return build_shift_plan(
+        plan_id="shifts-bc-network",
+        instance_id=instance_id,
+        work_items=work_items,
+        crews=crews,
+        machines=machines,
+        config=ShiftConfig(max_days_per_year=260, include_travel=True),
+        created_utc=CREATED,
+    )
+
+
 def _summary(
     network: dict[str, Any],
     strategic: dict[str, Any],
     tactical: dict[str, Any],
     resources: dict[str, Any],
     operations: dict[str, Any],
+    shifts: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1021,7 +1086,8 @@ def _summary(
             f"{all(item['solver_status'] == 'optimal' and item['replay_ok'] for item in strategic['milp_scenarios'])}.",
             f"Selected actions: {len(tactical['actions'])}; total cost: {tactical['total_cost']:.0f}; "
             f"resource cost: {resources['total_cost']:.0f}; contractor capacity feasible: "
-            f"{resources['feasible']}; work orders: {len(operations['work_orders'])}.",
+            f"{resources['feasible']}; work orders: {len(operations['work_orders'])}; "
+            f"shift assignments: {len(shifts.get('assignments', []))}.",
             "",
             "| Year | Tactical cost | Crew-hours requested |",
             "|---:|---:|---:|",
@@ -1166,6 +1232,7 @@ def main() -> None:
     tactical, access, resources, operations = _tactical(
         milp_balanced["actions"], segments, units, towers
     )
+    shifts = _shifts(tactical.actions, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
         "instance_id": "bc-hydro-network-2026",
@@ -1269,11 +1336,19 @@ def main() -> None:
         ("tactical.json", tactical_payload),
         ("resources.json", resources_payload),
         ("operations.json", operations_payload),
+        ("shifts.json", shifts.model_dump(mode="json")),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     (OUT / "summary.md").write_text(
-        _summary(network, strategic, tactical_payload, resources_payload, operations_payload),
+        _summary(
+            network,
+            strategic,
+            tactical_payload,
+            resources_payload,
+            operations_payload,
+            shifts.model_dump(mode="json"),
+        ),
         encoding="utf-8",
     )
     print(

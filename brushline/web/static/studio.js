@@ -202,10 +202,17 @@ function drawPareto(){
 }
 function drawTimeline(){
  if(state.network){
+  $("#timeline-heading").textContent="Shift schedule";
+  const shifts=(state.network.shifts?.assignments||[]).filter(item=>item.year===state.year);
+  if(shifts.length){
+   $("#timeline").innerHTML=`<table><tr><th>Year</th><th>Day</th><th>Crew</th><th>Machine</th><th>Unit</th><th>Method</th><th>Prod. h</th><th>Travel h</th></tr>${shifts.slice(0,24).map(item=>`<tr><td>${item.year}</td><td>${item.day}</td><td>${esc(item.crew_id)}</td><td>${esc(item.machine_id||"—")}</td><td>${esc(item.unit_id)}</td><td>${esc(item.method)}</td><td>${item.productive_hours.toFixed(1)}</td><td>${item.travel_hours.toFixed(1)}</td></tr>`).join("")}</table>`;
+   return;
+  }
   const orders=(state.network.operations?.work_orders||[]).filter(order=>order.year===state.year);
   $("#timeline").innerHTML=orders.length?`<table><tr><th>Year</th><th>Seq. day</th><th>Unit</th><th>Method</th><th>Crew</th><th>Cost</th></tr>${orders.slice(0,20).map(o=>`<tr><td>${o.year}</td><td>${o.day}</td><td>${esc(o.unit_id)}</td><td>${esc(o.method)}</td><td>${esc(o.crew_id)}</td><td>${o.cost.toFixed(0)}</td></tr>`).join("")}</table>`:"<p>No work orders.</p>";
   return;
  }
+ $("#timeline-heading").textContent="Operations timeline";
  $("#timeline").innerHTML=state.timeline.length?`<table><tr><th>Event</th><th>Resource</th><th>Segment</th><th>Start</th></tr>${state.timeline.slice(0,12).map(e=>`<tr><td>${esc(e.event_type)}</td><td>${esc(e.resource_id)}</td><td>${esc(e.segment_id)}</td><td>${esc(e.start_utc)}</td></tr>`).join("")}</table>`:"<p>No operations timeline for this observed instance.</p>";
 }
 $("#walk").onclick=()=>{state.walking=!state.walking;window.brushline3d?.setWalking(state.walking);drawScene()};

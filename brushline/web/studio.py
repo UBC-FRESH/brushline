@@ -333,7 +333,15 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail="not a network instance")
         return {
             key: json.loads((BC_NETWORK_DIR / f"{key}.json").read_text(encoding="utf-8"))
-            for key in ("network", "strategic", "tactical", "resources", "operations", "access")
+            for key in (
+                "network",
+                "strategic",
+                "tactical",
+                "resources",
+                "operations",
+                "shifts",
+                "access",
+            )
         }
 
     @app.get("/api/studio/summary")

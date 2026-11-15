@@ -55,7 +55,9 @@ The MILP balanced scenario becomes an **84-action tactical program**:
 - Resource-plan cost: 277,093 CAD with modelling overheads.
 - Modelled contractor capacity: 9,200 hours/year.
 - Balanced demand: 1,000 hours/year, about 11 percent of modelled capacity.
-- Operations: 84 work-ready orders with crew assignments and sequence days.
+- Operations: 84 work-ready orders plus 698 crew/machine shift assignments.
+- Shift scheduling includes travel and splits long jobs across days; it is a FHOPS-style prototype,
+  not a FHOPS engine run.
 
 The resource comparison is useful in both directions: spare capacity can support recruitment
 headroom, while a capacity shortfall would trigger a contractor ramp-up or a different allocation.

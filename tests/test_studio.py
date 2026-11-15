@@ -75,6 +75,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["strategic"]["portfolios"]
         assert network_plan["tactical"]["actions"]
         assert network_plan["operations"]["work_orders"]
+        assert network_plan["shifts"]["assignments"]
         network_scene = client.get(
             "/api/studio/scene/bc-network?variant=pre&instance_id=bc-hydro-network"
         )

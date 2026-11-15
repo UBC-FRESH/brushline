@@ -65,6 +65,7 @@ whenever you add a module to the project.
    recalibration
    replan
    monitoring-validation
+   shift-scheduling
    field
    field-comparison
    plan-exchange
