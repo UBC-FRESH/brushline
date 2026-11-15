@@ -45,6 +45,7 @@ from brushline.strategic.stateful import (
     StatefulSegment,
     build_stateful_plan,
 )
+from brushline.strategic.uncertainty import UncertaintyConfig, evaluate_uncertainty
 from brushline.tactical.access import AccessPlan, AccessWindow, RoadLink, build_access_plan
 from brushline.tactical.operations import OperationsConfig, OperationsPlan, build_operations_plan
 from brushline.tactical.program import (
@@ -1293,6 +1294,7 @@ def _summary(
     workforce: list[dict[str, Any]],
     scalability: list[dict[str, Any]],
     bid: dict[str, Any],
+    uncertainty: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1394,6 +1396,13 @@ def _summary(
             f"{bid['bid']['total_cost']:.0f} CAD; delta: "
             f"{bid['comparison']['delta']:.0f} CAD; within fair range: "
             f"{bid['comparison']['within_fair_range']}.",
+            "",
+            "## Execution uncertainty",
+            "",
+            "| Metric | P10 | P50 | P90 | Probability of shortfall |",
+            "|---|---:|---:|---:|---:|",
+            f"| Total cost | {uncertainty['cost_band']['p10']:.0f} | {uncertainty['cost_band']['p50']:.0f} | {uncertainty['cost_band']['p90']:.0f} | {uncertainty['probability_budget_exceeded']:.1%} budget |",
+            f"| Crew-hours | {uncertainty['hours_band']['p10']:.0f} | {uncertainty['hours_band']['p50']:.0f} | {uncertainty['hours_band']['p90']:.0f} | {uncertainty['probability_capacity_shortfall']:.1%} capacity |",
             "",
             "## Caveats",
             "",
@@ -1530,6 +1539,22 @@ def main() -> None:
     shifts = _shifts(tactical.actions, "bc-hydro-network-2026", profiles)
     workforce = _workforce_scenarios(tactical.actions, "bc-hydro-network-2026")
     scalability = _scalability(segments, "bc-hydro-network-2026")
+    tactical_periods = [
+        StatefulPeriod(
+            year=START_YEAR + offset,
+            budget=60000.0,
+            capacity_hours=6000.0,
+        )
+        for offset in range(HORIZON)
+    ]
+    uncertainty = evaluate_uncertainty(
+        instance_id="bc-hydro-network-2026",
+        actions=tactical.actions,
+        periods=tactical_periods,
+        profiles=profiles,
+        config=UncertaintyConfig(samples=500, seed=7),
+        created_utc=CREATED,
+    )
     bid = _bid(tactical.actions, units, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
@@ -1638,6 +1663,7 @@ def main() -> None:
         ("shifts.json", shifts.model_dump(mode="json")),
         ("workforce.json", workforce),
         ("bid.json", bid),
+        ("uncertainty.json", uncertainty.model_dump(mode="json")),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -1652,6 +1678,7 @@ def main() -> None:
             workforce,
             scalability,
             bid,
+            uncertainty.model_dump(mode="json"),
         ),
         encoding="utf-8",
     )

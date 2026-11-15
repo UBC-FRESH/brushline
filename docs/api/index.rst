@@ -68,6 +68,7 @@ whenever you add a module to the project.
    recalibration
    replan
    monitoring-validation
+   uncertainty
    shift-scheduling
    field
    field-comparison

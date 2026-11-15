@@ -241,6 +241,10 @@ test suite. This page is the map.
      - ``brushline.field-comparison.v1``
      - ``compare_field_data``
      - Field/LiDAR residuals, unit bias/MAE/RMSE, sample gates, review multipliers, and treatment-evidence status
+   * - Execution uncertainty
+     - ``brushline.uncertainty.v1``
+     - ``evaluate_uncertainty``
+     - Seeded cost/productivity/capacity sampling, percentile bands, budget/capacity/contractor shortfall probabilities, and one-at-a-time sensitivities
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``
