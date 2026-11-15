@@ -1,0 +1,232 @@
+"""Tests for the self-contained planning brief."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from typing import Any
+
+import pytest
+from brushline.strategic.planning_brief import (
+    BriefSection,
+    BriefTable,
+    PlanningBriefError,
+    build_planning_brief,
+    render_html,
+    render_markdown,
+)
+
+CREATED = datetime(2026, 11, 15, 23, 0, tzinfo=UTC)
+
+
+def _artifacts() -> dict[str, Any]:
+    network = {
+        "instance_id": "bc-hydro-network-2026",
+        "aoi_ha": 8737,
+        "line_km": 29.2,
+        "lines": [{"line_id": "L01"}],
+        "units": [{"unit_id": "U001"}],
+        "segments": [{"segment_id": "L01-S001"}],
+        "sources": [{"name": "OSM <test>", "licence": "ODbL"}],
+        "assumptions": {
+            "method_costs": {
+                "mowing": {
+                    "cost_ha": 420,
+                    "hours_ha": 7,
+                    "service_gain": 0.35,
+                    "risk_reduction": 0.3,
+                }
+            },
+            "contractor_capacity": [2600, 4200, 2400],
+            "segment_m": 500,
+            "horizon": 5,
+            "start_year": 2027,
+            "caveat": "Prototype assumptions only.",
+        },
+    }
+    strategic = {
+        "milp_scenarios": [
+            {
+                "name": "milp-budget-60000",
+                "annual_budget": 60000,
+                "five_year_cost": 299859,
+                "mean_service": 0.971,
+                "mean_risk": 0.0294,
+                "mean_annual_hours": 1000,
+                "rows": [
+                    {
+                        "year": 2027,
+                        "cost": 59972,
+                        "hours": 1000,
+                        "risk": 0.115,
+                        "service": 0.885,
+                        "actions": 46,
+                    }
+                ],
+                "plan": {
+                    "solver": "scipy-highs",
+                    "status": "optimal",
+                    "replay_ok": True,
+                },
+            }
+        ],
+        "stateful_bau": {
+            "five_year_cost": 79082,
+            "mean_service": 0.747,
+            "mean_risk": 0.257,
+            "mean_annual_hours": 264,
+        },
+        "caveats": ["A strategic caveat."],
+        "scalability": [
+            {
+                "segments": 59,
+                "variables": 295,
+                "seconds": 0.05,
+                "mean_risk": 0.029,
+                "status": "feasible",
+                "evaluations": 21,
+            }
+        ],
+    }
+    tactical = {
+        "actions": [{"year": 2027, "cost": 59972}],
+        "total_cost": 299859,
+        "cost_by_year": {"2027": 59972},
+    }
+    resources = {
+        "requests": [{"year": 2027, "capacity_units": 1000}],
+        "total_cost": 258638,
+        "feasible": True,
+    }
+    operations = {"work_orders": [{"year": 2027}], "feasible": True}
+    shifts = {
+        "assignments": [{"work_order_id": "wo-1"}],
+        "total_productive_hours": 4998,
+        "total_travel_hours": 42,
+        "crew_utilization": {"crew-a": 4998},
+        "feasible": True,
+    }
+    workforce = [
+        {
+            "name": "current-mix",
+            "reassigned_hours": 0,
+            "resource_cost": 258638,
+            "resource_feasible": True,
+            "shift_feasible": True,
+            "shift_assignments": 698,
+        }
+    ]
+    bid = {
+        "owner_total": 299859,
+        "bid": {
+            "total_cost": 321651,
+            "assumptions": ["Mock contractor rate adjustment."],
+        },
+        "comparison": {
+            "delta": 21792,
+            "fair_low": 284866,
+            "fair_high": 344838,
+            "within_fair_range": True,
+        },
+    }
+    uncertainty = {
+        "samples": 500,
+        "cost_band": {"p10": 231034, "p50": 296536, "p90": 373432},
+        "hours_band": {"p10": 4090, "p50": 5014, "p90": 5956},
+        "probability_budget_exceeded": 0.484,
+        "probability_capacity_shortfall": 0.0,
+    }
+    scenario_optimization = {
+        "scenarios": 30,
+        "fixed_cost_band": {"p10": 249742, "p90": 371650},
+        "adaptive_cost_band": {"p10": 298055, "p90": 299452},
+        "fixed_risk_band": {"mean": 0.0294},
+        "adaptive_risk_band": {"mean": 0.0317},
+        "probability_adaptation_improves": 1.0,
+        "mean_fixed_objective": 0.1068,
+        "mean_adaptive_objective": 0.0317,
+        "mean_regret": 0.0752,
+        "fixed_budget_violation_probability": 0.5667,
+    }
+    access = {
+        "results": [{"allowed": True}, {"allowed": True}],
+        "total_route_m": 86235,
+        "feasible": True,
+    }
+    return {
+        "network": network,
+        "strategic": strategic,
+        "tactical": tactical,
+        "resources": resources,
+        "operations": operations,
+        "shifts": shifts,
+        "workforce": workforce,
+        "bid": bid,
+        "uncertainty": uncertainty,
+        "scenario_optimization": scenario_optimization,
+        "access": access,
+    }
+
+
+def test_planning_brief_markdown_and_html() -> None:
+    artifacts = _artifacts()
+    brief = build_planning_brief(
+        **artifacts,
+        generated_utc=CREATED,
+        command="python tools/build_bc_network_demo.py",
+        commit="abc1234",
+    )
+    assert brief.filename_markdown == "bc-hydro-network-2026-planning-brief.md"
+    assert brief.filename_html == "bc-hydro-network-2026-planning-brief.html"
+    assert "BC Hydro public-data network planning brief" in brief.markdown
+    assert "## Decision summary" in brief.markdown
+    assert "## Workforce scenarios" in brief.markdown
+    assert "## Commercial check" in brief.markdown
+    assert "## Execution uncertainty" in brief.markdown
+    assert "## Hindsight adaptive planning" in brief.markdown
+    assert "299,859" in brief.markdown
+    assert "249,742-371,650" in brief.markdown
+    assert "current-mix" in brief.markdown
+    assert "Mock contractor rate adjustment." in brief.markdown
+    assert "&lt;test&gt;" in brief.html
+    assert "<table>" in brief.html
+    assert "<script" not in brief.html
+    assert "abc1234" in brief.html
+    assert "Prototype assumptions only." in brief.html
+
+
+def test_planning_brief_validation_and_renderers() -> None:
+    artifacts = _artifacts()
+    with pytest.raises(PlanningBriefError, match="network artifact"):
+        build_planning_brief(**{**artifacts, "network": {}}, generated_utc=CREATED)
+    with pytest.raises(PlanningBriefError, match="strategic artifact"):
+        build_planning_brief(**{**artifacts, "strategic": {}}, generated_utc=CREATED)
+    empty_strategic = {**artifacts["strategic"], "milp_scenarios": []}
+    with pytest.raises(PlanningBriefError, match="no MILP scenarios"):
+        build_planning_brief(**{**artifacts, "strategic": empty_strategic}, generated_utc=CREATED)
+    with pytest.raises(PlanningBriefError, match="timezone-aware"):
+        build_planning_brief(
+            **artifacts,
+            generated_utc=datetime(2026, 11, 15, 23, 0),
+        )
+    section = BriefSection(
+        heading="Example",
+        paragraphs=["A paragraph"],
+        bullets=["A bullet"],
+        table=BriefTable(columns=["A", "B"], rows=[["1", "2"]], note="A note"),
+    )
+    assert "A note" in render_markdown(
+        title="T",
+        instance_id="i",
+        generated_utc=CREATED,
+        command="cmd",
+        commit="c",
+        sections=[section],
+    )
+    assert "A note" in render_html(
+        title="T",
+        instance_id="i",
+        generated_utc=CREATED,
+        command="cmd",
+        commit="c",
+        sections=[section],
+    )

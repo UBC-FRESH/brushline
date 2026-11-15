@@ -80,6 +80,28 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["bid"]["comparison"]["within_fair_range"]
         assert network_plan["uncertainty"]["cost_band"]["p50"] > 0
         assert network_plan["scenario-optimization"]["scenarios"] >= 1
+        brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
+        assert brief.status_code == 200
+        assert brief.headers["content-type"].startswith("text/html")
+        assert "attachment; filename=" in brief.headers["content-disposition"]
+        assert "BC Hydro public-data network planning brief" in brief.text
+        assert "<script" not in brief.text
+        brief_md = client.get(
+            "/api/studio/network/brief?instance_id=bc-hydro-network&format=markdown"
+        )
+        assert brief_md.status_code == 200
+        assert brief_md.headers["content-type"].startswith("text/markdown")
+        assert "# BC Hydro public-data network planning brief" in brief_md.text
+        assert (
+            client.get("/api/studio/network/brief?instance_id=synthetic-corridor").status_code
+            == 404
+        )
+        assert (
+            client.get(
+                "/api/studio/network/brief?instance_id=bc-hydro-network&format=pdf"
+            ).status_code
+            == 422
+        )
         network_scene = client.get(
             "/api/studio/scene/bc-network?variant=pre&instance_id=bc-hydro-network"
         )
@@ -106,11 +128,15 @@ def test_studio_static_contains_pre_post_and_skin_hooks() -> None:
     js = (__import__("pathlib").Path("brushline/web/static/studio.js")).read_text()
     assert "toggleVariant" in js
     assert "variant" in js
+    assert "network/brief" in js
     assert (
         "Walk this block"
         in (__import__("pathlib").Path("brushline/web/static/studio.html")).read_text()
     )
     assert "brushline3d" in js
+    assert "Planning brief" in (
+        __import__("pathlib").Path("brushline/web/static/studio.html").read_text()
+    )
     assert (
         "Pre / Post" in (__import__("pathlib").Path("brushline/web/static/studio.html")).read_text()
     )

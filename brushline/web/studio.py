@@ -10,12 +10,15 @@ from __future__ import annotations
 import json
 import re
 from collections.abc import Awaitable, Callable, Iterator
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+
+from brushline.strategic.planning_brief import PlanningBriefError, build_planning_brief
 
 STUDIO_SCHEMA_VERSION: Literal["brushline.studio.v1"] = "brushline.studio.v1"
 STATIC_ROOT = Path(__file__).resolve().with_name("static")
@@ -29,6 +32,41 @@ RESOURCE_ROOT = Path(__file__).resolve().parents[1] / "resources"
 MKRK_SCENE_PATH = Path(__file__).resolve().parents[2] / "runtime/private/mkrf-powerline/scene.json"
 BC_NETWORK_DIR = Path(__file__).resolve().parents[2] / "runtime/private/bc-network/model"
 BC_NETWORK_SCENE_PATH = BC_NETWORK_DIR / "scene.json"
+
+
+def _current_commit() -> str:
+    """Return the checked-out commit, or a working-tree marker."""
+    git_dir = Path(__file__).resolve().parents[2] / ".git"
+    try:
+        head = (git_dir / "HEAD").read_text(encoding="utf-8").strip()
+        if head.startswith("ref: "):
+            ref = git_dir / head[5:]
+            return ref.read_text(encoding="utf-8").strip()[:7]
+        return head[:7]
+    except OSError:
+        return "working tree"
+
+
+def _network_artifacts() -> dict[str, Any]:
+    """Load the network artifact set used by the studio and brief."""
+    return {
+        key: json.loads((BC_NETWORK_DIR / f"{key}.json").read_text(encoding="utf-8"))
+        for key in (
+            "network",
+            "strategic",
+            "tactical",
+            "resources",
+            "operations",
+            "shifts",
+            "workforce",
+            "bid",
+            "uncertainty",
+            "scenario-optimization",
+            "access",
+        )
+    }
+
+
 INSTANCES: tuple[dict[str, object], ...] = (
     {
         "id": "synthetic-corridor",
@@ -331,22 +369,50 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     def network(instance_id: str = Query(default="bc-hydro-network")) -> dict[str, Any]:
         if instance_id != "bc-hydro-network":
             raise HTTPException(status_code=404, detail="not a network instance")
-        return {
-            key: json.loads((BC_NETWORK_DIR / f"{key}.json").read_text(encoding="utf-8"))
-            for key in (
-                "network",
-                "strategic",
-                "tactical",
-                "resources",
-                "operations",
-                "shifts",
-                "workforce",
-                "bid",
-                "uncertainty",
-                "scenario-optimization",
-                "access",
+        return _network_artifacts()
+
+    @app.get("/api/studio/network/brief")
+    def network_brief(
+        instance_id: str = Query(default="bc-hydro-network"),
+        output_format: Literal["html", "markdown"] = Query(default="html", alias="format"),
+    ) -> Response:
+        if instance_id != "bc-hydro-network":
+            raise HTTPException(status_code=404, detail="not a network instance")
+        artifacts = _network_artifacts()
+        try:
+            brief = build_planning_brief(
+                network=artifacts["network"],
+                strategic=artifacts["strategic"],
+                tactical=artifacts["tactical"],
+                resources=artifacts["resources"],
+                operations=artifacts["operations"],
+                shifts=artifacts["shifts"],
+                workforce=artifacts["workforce"],
+                bid=artifacts["bid"],
+                uncertainty=artifacts["uncertainty"],
+                scenario_optimization=artifacts["scenario-optimization"],
+                access=artifacts["access"],
+                generated_utc=datetime.now(UTC),
+                command="python tools/build_bc_network_demo.py",
+                commit=_current_commit(),
             )
-        }
+        except PlanningBriefError as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        content = brief.markdown if output_format == "markdown" else brief.html
+        filename = brief.filename_markdown if output_format == "markdown" else brief.filename_html
+        media_type = (
+            "text/markdown; charset=utf-8"
+            if output_format == "markdown"
+            else "text/html; charset=utf-8"
+        )
+        return Response(
+            content=content,
+            media_type=media_type,
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+                "Cache-Control": "no-store",
+            },
+        )
 
     @app.get("/api/studio/summary")
     def summary(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:

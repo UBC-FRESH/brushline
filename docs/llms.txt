@@ -115,6 +115,7 @@
 - [Shift scheduling API](api/shift-scheduling.html): work items, crews, machines, assignments, utilization, and violations.
 - [Uncertainty API](api/uncertainty.html): uncertainty config, bands, sampled outcomes, and sensitivity cases.
 - [Scenario optimization API](api/scenario-optimization.html): fixed versus re-solved scenario plans, bands, feasibility penalties, and regret.
+- [Planning brief API](api/planning-brief.html): self-contained Markdown/HTML decision record from network artifacts.
 
 - [Mission simulation](reference/mission.html): corridor graph, endurance, footprint, weather, and cost.
 - [Monitoring value](reference/monitoring-value.html): expected loss reduction, cost, and regret per dollar.
@@ -126,6 +127,7 @@
 - [Shift scheduling](reference/shift-scheduling.html): crew/machine skills, daily shift capacity, travel, split work, utilization, and limits.
 - [Uncertainty and sensitivity](reference/uncertainty.html): seeded cost/productivity/capacity bands, budget and shortfall probabilities, and one-at-a-time stresses.
 - [Scenario-optimized planning](reference/scenario-optimization.html): hindsight adaptive MILP re-solves, fixed-plan budget/capacity feasibility, cost/risk bands, and regret.
+- [Planning brief](reference/planning-brief.html): one-click self-contained decision record with frontier, tactical schedule, uncertainty, adaptation, caveats, and commit provenance.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

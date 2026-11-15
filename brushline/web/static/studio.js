@@ -12,7 +12,7 @@ async function boot(){
 }
 async function loadInstance(id){
  state.instanceId=id;
- state.schedule=null;state.year=2026;state.network=null;$("#time-control").hidden=true;
+ state.schedule=null;state.year=2026;state.network=null;$("#time-control").hidden=true;$("#brief-link").hidden=true;
  const q=`?instance_id=${encodeURIComponent(id)}`;
  const [summary,blocks]=await Promise.all([api(`api/studio/summary${q}`),api(`api/studio/blocks${q}`)]);
  state.summary=summary; state.blocks=blocks.blocks||[];
@@ -21,6 +21,8 @@ async function loadInstance(id){
   state.network=await api(`api/studio/network${q}`);
   state.plan=null;state.pareto={members:[]};state.timeline=[];
   $("#summary").textContent=`${summary.title} · ${summary.aoi_ha} ha · ${summary.line_km} km · ${summary.feature_count} features · ${summary.scenario_count} scenarios`;
+  $("#brief-link").href=`api/studio/network/brief?instance_id=${encodeURIComponent(id)}`;
+  $("#brief-link").hidden=false;
  }else if(summary.kind==="planning"){
   const [plan,pareto,timeline]=await Promise.all([api(`api/studio/plan/current${q}`),api(`api/studio/pareto${q}`),api(`api/studio/timeline${q}`)]);
   state.plan=plan;state.pareto=pareto;state.timeline=timeline.events||[];

@@ -249,6 +249,10 @@ test suite. This page is the map.
      - ``brushline.scenario-optimization.v1``
      - ``optimize_scenarios``
      - Hindsight scenario re-solves, fixed/adaptive cost/hour/risk bands, budget and capacity violation probabilities, normalized feasibility penalty, and regret
+   * - Planning brief
+     - ``brushline.planning-brief.v1``
+     - ``build_planning_brief``
+     - Self-contained Markdown and HTML decision record with selected frontier, tactical and shift summaries, workforce, bid, uncertainty, scenario comparison, caveats, and reproduction metadata
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

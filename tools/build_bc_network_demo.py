@@ -1356,10 +1356,7 @@ def _summary(
             f"{resources['feasible']}; work orders: {len(operations['work_orders'])}; "
             f"shift assignments: {len(shifts.get('assignments', []))}.",
             "",
-            "## Workforce scenarios",
-            "",
-            "| Scenario | Reassigned h | Resource cost | Resource feasible | Shift feasible |",
-            "|---|---:|---:|---|---|",
+            "## Annual tactical demand",
             "",
             "| Year | Tactical cost | Crew-hours requested |",
             "|---:|---:|---:|",
@@ -1370,6 +1367,15 @@ def _summary(
             f"| {year} | {tactical['cost_by_year'].get(str(year), 0):.0f} | "
             f"{demand_by_year[year]:.0f} |"
         )
+    lines.extend(
+        [
+            "",
+            "## Workforce scenarios",
+            "",
+            "| Scenario | Reassigned h | Resource cost | Resource feasible | Shift feasible |",
+            "|---|---:|---:|---|---|",
+        ]
+    )
     for scenario in workforce:
         lines.append(
             f"| {scenario['name']} | {scenario['reassigned_hours']:.0f} | "

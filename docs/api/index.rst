@@ -70,6 +70,7 @@ whenever you add a module to the project.
    monitoring-validation
    uncertainty
    scenario-optimization
+   planning-brief
    shift-scheduling
    field
    field-comparison
