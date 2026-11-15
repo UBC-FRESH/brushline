@@ -26,8 +26,9 @@ import numpy as np
 from matplotlib.lines import Line2D
 from pyproj import Transformer
 from shapely.affinity import translate
-from shapely.geometry import Point
+from shapely.geometry import Point, box
 from shapely.geometry.base import BaseGeometry
+from shapely.ops import nearest_points
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -36,6 +37,7 @@ from brushline.field.validation import FIELD_COLUMNS
 ROOT = Path(__file__).resolve().parents[1]
 SCENE_PATH = ROOT / "runtime/private/mkrf-powerline/scene.json"
 BOUNDARY = ROOT.parent / "sources/mkrf-gis-2026-11-02/processed/boundary.gpkg"
+ROADS = ROOT.parent / "sources/mkrf-gis-2026-11-02/processed/roads_current.gpkg"
 OUT = ROOT / "runtime/private/mkrf-powerline/field-kit"
 PLOT_FRACTIONS = (0.10, 0.22, 0.36, 0.50, 0.65, 0.80)
 PLOT_OFFSETS = (0.0, 25.0, 0.0, -25.0, 0.0, 25.0)
@@ -71,7 +73,9 @@ def _sample_canopy(scene: dict[str, Any], x: float, y: float) -> float:
     return round(float(terrain["canopy_height"][row][col]), 1)
 
 
-def _build_plots(scene: dict[str, Any], perimeter: BaseGeometry) -> list[dict[str, Any]]:
+def _build_plots(
+    scene: dict[str, Any], perimeter: BaseGeometry, roads: gpd.GeoDataFrame
+) -> list[dict[str, Any]]:
     origin_x, origin_y = (float(value) for value in scene["origin_m"])
     local_perimeter = translate(perimeter, xoff=-origin_x, yoff=-origin_y)
     to_wgs84 = Transformer.from_crs(3005, 4326, always_xy=True)
@@ -108,6 +112,13 @@ def _build_plots(scene: dict[str, Any], perimeter: BaseGeometry) -> list[dict[st
             easting = origin_x + x
             northing = origin_y + y
             lon, lat = to_wgs84.transform(easting, northing)
+            plot_point = Point(easting, northing)
+            nearest_road = roads.iloc[roads.distance(plot_point).argmin()]
+            access_distance = float(nearest_road.geometry.distance(plot_point))
+            access_point = nearest_points(nearest_road.geometry, plot_point)[0]
+            access_road = str(nearest_road.get("NAME") or "unnamed road")
+            access_status = str(nearest_road.get("STATUS") or "unknown")
+            access_use = str(nearest_road.get("USE") or "unknown")
             plots.append(
                 {
                     "plot_id": plot_id,
@@ -122,6 +133,12 @@ def _build_plots(scene: dict[str, Any], perimeter: BaseGeometry) -> list[dict[st
                     "northing_3005": round(northing, 2),
                     "latitude": round(lat, 6),
                     "longitude": round(lon, 6),
+                    "access_road": access_road,
+                    "access_status": access_status,
+                    "access_use": access_use,
+                    "access_distance_m": round(access_distance, 1),
+                    "access_point_x_m": round(access_point.x - origin_x, 1),
+                    "access_point_y_m": round(access_point.y - origin_y, 1),
                     "target_shrub_patches": len(nearby_patches),
                     "target_mean_cover_pct": round(cover, 1),
                     "target_max_shrub_height_m": round(max_height, 1),
@@ -212,11 +229,17 @@ def _write_photo_log(plots: list[dict[str, Any]], path: Path) -> None:
             writer.writerow([plot["plot_id"], "", "", "", "", ""])
 
 
-def _map(scene: dict[str, Any], plots: list[dict[str, Any]], path: Path) -> None:
+def _map(
+    scene: dict[str, Any], plots: list[dict[str, Any]], path: Path, roads: gpd.GeoDataFrame
+) -> None:
     terrain = scene["terrain"]
     width = float(terrain["width"]) * float(terrain["resolution_m"])
     height = float(terrain["height"]) * float(terrain["resolution_m"])
     elevation = np.asarray(terrain["elevation"], dtype=float)
+    origin_x, origin_y = (float(value) for value in scene["origin_m"])
+    local_roads = roads.copy()
+    local_roads["geometry"] = local_roads.geometry.translate(xoff=-origin_x, yoff=-origin_y)
+    local_roads = gpd.clip(local_roads, box(0, 0, width, height))
     rows, cols = elevation.shape
     x = np.linspace(0, width, cols)
     y = np.linspace(0, height, rows)
@@ -230,6 +253,17 @@ def _map(scene: dict[str, Any], plots: list[dict[str, Any]], path: Path) -> None
         aspect="equal",
     )
     ax.contour(x, y, elevation, levels=10, colors="#526b54", linewidths=0.45, alpha=0.75)
+    for _, road in local_roads.iterrows():
+        geometry = road.geometry
+        parts = [geometry] if geometry.geom_type == "LineString" else list(geometry.geoms)
+        for part in parts:
+            ax.plot(
+                [point[0] for point in part.coords],
+                [point[1] for point in part.coords],
+                color="#8b9289",
+                linewidth=1.2,
+                zorder=2,
+            )
     year_colors = {2027: "#d9691f", 2028: "#c49a31", 2029: "#3d6e51"}
     for unit in scene["treatment_schedule"]["units"]:
         points = unit["points"]
@@ -275,6 +309,15 @@ def _map(scene: dict[str, Any], plots: list[dict[str, Any]], path: Path) -> None
             linewidth=1.2,
             zorder=7,
         )
+        if plot["access_distance_m"] > 0.5:
+            ax.plot(
+                [plot["x_m"], plot["access_point_x_m"]],
+                [plot["y_m"], plot["access_point_y_m"]],
+                color="#8a6a45",
+                linewidth=0.8,
+                linestyle="--",
+                zorder=3,
+            )
         ax.annotate(
             plot["plot_id"],
             (plot["x_m"], plot["y_m"]),
@@ -320,6 +363,7 @@ def _map(scene: dict[str, Any], plots: list[dict[str, Any]], path: Path) -> None
             markersize=8,
             label="edge plot",
         ),
+        Line2D([0], [0], color="#8b9289", linewidth=1.2, label="mapped road"),
         Line2D(
             [0],
             [0],
@@ -333,6 +377,8 @@ def _map(scene: dict[str, Any], plots: list[dict[str, Any]], path: Path) -> None
     ]
     ax.legend(handles=handles, loc="lower right", fontsize=8, framealpha=0.92)
     ax.set_title("MKRF southwest 500 kV corridor — field validation plots", loc="left")
+    ax.set_xlim(0, width)
+    ax.set_ylim(0, height)
     ax.set_xlabel("local easting (m)")
     ax.set_ylabel("local northing (m)")
     ax.text(
@@ -379,6 +425,7 @@ def _cards_html(plots: list[dict[str, Any]], scene: dict[str, Any]) -> str:
               </header>
               <p class="loc">WGS84 {plot["latitude"]:.6f}, {plot["longitude"]:.6f} · EPSG:3005 {plot["easting_3005"]:.1f}, {plot["northing_3005"]:.1f}</p>
               <div class="targets">
+                <span>Access: {html.escape(plot["access_road"])} ({html.escape(plot["access_status"])}) · {plot["access_distance_m"]} m walk from mapped road · verify permission/status</span><br>
                 <span>LiDAR target: {plot["target_shrub_patches"]} shrub patches · {plot["target_mean_cover_pct"]}% mean cover · {plot["target_max_shrub_height_m"]} m max height · {plot["target_tree_clumps"]} tree clumps</span>
               </div>
               <table>{rows_html}</table>
@@ -442,7 +489,7 @@ def _readme(scene: dict[str, Any], plots: list[dict[str, Any]]) -> str:
         "## Contents",
         "",
         "- `map.png` / `map.pdf` — offline corridor map with scheduled units and plots.",
-        "- `plots.csv` — planned plot locations and 2016 LiDAR target metrics.",
+        "- `plots.csv` — planned plot locations, mapped-road access, and 2016 LiDAR target metrics.",
         "- `corridor-plots.geojson` — units, towers, and plot points for GIS import.",
         "- `plot-cards.html` / `plot-cards.pdf` — printable plot cards.",
         "- `field-observations-template.csv` — import template for field measurements.",
@@ -469,6 +516,12 @@ def _readme(scene: dict[str, Any], plots: list[dict[str, Any]]) -> str:
         )
     lines.extend(
         [
+            "",
+            "## Access",
+            "",
+            "Each plot records the nearest mapped road, its mapped status/use, and the straight-line",
+            "walk distance. A mapped road is not permission: verify gates, road status, and safe parking",
+            "with MKRF before the visit. Do not walk along or under energised conductors.",
             "",
             "## Measurement definitions",
             "",
@@ -537,7 +590,11 @@ def main() -> None:
     scene = json.loads(SCENE_PATH.read_text(encoding="utf-8"))
     boundary = gpd.read_file(BOUNDARY).to_crs(3005)
     perimeter = boundary.geometry.union_all()
-    plots = _build_plots(scene, perimeter)
+    roads = gpd.read_file(ROADS).to_crs(3005)
+    origin_x, origin_y = (float(value) for value in scene["origin_m"])
+    bbox = box(origin_x, origin_y, origin_x + 1300.0, origin_y + 780.0)
+    roads = roads[roads.intersects(bbox)]
+    plots = _build_plots(scene, perimeter, roads)
     OUT.mkdir(parents=True, exist_ok=True)
     plots_path = OUT / "plots.csv"
     _write_plots_csv(plots, plots_path)
@@ -546,7 +603,7 @@ def main() -> None:
     )
     _write_field_template(plots, OUT / "field-observations-template.csv")
     _write_photo_log(plots, OUT / "photo-log.csv")
-    _map(scene, plots, OUT / "map.png")
+    _map(scene, plots, OUT / "map.png", roads)
     html_text = _cards_html(plots, scene)
     _print_cards(html_text, OUT / "plot-cards.pdf")
     (OUT / "README.md").write_text(_readme(scene, plots), encoding="utf-8")

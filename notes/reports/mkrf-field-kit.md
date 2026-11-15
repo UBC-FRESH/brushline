@@ -15,6 +15,12 @@ an import validator. It does not establish a treatment prescription or an approv
 - Plot targets are 2016 LiDAR-derived shrub patch count, mean cover, maximum shrub height, tree-clump
   count, and canopy height. They are baselines, not ground truth.
 
+## Access
+
+Each plot records the nearest mapped road, status/use, access point, and straight-line walk distance.
+The map overlays mapped roads and dashed access connectors. A mapped road is not permission; verify
+gates, road status, and safe parking with MKRF, and do not walk under energised conductors.
+
 ## Outputs
 
 The generated kit is private and lives under ignored runtime storage:
@@ -24,7 +30,7 @@ The generated kit is private and lives under ignored runtime storage:
 It contains:
 
 - `map.png` and `map.pdf`
-- `plots.csv`
+- `plots.csv` with nearest mapped-road access, status, walk distance, and LiDAR targets
 - `corridor-plots.geojson`
 - `plot-cards.html` and `plot-cards.pdf`
 - `field-observations-template.csv`
