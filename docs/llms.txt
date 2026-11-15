@@ -106,12 +106,14 @@
 - [Operations timeline API](api/tactical-timeline.html): events, positions, and timeline builder.
 - [Tactical validation API](api/tactical-validation.html): the synthetic case and named checks.
 - [Observation API](api/observation-model.html): settings, requests, results, and simulation.
+- [Field validation API](api/field.html): observation models, plot references, validator, and JSON writer.
 
 - [Mission simulation](reference/mission.html): corridor graph, endurance, footprint, weather, and cost.
 - [Monitoring value](reference/monitoring-value.html): expected loss reduction, cost, and regret per dollar.
 - [Recalibration](reference/recalibration.html): posterior state, uncertainty, parameter, and model record.
 - [Replan trigger](reference/replan.html): forecast-error/uncertainty trigger and new plan version.
 - [Monitoring validation](reference/monitoring-validation.html): adaptive versus fixed calendar, recalibration, and replan.
+- [Field validation](reference/field-validation.html): campaign CSV import, plot/unit/GPS checks, normalized observations, and command usage.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

@@ -16,6 +16,7 @@ import typer
 from brushline import __version__
 from brushline.build.compiler import compile_fixture
 from brushline.demo.builder import build_demo_site
+from brushline.field.validation import validate_field_csv, write_field_validation
 from brushline.fixtures.synthetic import DEFAULT_SEED, generate_fixture
 from brushline.instance_ops import (
     build_demo_file,
@@ -458,6 +459,67 @@ def validate(
         raise typer.Exit(code=1)
 
 
+field_app = typer.Typer(help="Validate field observations for a planned campaign.")
+
+
+@field_app.command("validate")
+def field_validate(
+    observations: Annotated[
+        Path, typer.Option("--csv", help="Field observations CSV exported from the field kit.")
+    ],
+    plots: Annotated[Path, typer.Option("--plots", help="Planned plot points as GeoJSON.")],
+    out: Annotated[
+        Path | None, typer.Option("--out", help="Write normalized observations to JSON.")
+    ] = None,
+    json_output: Annotated[
+        bool, typer.Option("--json", help="Print the validation report as JSON.")
+    ] = False,
+) -> None:
+    """Validate field observations and optionally write normalized JSON.
+
+    Parameters
+    ----------
+    observations : Path
+        Field observations CSV.
+    plots : Path
+        Planned plot references GeoJSON.
+    out : Path, optional
+        Normalized JSON output.
+    json_output : bool, optional
+        Print JSON instead of a text summary.
+
+    Raises
+    ------
+    typer.Exit
+        With status 1 when the observations are invalid.
+    """
+    try:
+        report = validate_field_csv(observations, plots)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    if out is not None:
+        write_field_validation(report, out)
+    if json_output:
+        typer.echo(report.model_dump_json(indent=2))
+    else:
+        typer.echo(f"observations: {report.source_csv}")
+        typer.echo(f"plots_expected: {report.plots_expected}")
+        typer.echo(f"observations_valid: {len(report.observations)}")
+        if report.warnings:
+            typer.echo("warnings:")
+            for message in report.warnings:
+                typer.echo(f"  {message}")
+        if report.errors:
+            typer.echo("errors:")
+            for message in report.errors:
+                typer.echo(f"  {message}")
+        typer.echo("VALID" if report.valid else "INVALID")
+    if not report.valid:
+        raise typer.Exit(code=1)
+
+
+app.add_typer(field_app, name="field")
 app.add_typer(instance_app, name="instance")
 
 

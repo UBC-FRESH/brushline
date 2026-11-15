@@ -233,6 +233,10 @@ test suite. This page is the map.
      - ``brushline.plan-exchange.v1``
      - ``PlanExchange``
      - Cost category totals, owner/contractor views, bid comparison, and approval digest
+   * - Field validation
+     - ``brushline.field-observation.v1``, ``brushline.field-validation.v1``
+     - ``validate_field_csv``
+     - Required columns, plot/unit/position references, GPS distance, duplicates, ranges, photo IDs, and normalized observations
    * - Studio
      - ``brushline.scene.v1``
      - ``Studio``
@@ -339,6 +343,8 @@ Error prefixes
      - Tactical FHOPS boundary
    * - ``TIMELINE-*``
      - Operations timeline
+   * - ``FIELD-*``
+     - Field validation
    * - ``STUDIO-*``
      - Studio compatibility
 
@@ -347,7 +353,7 @@ Test layers
 
 - Unit tests for each model and validator.
 - Contract tests for the public interfaces.
-- Integration tests for the CLI (``validate``, ``build``, ``simulate``, ``prototype``).
+- Integration tests for the CLI (``validate``, ``field validate``, ``build``, ``simulate``, ``prototype``).
 - Catalogue tests for licences, classifications, unknown references, connector scope, approval, and
   the secret scan.
 - Fetch tests for estimates, bulk approval, catalogue drift, materialization checksums and containment,

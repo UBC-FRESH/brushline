@@ -411,6 +411,23 @@ def main() -> None:
             [round(x - origin[0], 2), round(y - origin[1], 2)] for x, y in line["geometry"].coords
         ]
         line_payload.append({"name": line["name"], "points": coords})
+    # Keep only line parts that stay inside the modelled terrain block. The third
+    # clipped fragment lies south of the scene window and cannot support field plots.
+    line_payload = [
+        line
+        for line in line_payload
+        if all(
+            -1.0 <= point[0] <= width_m + 1.0 and -1.0 <= point[1] <= height_m + 1.0
+            for point in line["points"]
+        )
+    ]
+    if not line_payload:
+        raise SystemExit("no line payload remains inside the scene block")
+    corridor_length = sum(
+        math.dist(first, second)
+        for line in line_payload
+        for first, second in pairwise(line["points"])
+    )
     tower_payload = [
         {
             "tower_id": f"osm-{index}",
@@ -459,7 +476,7 @@ def main() -> None:
             "conductor_height_m": 32.0,
             "source": "OpenStreetMap via Overpass API",
             "source_timestamp": osm_timestamp,
-            "corridor_length_m": round(sum(line["geometry"].length for line in selected), 1),
+            "corridor_length_m": round(corridor_length, 1),
             "corridor_width_m": 70.0,
             "tree_clearance_m": 36.0,
         },

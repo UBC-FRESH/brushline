@@ -56,6 +56,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    recalibration
    replan
    monitoring-validation
+   field-validation
    plan-exchange
    studio
    demo-portal

@@ -64,6 +64,7 @@ whenever you add a module to the project.
    recalibration
    replan
    monitoring-validation
+   field
    plan-exchange
    studio
    demo-portal
