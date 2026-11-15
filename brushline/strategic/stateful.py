@@ -67,6 +67,7 @@ class StatefulConfig(BaseModel):
 
     risk_weight: float = Field(default=1.0, ge=0)
     cost_weight: float = Field(default=0.0, ge=0)
+    hours_weight: float = Field(default=0.0, ge=0)
     growth_per_year: float = Field(default=0.03, ge=0, le=0.5)
     max_mean_risk: float | None = Field(default=None, ge=0, le=0.95)
     max_seconds: float = Field(default=60.0, gt=0)
@@ -174,6 +175,10 @@ def _build_problem(
                     config.cost_weight
                     * segments[segment].area_ha
                     * methods[method].cost_per_ha
+                    / 100000.0
+                    + config.hours_weight
+                    * segments[segment].area_ha
+                    * methods[method].hours_per_ha
                     / 100000.0
                 )
     lower = np.zeros(n_variables)
@@ -380,7 +385,11 @@ def build_stateful_plan(
     )
     if rules.max_mean_risk is not None and mean_risk > rules.max_mean_risk + 1e-5:
         raise StatefulError("replayed plan exceeds the maximum mean risk")
-    objective = rules.risk_weight * mean_risk + rules.cost_weight * total_cost / 100000.0
+    objective = (
+        rules.risk_weight * mean_risk
+        + rules.cost_weight * total_cost / 100000.0
+        + rules.hours_weight * total_hours / 100000.0
+    )
     replay_ok = math.isclose(objective, float(result.fun), rel_tol=2e-4, abs_tol=2e-4)
     return StatefulPlan(
         instance_id=instance_id,

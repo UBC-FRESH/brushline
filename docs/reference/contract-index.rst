@@ -253,6 +253,10 @@ test suite. This page is the map.
      - ``brushline.stateful-decomposition.v1``
      - ``decompose_stateful``, ``repair_stateful_clusters``
      - Cluster grouping, allocated budgets, exact cluster solves, baseline fallback, aggregate replay, and gap
+   * - Stateful coordination
+     - ``brushline.stateful-coordination.v1``
+     - ``coordinate_stateful``
+     - Lagrangian budget/crew prices, cluster priced subproblems, subgradient iterations, and dual bounds
    * - Shift plan
      - ``brushline.tactical-shifts.v1``
      - ``build_shift_plan``

@@ -40,6 +40,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    stateful-strategic
    stateful-heuristic
    stateful-decomposition
+   stateful-coordination
    strategic-portfolio
    strategic-monitoring
    strategic-bau
