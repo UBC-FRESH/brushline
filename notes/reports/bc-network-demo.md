@@ -61,6 +61,8 @@ The MILP balanced scenario becomes an **84-action tactical program**:
 - Modelled contractor capacity: 9,200 hours/year.
 - Balanced demand: 1,000 hours/year, about 11 percent of modelled capacity.
 - Operations: 84 work-ready orders plus 698 crew/machine shift assignments.
+- Commercial check: owner plan 299,859 CAD; mock contractor bid 321,651 CAD; delta 21,792 CAD,
+  within the 95–115 percent fair range.
 - Shift scheduling includes travel and splits long jobs across days; it is a FHOPS-style prototype,
   not a FHOPS engine run.
 

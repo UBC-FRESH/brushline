@@ -18,6 +18,16 @@ from typing import Any
 import geopandas as gpd
 import numpy as np
 import rasterio
+from brushline.exchange.bids import compare_bid
+from brushline.exchange.contractor import build_contractor_bid
+from brushline.exchange.plan import build_exchange
+from brushline.model.plan import (
+    CostLine,
+    Plan,
+    PlanAction,
+    PlanAssumption,
+    PlanHeader,
+)
 from brushline.strategic.bau import BauConfig, build_bau_plan, compare_bau
 from brushline.strategic.heuristic import build_stateful_heuristic
 from brushline.strategic.portfolio import (
@@ -1188,6 +1198,91 @@ def _workforce_scenarios(actions: list[TacticalAction], instance_id: str) -> lis
     return results
 
 
+def _bid(
+    actions: list[TacticalAction], units: list[dict[str, Any]], instance_id: str
+) -> dict[str, Any]:
+    """Build the owner plan, contractor bid, and fair-price check."""
+    unit_map = {unit["unit_id"]: unit for unit in units}
+    plan_actions = []
+    for action in actions:
+        labour = round(action.cost * 0.70, 2)
+        equipment = round(action.cost * 0.20, 2)
+        travel = round(action.cost - labour - equipment, 2)
+        area = float(unit_map[action.unit_id]["area_ha"])
+        plan_actions.append(
+            PlanAction(
+                action_id=action.action_id,
+                segment_id=action.unit_id,
+                year=action.year,
+                season=action.season,
+                method=action.method,
+                intensity=0.5,
+                efficacy=0.5,
+                cost_lines=[
+                    CostLine(category="labour", amount=labour, source="prototype method mix"),
+                    CostLine(category="equipment", amount=equipment, source="prototype method mix"),
+                    CostLine(category="travel", amount=travel, source="prototype method mix"),
+                ],
+                treatment_unit_id=action.unit_id,
+                quantity_ha=area,
+                assumptions=["Prototype cost allocation; not a contractor rate sheet."],
+                risk_notes="Planning estimate only.",
+            )
+        )
+    plan = Plan(
+        header=PlanHeader(
+            plan_id="bc-network-balanced-2027",
+            version=1,
+            status="proposed",
+            scenario_id="bc-hydro-network-2026",
+            dataset_id="bc-hydro-network-2026",
+            data_version="public-data-2026-11-15",
+            model_versions={
+                "data_version": "public-data-2026-11-15",
+                "model": "brushline.stateful-milp.v1",
+            },
+            configuration={"budget_per_year": 60000, "objective": "risk-first linear MILP"},
+            currency="CAD",
+            created_utc=CREATED,
+            created_by="Brushline prototype",
+        ),
+        actions=plan_actions,
+        assumptions=[
+            PlanAssumption(
+                assumption_id="A1",
+                statement="Cost allocation is a prototype 70/20/10 labour/equipment/travel split.",
+                source="Brushline demo",
+                impact="Commercial comparison only.",
+            )
+        ],
+    )
+    exchange = build_exchange(plan)
+    bid = build_contractor_bid(
+        exchange,
+        contractor_id="valley-crew",
+        access_cost=5000.0,
+        schedule_days=60,
+        productivity=0.9,
+        rate_adjustments={"labour": 0.06, "equipment": 0.02, "travel": 0.10},
+        assumptions=[
+            "Mock contractor rate adjustments and access cost.",
+            "Productivity 0.9 for bid comparison.",
+        ],
+    )
+    comparison = compare_bid(
+        exchange,
+        bid,
+        fair_low=round(exchange.cost_buildup.total_cost * 0.95, 2),
+        fair_high=round(exchange.cost_buildup.total_cost * 1.15, 2),
+    )
+    return {
+        "plan_id": plan.header.plan_id,
+        "owner_total": exchange.cost_buildup.total_cost,
+        "bid": bid.model_dump(mode="json"),
+        "comparison": comparison.model_dump(mode="json"),
+    }
+
+
 def _summary(
     network: dict[str, Any],
     strategic: dict[str, Any],
@@ -1197,6 +1292,7 @@ def _summary(
     shifts: dict[str, Any],
     workforce: list[dict[str, Any]],
     scalability: list[dict[str, Any]],
+    bid: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1291,6 +1387,13 @@ def _summary(
         )
     lines.extend(
         [
+            "",
+            "## Commercial check",
+            "",
+            f"Owner plan: {bid['owner_total']:.0f} CAD; contractor bid: "
+            f"{bid['bid']['total_cost']:.0f} CAD; delta: "
+            f"{bid['comparison']['delta']:.0f} CAD; within fair range: "
+            f"{bid['comparison']['within_fair_range']}.",
             "",
             "## Caveats",
             "",
@@ -1427,6 +1530,7 @@ def main() -> None:
     shifts = _shifts(tactical.actions, "bc-hydro-network-2026", profiles)
     workforce = _workforce_scenarios(tactical.actions, "bc-hydro-network-2026")
     scalability = _scalability(segments, "bc-hydro-network-2026")
+    bid = _bid(tactical.actions, units, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
         "instance_id": "bc-hydro-network-2026",
@@ -1533,6 +1637,7 @@ def main() -> None:
         ("operations.json", operations_payload),
         ("shifts.json", shifts.model_dump(mode="json")),
         ("workforce.json", workforce),
+        ("bid.json", bid),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -1546,6 +1651,7 @@ def main() -> None:
             shifts.model_dump(mode="json"),
             workforce,
             scalability,
+            bid,
         ),
         encoding="utf-8",
     )
