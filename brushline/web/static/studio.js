@@ -1,4 +1,4 @@
-const state={instanceId:"synthetic-corridor",plan:null,pareto:null,timeline:[],blocks:[],selected:null,variant:"pre",walking:false,heading:0,position:0,time:0,skin:"operations-planner"};
+const state={instanceId:"synthetic-corridor",plan:null,pareto:null,timeline:[],blocks:[],selected:null,variant:"pre",walking:false,heading:0,position:0,time:0,skin:"operations-planner",year:2026,schedule:null};
 const $=s=>document.querySelector(s);
 const api=async p=>{const r=await fetch(p);if(!r.ok)throw new Error(await r.text());return r.json()};
 const esc=s=>String(s??"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
@@ -12,16 +12,18 @@ async function boot(){
 }
 async function loadInstance(id){
  state.instanceId=id;
+ state.schedule=null;state.year=2026;$("#time-control").hidden=true;
  const q=`?instance_id=${encodeURIComponent(id)}`;
  const [summary,blocks]=await Promise.all([api(`api/studio/summary${q}`),api(`api/studio/blocks${q}`)]);
  state.summary=summary; state.blocks=blocks.blocks||[];
+ const observedSchedule=state.blocks[0]?.treatment_schedule;
  if(summary.kind==="planning"){
   const [plan,pareto,timeline]=await Promise.all([api(`api/studio/plan/current${q}`),api(`api/studio/pareto${q}`),api(`api/studio/timeline${q}`)]);
   state.plan=plan;state.pareto=pareto;state.timeline=timeline.events||[];
   $("#summary").textContent=`${summary.title} · ${summary.run_id} · ${summary.currency} ${summary.total_cost}`;
  }else{
   state.plan=null;state.pareto={members:[]};state.timeline=[];
-  $("#summary").textContent=`${summary.title} · observed · ${summary.tree_count} trees${summary.understory_patch_count?` · ${summary.understory_patch_count} shrubs`:""}${summary.voltage_kv?` · ${summary.voltage_kv} kV`:""} · no treatment plan`;
+  $("#summary").textContent=`${summary.title} · observed · ${summary.tree_count} trees${summary.understory_patch_count?` · ${summary.understory_patch_count} shrubs`:""}${summary.voltage_kv?` · ${summary.voltage_kv} kV`:""} · ${observedSchedule?"modelled schedule":"no treatment plan"}`;
  }
  drawMap();drawPareto();drawTimeline();
  await selectBlock(state.blocks[0]?.block_id);
@@ -48,6 +50,22 @@ function drawMap(){
    line.setAttribute("d",d);line.setAttribute("fill","none");line.setAttribute("stroke",power.block_id===state.selected?"#e7ad4a":"#c98b3c");line.setAttribute("stroke-width","4");line.setAttribute("stroke-dasharray","8 5");line.setAttribute("stroke-linecap","round");g.appendChild(line);
   });
   (power.towers||[]).forEach(t=>{const c=document.createElementNS("http://www.w3.org/2000/svg","circle");const p=map([t.x_m,t.y_m]);c.setAttribute("cx",p[0]);c.setAttribute("cy",p[1]);c.setAttribute("r","5");c.setAttribute("fill","#35413d");c.setAttribute("stroke","#f2d59b");c.setAttribute("stroke-width","2");g.appendChild(c);});
+  if(state.schedule?.units){
+   state.schedule.units.forEach(unit=>{
+    const points=unit.points||[];if(points.length<2)return;
+    const d=points.map((p,i)=>`${i?"L":"M"}${map(p)[0].toFixed(1)} ${map(p)[1].toFixed(1)}`).join(" ");
+    const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+    const planned=unit.planned?.year;const current=planned===state.year;
+    path.setAttribute("d",d);path.setAttribute("fill","none");
+    path.setAttribute("stroke",current?"#d9691f":state.year>planned?"#355a3e":"#b5a078");
+    path.setAttribute("stroke-width",current?"8":"6");
+    path.setAttribute("stroke-dasharray",current?"":"10 5");
+    path.setAttribute("stroke-linecap","round");path.setAttribute("stroke-linejoin","round");
+    path.style.cursor="pointer";path.setAttribute("title",`${unit.unit_id} · ${planned} · ${unit.planned?.method||"planned"}`);
+    path.onclick=(event)=>{event.stopPropagation();setYear(planned);};
+    g.appendChild(path);
+   });
+  }
   const label=document.createElementNS("http://www.w3.org/2000/svg","text");label.setAttribute("x","50");label.setAttribute("y","245");label.setAttribute("class","powerline-label");label.textContent=`${[...new Set(power.line_names.filter(Boolean).map(n=>n.replace(/\s*500KV$/i,"").trim()))].join(" / ")} · ${power.voltage_kv} kV`;g.appendChild(label);
   svg.appendChild(g);return;
  }
@@ -67,18 +85,58 @@ function drawProvenance(){
 }
 
 async function selectBlock(id){
- state.selected=id;drawMap();const b=state.blocks.find(x=>x.block_id===id);
+ const b=state.blocks.find(x=>x.block_id===id);
+ state.selected=id;state.schedule=b?.treatment_schedule||null;
  $("#map-hint").textContent=b?.block_kind==="powerline_block"?`${b.label} · ${b.voltage_kv} kV · ${b.height_m} m max canopy · ${b.cover_pct}% cover >3 m · ${b.tree_count} tree clumps · ${b.understory_patch_count} shrubs (${b.understory_corridor_count} in corridor)`:`${id} · ${b?.height_m??"?"} m · ${b?.cover_pct??"?"}% cover · ${b?.actions?.length||0} treatment action(s)`;
  $("#toggle").disabled=!b?.variant_available;
- const s=await api(`api/studio/scene/${id}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;drawProvenance();drawScene();
+ const s=await api(`api/studio/scene/${id}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;state.schedule=s.treatment_schedule||state.schedule;
+ configureYear();drawProvenance();drawMap();drawSchedule();drawScene();
+ setTimeout(()=>window.brushline3d?.setYear(state.year),80);
+}
+
+function configureYear(){
+ const s=state.schedule;
+ if(!s){$("#time-control").hidden=true;return;}
+ const axis=s.time_axis||[s.baseline_year||2026];
+ const min=axis[0],max=axis[axis.length-1];
+ state.year=Math.max(min,Math.min(max,state.year));
+ const input=$("#year");input.min=min;input.max=max;input.step=1;input.value=state.year;input.disabled=false;
+ $("#time-control").hidden=false;updateYearLabel();
+}
+function yearText(){
+ const s=state.schedule;if(!s)return "";
+ return `${state.year}${state.year===s.baseline_year?" observed":" modelled"}`;
+}
+function updateYearLabel(){
+ const s=state.schedule;if(!s)return;
+ const label=yearText();
+ $("#year-label").textContent=label;
+ $("#variant").textContent=label;
+}
+function setYear(year){
+ if(!state.schedule)return;
+ state.year=Number(year);$("#year").value=state.year;updateYearLabel();drawSchedule();drawMap();
+ window.brushline3d?.setYear(state.year);
+}
+function drawSchedule(){
+ const s=state.schedule;
+ if(!s){$("#schedule").innerHTML="<p>No modelled treatment schedule for this block.</p>";return;}
+ const rows=(s.units||[]).map(unit=>{
+  const p=unit.planned||{};
+  const current=p.year===state.year;
+  const status=current?"this year":state.year>p.year?"modelled treated":"planned";
+  return `<tr class="${current?"current":""}" title="${esc(p.driver||"")}"><td>${esc(p.year)}</td><td>${esc(unit.unit_id)}<br><small>${esc(unit.line_name||"")}</small></td><td>${esc(p.method||"")}</td><td>${unit.area_ha} ha</td><td>${unit.shrub_patch_count}</td><td>${unit.mean_cover_pct}%</td><td>${esc(p.monitor_year||"")}</td><td>${esc(p.proposed_window||"")}<br><small>${esc(status)}</small></td></tr>`;
+ }).join("");
+ $("#schedule").innerHTML=`<p class="schedule-note">Baseline ${s.baseline_year}: observed LiDAR. Slider is a modelled maintenance sequence; shrub response is illustrative, not field-calibrated.</p><table><tr><th>Year</th><th>Unit</th><th>Method</th><th>Area</th><th>Shrubs</th><th>Cover</th><th>Monitor</th><th>Window / status</th></tr>${rows}</table>`;
 }
 function drawScene(){
- $("#scene-caveat").textContent=state.scene?.powerline?"Real MKRF power-line location, LiDAR terrain/canopy, and LiDAR-derived shrub patches. Towers are schematic; conductors are approximate. Tall-tree suppression is a corridor visualization choice, not observed treatment. Context view only; not a survey or safety certification.":"Context view only. Positions are unknown unless supplied; pre/post is model state, not a survey.";
+ $("#scene-caveat").textContent=state.scene?.powerline?"Real MKRF power-line location, LiDAR terrain/canopy, and LiDAR-derived shrub patches. The dark green low clumps in the corridor are mapped shrub patches. Towers are schematic; conductors are approximate. Tall-tree suppression is a corridor visualization choice, not observed treatment. Context view only; not a survey or safety certification.":"Context view only. Positions are unknown unless supplied; pre/post is model state, not a survey.";
  $("#walk-hud").hidden=!state.walking;
  if(state.walking)$("#walk-hud").textContent=`${state.selected} · ${state.variant} · context view`;
  $("#variant").textContent=state.variant;
  if(window.brushline3d) window.brushline3d.setScene(state.scene,state.variant);
  else setTimeout(()=>window.brushline3d?.setScene(state.scene,state.variant),80);
+ if(state.schedule) $("#variant").textContent=yearText();
 }
 
 async function toggleVariant(){const b=state.blocks.find(x=>x.block_id===state.selected);if(!b?.variant_available)return;state.variant=state.variant==="pre"?"post":"pre";const s=await api(`api/studio/scene/${state.selected}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;drawScene();}
@@ -92,6 +150,7 @@ $("#walk").onclick=()=>{state.walking=!state.walking;window.brushline3d?.setWalk
 $("#toggle").onclick=toggleVariant;$("#play").onclick=()=>{state.walking=true;window.brushline3d?.setWalking(true);drawScene()};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){state.walking=false;window.brushline3d?.setWalking(false);drawScene()}if(e.key.toLowerCase()==="v")toggleVariant();});
 window.addEventListener("brushline:exit-walk",()=>{state.walking=false;drawScene()});
+$("#year").addEventListener("input",e=>setYear(Number(e.target.value)));
 $("#skin").onchange=e=>{state.skin=e.target.value;document.body.dataset.skin=state.skin};
 $("#instance").onchange=e=>loadInstance(e.target.value).catch(err=>$("#summary").textContent=`error: ${err.message}`);
 boot().catch(e=>$("#summary").textContent=`error: ${e.message}`);

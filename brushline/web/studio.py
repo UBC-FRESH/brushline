@@ -9,11 +9,11 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Iterator
+from collections.abc import Awaitable, Callable, Iterator
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -97,6 +97,7 @@ def _mkrf_block(scene: dict[str, Any]) -> dict[str, Any]:
         "understory_patch_count": scene.get("understory", {}).get("patch_count", 0),
         "understory_corridor_count": scene.get("understory", {}).get("corridor_patch_count", 0),
         "understory_mean_cover_pct": scene.get("understory", {}).get("mean_cover_pct"),
+        "treatment_schedule": scene.get("treatment_schedule"),
         "voltage_kv": power.get("voltage_kv"),
         "line_names": [line.get("name") for line in power.get("lines", [])],
         "geometry": {"lines": lines, "width_m": 70.0},
@@ -273,6 +274,15 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     """
     root = Path(artifact_root or DEFAULT_ARTIFACT_ROOT).resolve()
     app = FastAPI(title="Brushline studio", version="0.1.4")
+
+    @app.middleware("http")
+    async def no_cache(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        response = await call_next(request)
+        if request.url.path == "/" or request.url.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-store"
+        return response
 
     def root_for(instance_id: str) -> Path:
         if instance_id == "synthetic-corridor":

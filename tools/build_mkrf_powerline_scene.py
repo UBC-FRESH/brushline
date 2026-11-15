@@ -220,6 +220,103 @@ def _understory(
     }
 
 
+def _treatment_schedule(
+    lines: list[dict],
+    towers: list[dict],
+    trees: list[dict],
+    understory: dict,
+) -> dict:
+    """Build a modelled, priority-ranked corridor maintenance schedule."""
+    units = []
+    for index, line in enumerate(lines, start=1):
+        points = line.get("points", [])
+        length = sum(math.dist(a, b) for a, b in pairwise(points))
+        units.append(
+            {
+                "unit_id": f"SW-{index:02d}",
+                "name": f"SW-{index:02d} · {line.get('name', 'power line')}",
+                "line_name": line.get("name", "power line"),
+                "points": points,
+                "length_m": round(length, 1),
+                "area_ha": round(length * 70.0 / 10000.0, 2),
+            }
+        )
+    patches = understory.get("patches", [])
+    for patch in patches:
+        distances = [
+            (_distance_to_lines(patch["x_m"], patch["y_m"], [unit]), unit["unit_id"])
+            for unit in units
+        ]
+        patch["unit_id"] = min(distances, key=lambda item: item[0])[1]
+    for unit in units:
+        unit_patches = [patch for patch in patches if patch.get("unit_id") == unit["unit_id"]]
+        tree_count = sum(
+            _distance_to_lines(tree["x_m"], tree["y_m"], [unit]) <= 36.0 for tree in trees
+        )
+        tower_count = sum(
+            _distance_to_lines(tower["x_m"], tower["y_m"], [unit]) <= 50.0 for tower in towers
+        )
+        cover = (
+            sum(patch["cover_pct"] for patch in unit_patches) / len(unit_patches)
+            if unit_patches
+            else 0.0
+        )
+        max_height = max((patch["height_m"] for patch in unit_patches), default=0.0)
+        score = (
+            0.45 * min(1.0, cover / 100.0)
+            + 0.25 * min(1.0, len(unit_patches) / 100.0)
+            + 0.20 * min(1.0, tree_count / 40.0)
+            + 0.10 * min(1.0, tower_count / 2.0)
+        )
+        method = "manual" if cover >= 35.0 or max_height >= 2.0 else "mowing"
+        unit.update(
+            {
+                "shrub_patch_count": len(unit_patches),
+                "mean_cover_pct": round(cover, 1),
+                "max_shrub_height_m": round(max_height, 2),
+                "tall_tree_count": tree_count,
+                "tower_count": tower_count,
+                "priority_score": round(score, 3),
+                "_method": method,
+            }
+        )
+    ranked = sorted(units, key=lambda unit: unit["priority_score"], reverse=True)
+    years = [2027, 2028, 2029, 2030, 2031]
+    for rank, unit in enumerate(ranked, start=1):
+        planned_year = years[min(rank - 1, len(years) - 1)]
+        unit["priority_rank"] = rank
+        unit["planned"] = {
+            "year": planned_year,
+            "method": unit.pop("_method"),
+            "intensity": "selective" if unit["mean_cover_pct"] >= 35.0 else "low",
+            "proposed_window": f"Oct {planned_year} - Mar {planned_year + 1}",
+            "monitor_year": planned_year + 1,
+            "driver": (
+                f"{unit['mean_cover_pct']}% mean shrub cover; "
+                f"{unit['shrub_patch_count']} patches; "
+                f"{unit['tall_tree_count']} tall-tree clumps within 36 m"
+            ),
+            "modelled_shrub_height_factor": 0.40,
+            "modelled_regrowth_per_year": 0.08,
+        }
+    ordered = sorted(units, key=lambda unit: unit["planned"]["year"])
+    return {
+        "schedule_version": "brushline.corridor-schedule.v1",
+        "status": "modelled",
+        "baseline_year": 2026,
+        "time_axis": [2026, 2027, 2028, 2029, 2030, 2031],
+        "corridor_width_m": 70.0,
+        "units": ordered,
+        "caveats": [
+            "Modelled maintenance sequence, not an approved work plan.",
+            "Treatment years and methods are proposed from observed LiDAR cover and line geometry.",
+            "Shrub reduction and regrowth are illustrative factors, not field-calibrated efficacy.",
+            "No cost, crew, access, environmental-window, or energised-line assumptions are "
+            "included.",
+        ],
+    }
+
+
 def main() -> None:
     """Build the derived MKRF power-line scene."""
     boundary = gpd.read_file(BOUNDARY).to_crs(3005)
@@ -324,6 +421,7 @@ def main() -> None:
         for index, p in enumerate(selected_towers)
     ]
     understory = _understory(perimeter, bbox, origin, resolution, elevation, line_payload)
+    schedule = _treatment_schedule(line_payload, tower_payload, trees, understory)
     scene = {
         "schema_version": "brushline.real-scene.v1",
         "instance_id": "mkrf-powerline-2016",
@@ -348,6 +446,7 @@ def main() -> None:
         },
         "trees": trees,
         "understory": understory,
+        "treatment_schedule": schedule,
         "location": {
             "bbox_3005": list(bounds.bounds),
             "bbox_wgs84": [west, south, east, north],
@@ -381,6 +480,11 @@ def main() -> None:
                 "url": "",
             },
             {
+                "name": "MKRF modelled corridor schedule",
+                "licence": "Derived from private MKRF data and OSM; release not reviewed",
+                "url": "",
+            },
+            {
                 "name": "MKRF GIS boundary",
                 "licence": "MKRF private delivery (not redistributed)",
                 "url": "",
@@ -395,6 +499,8 @@ def main() -> None:
             "Tall tree instances within 36 m of the line are suppressed for the 70 m corridor "
             "view; this is a visualization choice, not an observed treatment.",
             "DEM/CHM void cells outside valid coverage are filled with the nearest valid sample.",
+            "The treatment schedule is modelled from 2016 LiDAR and OSM geometry; it is not an "
+            "approved work plan.",
             "Context view only; not survey-grade or a safety certification.",
         ],
         "treatment": None,
@@ -407,6 +513,8 @@ def main() -> None:
         len(trees),
         "understory",
         understory.get("patch_count"),
+        "schedule_units",
+        len(schedule["units"]),
         "towers",
         len(tower_payload),
         "lines",

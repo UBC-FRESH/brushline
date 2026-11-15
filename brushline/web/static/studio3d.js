@@ -3,7 +3,7 @@ import { OrbitControls } from "three/addons/OrbitControls.js";
 
 let renderer, scene, camera, controls, terrain, vegetation, group, block = null;
 let pre = null, post = null, variant = "pre", walking = false, walkYaw = 0, walkPitch = 0;
-let keys = new Set(), dragging = false, last = null, saved = null, real = null;
+let keys = new Set(), dragging = false, last = null, saved = null, real = null, shrubLayer = null;
 const eyeHeight = 1.7;
 
 function terrainY(x, z) {
@@ -160,7 +160,7 @@ function build(sceneData, nextVariant) {
 
 
 function buildReal(data) {
-  block = data; real = data; variant = "pre";
+  block = data; real = data; variant = "pre"; shrubLayer = null;
   if (group) scene.remove(group);
   group = new THREE.Group(); scene.add(group);
   const t = data.terrain, w = t.width, h = t.height, res = t.resolution_m;
@@ -209,29 +209,32 @@ function buildReal(data) {
     const shrubGeo = new THREE.IcosahedronGeometry(1, 1);
     const shrubMat = new THREE.MeshStandardMaterial({color:"#ffffff", roughness:1});
     const instances = shrubs.flatMap((shrub, i) => {
-      const lobes = 2 + (i % 3);
+      const lobes = 4 + (i % 3);
       return Array.from({length:lobes}, (_, k) => ({shrub, i, k, lobes}));
     });
     const shrubMesh = new THREE.InstancedMesh(shrubGeo, shrubMat, instances.length);
     const q = new THREE.Quaternion();
+    const instanceData = [];
     instances.forEach(({shrub, i, k, lobes}, index) => {
       const h = Math.max(0.4, shrub.height_m || 0.8);
       const w = Math.max(0.8, shrub.width_m || 1.2);
       const angle = (k / lobes) * Math.PI * 2 + i * .73;
-      const offset = k === 0 ? 0 : w * .22;
+      const offset = k === 0 ? 0 : w * .36;
       const x = shrub.x_m + Math.cos(angle) * offset;
       const z = shrub.y_m + Math.sin(angle) * offset;
       const y = terrainY(x, z);
-      const lobeH = h * (k === 0 ? .72 : .48 + ((i + k) % 3) * .08);
-      const lobeW = w * (k === 0 ? .54 : .38 + ((i * 3 + k) % 3) * .05);
+      const lobeH = h * (k === 0 ? .82 : .55 + ((i + k) % 3) * .10);
+      const lobeW = w * (k === 0 ? .62 : .42 + ((i * 3 + k) % 3) * .07);
+      instanceData.push({patch: shrub, x, z, h: lobeH, w: lobeW});
       shrubMesh.setMatrixAt(index, new THREE.Matrix4().compose(
         new THREE.Vector3(x, y + lobeH * .52, z),
         q,
         new THREE.Vector3(lobeW * .5, lobeH * .55, lobeW * .5),
       ));
-      shrubMesh.setColorAt(index, new THREE.Color().setHSL(.22 + ((i * 37) % 13) / 150, .40, .40 + ((i * 17) % 9) / 100));
+      shrubMesh.setColorAt(index, new THREE.Color().setHSL(.26 + ((i * 37) % 13) / 180, .52, .28 + ((i * 17) % 9) / 100));
     });
     shrubMesh.name = "shrubs";
+    shrubLayer = {mesh: shrubMesh, instances: instanceData};
     shrubMesh.instanceMatrix.needsUpdate = true;
     if (shrubMesh.instanceColor) shrubMesh.instanceColor.needsUpdate = true;
     group.add(shrubMesh);
@@ -295,6 +298,29 @@ function applyVariant() {
   document.getElementById("variant").textContent = variant;
 }
 
+function setYear(year) {
+  if (!shrubLayer) return;
+  const plans = new Map();
+  (real?.treatment_schedule?.units || []).forEach((unit) => {
+    if (unit.unit_id && unit.planned) plans.set(unit.unit_id, unit.planned);
+  });
+  const q = new THREE.Quaternion();
+  shrubLayer.instances.forEach((item, index) => {
+    const plan = plans.get(item.patch.unit_id);
+    let factor = 1;
+    if (plan && year >= plan.year) {
+      factor = Math.min(1, (plan.modelled_shrub_height_factor || .40) + (plan.modelled_regrowth_per_year || .08) * (year - plan.year));
+    }
+    const y = terrainY(item.x, item.z);
+    shrubLayer.mesh.setMatrixAt(index, new THREE.Matrix4().compose(
+      new THREE.Vector3(item.x, y + item.h * factor * .52, item.z),
+      q,
+      new THREE.Vector3(item.w * factor * .5, item.h * factor * .55, item.w * factor * .5),
+    ));
+  });
+  shrubLayer.mesh.instanceMatrix.needsUpdate = true;
+}
+
 function setWalking(on) {
   walking = on;
   controls.enabled = !on;
@@ -329,8 +355,8 @@ function setWalking(on) {
             if (distance < bestDistance) { bestDistance=distance; const length=Math.sqrt(length2)||1; direction=[dx/length,dz/length]; }
           }
         });
-        start = [shrub.x_m - direction[0]*8, shrub.y_m - direction[1]*8];
-        target = [start[0] + direction[0]*100, start[1] + direction[1]*100];
+        start = [shrub.x_m - direction[0]*7, shrub.y_m - direction[1]*7];
+        target = [shrub.x_m, shrub.y_m];
       } else {
         const pts = real.powerline.lines[0].points || [];
         const mid = pts[Math.floor(pts.length/2)] || [0,0];
@@ -391,6 +417,7 @@ window.brushline3d = {
   },
   setVariant(next) { variant = next; applyVariant(); },
   setWalking,
+  setYear,
   isWalking: () => walking,
   focusPower: () => {
     const tower = block?.powerline?.towers?.[0];

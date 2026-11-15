@@ -52,10 +52,15 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert mk[0]["geometry"]["lines"]
         assert mk[0]["understory_patch_count"] > 0
         assert mk[0]["understory_corridor_count"] > 0
+        schedule = mk[0]["treatment_schedule"]
+        assert schedule["status"] == "modelled"
+        assert len(schedule["units"]) > 0
+        assert schedule["units"][0]["planned"]["year"] >= 2027
         scene_mk = client.get("/api/studio/scene/mkrf-sw-powerline?variant=pre")
         assert scene_mk.status_code == 200
         assert scene_mk.json()["powerline"]["voltage_kv"] == 500
         assert scene_mk.json()["understory"]["patch_count"] > 0
+        assert scene_mk.json()["treatment_schedule"]["time_axis"][0] == 2026
     for instance_id, block_id in (
         ("ubc-public-block", "ubc-real"),
         ("ubc-public-block-2", "ubc-real-2"),
