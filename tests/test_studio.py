@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from brushline.web.studio import create_app
+from brushline.web.studio import MKRK_SCENE_PATH, create_app
 from fastapi.testclient import TestClient
 
 
@@ -39,12 +39,20 @@ def test_studio_endpoints_and_pov_variants() -> None:
     assert real.json()["trees"]
     assert client.get("/api/studio/scene/ubc-real?variant=post").status_code == 404
     instances = client.get("/api/studio/instances").json()["instances"]
-    assert {item["id"] for item in instances} == {
+    assert {item["id"] for item in instances} >= {
         "synthetic-corridor",
         "ubc-public-block",
         "ubc-public-block-2",
         "ubc-public-block-3",
     }
+    if MKRK_SCENE_PATH.exists():
+        assert "mkrf-powerline" in {item["id"] for item in instances}
+        mk = client.get("/api/studio/blocks?instance_id=mkrf-powerline").json()["blocks"]
+        assert mk[0]["block_kind"] == "powerline_block"
+        assert mk[0]["geometry"]["lines"]
+        scene_mk = client.get("/api/studio/scene/mkrf-sw-powerline?variant=pre")
+        assert scene_mk.status_code == 200
+        assert scene_mk.json()["powerline"]["voltage_kv"] == 500
     for instance_id, block_id in (
         ("ubc-public-block", "ubc-real"),
         ("ubc-public-block-2", "ubc-real-2"),

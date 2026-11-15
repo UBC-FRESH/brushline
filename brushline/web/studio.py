@@ -26,6 +26,7 @@ REAL_SCENES: dict[str, tuple[str, str, str]] = {
     "ubc-public-block-3": ("ubc-real-3", "ubc-real-3.json", "UBC public-data block 3"),
 }
 RESOURCE_ROOT = Path(__file__).resolve().parents[1] / "resources"
+MKRK_SCENE_PATH = Path(__file__).resolve().parents[2] / "runtime/private/mkrf-powerline/scene.json"
 INSTANCES: tuple[dict[str, object], ...] = (
     {
         "id": "synthetic-corridor",
@@ -54,6 +55,52 @@ INSTANCES: tuple[dict[str, object], ...] = (
         "description": "231 UBC tree records in a third 200 m block; observed state only.",
     },
 )
+MKRK_INSTANCE: dict[str, object] = {
+    "id": "mkrf-powerline",
+    "title": "MKRF southwest 500 kV power line",
+    "kind": "observed",
+    "description": "Real MKRF power-line crossing, LiDAR terrain/canopy, and schematic towers.",
+}
+
+
+def available_instances() -> list[dict[str, object]]:
+    """Return curated instances plus the local private MKRF scene when present."""
+    values = list(INSTANCES)
+    if MKRK_SCENE_PATH.exists():
+        values.append(MKRK_INSTANCE)
+    return values
+
+
+def _mkrf_scene() -> dict[str, Any]:
+    return dict(json.loads(MKRK_SCENE_PATH.read_text(encoding="utf-8")))
+
+
+def _mkrf_block(scene: dict[str, Any]) -> dict[str, Any]:
+    trees = scene.get("trees", [])
+    heights = [float(tree.get("height_m") or 0) for tree in trees]
+    canopy = [
+        float(value) for row in scene.get("terrain", {}).get("canopy_height", []) for value in row
+    ]
+    cover = 100.0 * sum(value > 3.0 for value in canopy) / len(canopy) if canopy else None
+    power = scene.get("powerline", {})
+    lines = [line.get("points", []) for line in power.get("lines", [])]
+    return {
+        "block_id": "mkrf-sw-powerline",
+        "block_kind": "powerline_block",
+        "segment_ids": [],
+        "height_m": round(max(heights), 1) if heights else None,
+        "cover_pct": round(cover, 1) if cover is not None else None,
+        "actions": [],
+        "variant_available": False,
+        "label": "MKRF southwest 500 kV power line",
+        "tree_count": len(trees),
+        "voltage_kv": power.get("voltage_kv"),
+        "line_names": [line.get("name") for line in power.get("lines", [])],
+        "geometry": {"lines": lines, "width_m": 70.0},
+        "towers": power.get("towers", []),
+    }
+
+
 SKINS: tuple[dict[str, Any], ...] = (
     {"id": "model-builder", "workspaces": ["build", "data"], "read_only": False},
     {"id": "owner-strategic", "workspaces": ["map", "plan", "results", "data"], "read_only": False},
@@ -144,6 +191,12 @@ def _segment_geometry(root: Path, block_id: str) -> dict[str, Any]:
 
 
 def _scene(root: Path, block_id: str, variant: str) -> dict[str, Any]:
+    if block_id == "mkrf-sw-powerline":
+        if variant != "pre":
+            raise StudioError("the observed MKRF block has no modelled post-treatment state")
+        if not MKRK_SCENE_PATH.exists():
+            raise StudioError("MKRF power-line scene is missing")
+        return _mkrf_scene()
     real_entry = next(
         (
             (instance, filename)
@@ -221,7 +274,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     def root_for(instance_id: str) -> Path:
         if instance_id == "synthetic-corridor":
             return root
-        if instance_id in REAL_SCENES:
+        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
             return root
         raise HTTPException(status_code=404, detail=f"unknown instance {instance_id}")
 
@@ -241,11 +294,31 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
 
     @app.get("/api/studio/instances")
     def instances() -> dict[str, Any]:
-        return {"instances": list(INSTANCES)}
+        return {"instances": available_instances()}
 
     @app.get("/api/studio/summary")
     def summary(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
+        if instance_id == "mkrf-powerline":
+            real = _mkrf_scene()
+            power = real.get("powerline", {})
+            return {
+                "schema_version": STUDIO_SCHEMA_VERSION,
+                "instance_id": instance_id,
+                "title": "MKRF southwest 500 kV power line",
+                "kind": "observed",
+                "tree_count": len(real.get("trees", [])),
+                "blocks": 1,
+                "status": "observed",
+                "crs": real.get("crs"),
+                "origin_m": real.get("origin_m"),
+                "powerline_name": power.get("name"),
+                "voltage_kv": power.get("voltage_kv"),
+                "line_count": len(power.get("lines", [])),
+                "tower_count": len(power.get("towers", [])),
+                "sources": real.get("sources", []),
+                "caveats": real.get("caveats", []),
+            }
         if instance_id in REAL_SCENES:
             _block, filename, title = REAL_SCENES[instance_id]
             real = json.loads((RESOURCE_ROOT / filename).read_text(encoding="utf-8"))
@@ -281,7 +354,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
         plan_id: str, instance_id: str = Query(default="synthetic-corridor")
     ) -> dict[str, Any]:
         root_for(instance_id)
-        if instance_id in REAL_SCENES:
+        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
             raise HTTPException(status_code=404, detail="observed block has no plan")
         try:
             return _plan_for(root, plan_id)
@@ -291,20 +364,22 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     @app.get("/api/studio/pareto")
     def pareto(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
-        if instance_id in REAL_SCENES:
+        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
             return {"members": []}
         return dict(safe_json(root, "pareto.json"))
 
     @app.get("/api/studio/timeline")
     def timeline(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
-        if instance_id in REAL_SCENES:
+        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
             return {"events": []}
         return {"events": _read_jsonl(root, "operations_timeline.jsonl")}
 
     @app.get("/api/studio/blocks")
     def blocks(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
+        if instance_id == "mkrf-powerline":
+            return {"blocks": [_mkrf_block(_mkrf_scene())]}
         if instance_id in REAL_SCENES:
             block_id, filename, title = REAL_SCENES[instance_id]
             real = json.loads((RESOURCE_ROOT / filename).read_text(encoding="utf-8"))

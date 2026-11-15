@@ -162,7 +162,41 @@ function buildReal(data) {
   geo.setAttribute("position", new THREE.Float32BufferAttribute(verts,3));
   geo.setIndex(idx); geo.computeVertexNormals();
   group.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:"#78977d", roughness:.95})));
-  const trees = data.trees || [];
+  const power = data.powerline || null;
+  const linePoints = [];
+  if (power) {
+    const cw = 70;
+    (power.lines || []).forEach((line) => {
+      const pts = line.points || [];
+      if (pts.length < 2) return;
+      const verts = [], idx = [];
+      pts.forEach((p, i) => {
+        const prev = pts[Math.max(0,i-1)], next = pts[Math.min(pts.length-1,i+1)];
+        const dx = next[0]-prev[0], dz = next[1]-prev[1], len = Math.hypot(dx,dz) || 1;
+        const nx = -dz/len*cw/2, nz = dx/len*cw/2;
+        verts.push(p[0]+nx, terrainY(p[0]+nx,p[1]+nz)+0.08, p[1]+nz);
+        verts.push(p[0]-nx, terrainY(p[0]-nx,p[1]-nz)+0.08, p[1]-nz);
+        if (i < pts.length-1) idx.push(i*2,i*2+1,i*2+2,i*2+1,i*2+3,i*2+2);
+      });
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.Float32BufferAttribute(verts,3)); g.setIndex(idx); g.computeVertexNormals();
+      group.add(new THREE.Mesh(g, new THREE.MeshStandardMaterial({color:'#9a8b6a', roughness:1})));
+      linePoints.push(pts);
+    });
+  }
+  const distanceToLine = (x,z) => {
+    let best = 1e9;
+    linePoints.forEach((pts) => {
+      for (let i=0;i<pts.length-1;i++) {
+        const [x1,z1]=pts[i], [x2,z2]=pts[i+1];
+        const dx=x2-x1, dz=z2-z1, l2=dx*dx+dz*dz;
+        const f=l2 ? Math.max(0,Math.min(1,((x-x1)*dx+(z-z1)*dz)/l2)) : 0;
+        best=Math.min(best, Math.hypot(x-(x1+f*dx), z-(z1+f*dz)));
+      }
+    });
+    return best;
+  };
+  const trees = (data.trees || []).filter((tree) => !power || distanceToLine(tree.x_m, tree.y_m) > 36);
   const trunkGeo = new THREE.CylinderGeometry(.18,.23,1,5);
   const crownGeo = new THREE.SphereGeometry(1,7,6);
   const trunks = new THREE.InstancedMesh(trunkGeo, new THREE.MeshStandardMaterial({color:"#5b4433"}), trees.length);
@@ -174,9 +208,42 @@ function buildReal(data) {
     m.compose(new THREE.Vector3(tree.x_m, y+hh*.78, tree.y_m), q, s.set(cw*.5,hh*.34,cw*.5)); crowns.setMatrixAt(i,m);
   });
   group.add(trunks); group.add(crowns);
+  if (power) {
+    const towerMat = new THREE.MeshStandardMaterial({color:"#4f5e5b", metalness:.45, roughness:.6});
+    (power.towers || []).forEach((tower) => {
+      const g = new THREE.Group();
+      const h = tower.height_m || 45;
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(1.8,2.3,h,8), towerMat);
+      mast.position.y = h/2; g.add(mast);
+      for (const [dx,dz] of [[-1.6,-1.6],[1.6,-1.6],[-1.6,1.6],[1.6,1.6]]) {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(.5,.75,h,5), towerMat);
+        leg.position.set(dx,h/2,dz); g.add(leg);
+      }
+      for (const [w, y] of [[13,.72],[9,.84],[5,.95]]) {
+        const arm = new THREE.Mesh(new THREE.BoxGeometry(w,.55,.7), towerMat);
+        arm.position.set(0,h*y,0); g.add(arm);
+      }
+      g.position.set(tower.x_m, terrainY(tower.x_m,tower.y_m), tower.y_m); group.add(g);
+    });
+    (power.lines || []).forEach((line) => {
+      const pts = (line.points || []).map(([x,z]) => new THREE.Vector3(x, terrainY(x,z)+(power.conductor_height_m||32), z));
+      if (pts.length > 1) {
+        const curve = new THREE.CatmullRomCurve3(pts);
+        group.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 64, 1.0, 6, false), new THREE.MeshStandardMaterial({color:'#202b29', roughness:.25})));
+      }
+    });
+  }
   const center = [w*res/2, h*res/2];
-  camera.position.set(center[0]+135, 125, center[1]+195);
-  controls.target.set(center[0], 55, center[1]); controls.update();
+  const span = Math.max(w*res, h*res);
+  if (power && power.towers?.length) {
+    const tower = power.towers[0];
+    camera.position.set(tower.x_m + 180, terrainY(tower.x_m, tower.y_m) + 110, tower.y_m + 220);
+    controls.target.set(tower.x_m, terrainY(tower.x_m, tower.y_m) + 25, tower.y_m);
+  } else {
+    camera.position.set(center[0]+span*.35, 150, center[1]+span*.55);
+    controls.target.set(center[0], 45, center[1]);
+  }
+  controls.update();
   applyVariant();
 }
 
@@ -207,11 +274,18 @@ function setWalking(on) {
     saved = {position: camera.position.clone(), quaternion: camera.quaternion.clone(), target: controls.target.clone(), fov: camera.fov};
     camera.fov = 68; camera.updateProjectionMatrix();
     let start = [0,0], target = [100,0];
-    if (real) { start = [20,20]; target = [real.terrain.width*real.terrain.resolution_m/2, real.terrain.height*real.terrain.resolution_m/2]; }
+    if (real?.powerline?.lines?.length) {
+      const pts = real.powerline.lines[0].points || [];
+      const mid = pts[Math.floor(pts.length/2)] || [0,0];
+      const next = pts[Math.min(pts.length-1, Math.floor(pts.length/2)+1)] || mid;
+      const dx = next[0]-mid[0], dz = next[1]-mid[1], len = Math.hypot(dx,dz) || 1;
+      start = [mid[0] - dz/len*14, mid[1] + dx/len*14];
+      target = [start[0] + dx/len*100, start[1] + dz/len*100];
+    } else if (real) { start = [20,20]; target = [real.terrain.width*real.terrain.resolution_m/2, real.terrain.height*real.terrain.resolution_m/2]; }
     else if (block?.geometry?.points?.length) { start = block.geometry.points[0]; target = block.geometry.points[block.geometry.points.length-1]; }
     camera.position.set(start[0], terrainY(start[0],start[1])+eyeHeight, start[1]);
     walkYaw = Math.atan2(-(target[0]-start[0]), -(target[1]-start[1]));
-    walkPitch = -0.04;
+    walkPitch = 0.02;
     camera.rotation.set(walkPitch, walkYaw, 0, "YXZ");
     canvas.focus();
   } else {
@@ -260,6 +334,13 @@ window.brushline3d = {
   setVariant(next) { variant = next; applyVariant(); },
   setWalking,
   isWalking: () => walking,
+  focusPower: () => {
+    const tower = block?.powerline?.towers?.[0];
+    if (!tower) return;
+    camera.position.set(tower.x_m + 180, terrainY(tower.x_m, tower.y_m) + 110, tower.y_m + 220);
+    controls.target.set(tower.x_m, terrainY(tower.x_m, tower.y_m) + 25, tower.y_m);
+    controls.update();
+  },
   debug: () => ({children: scene?.children.length, camera: camera?.position.toArray(), block: !!block, group: !!group, groupChildren: group?.children.length}),
 };
 init();
