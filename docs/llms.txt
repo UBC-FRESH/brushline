@@ -92,6 +92,7 @@
 - [Search budget API](api/optimization-budget.html): quality, scaling, checkpoint, and report models.
 - [Studio telemetry API](api/optimization-telemetry.html): event streams, writers, and studio compatibility.
 - [Strategic dynamic program API](api/strategic-dynamic-program.html): the DP models, solver, and validation.
+- [Stateful strategic MILP API](api/stateful-strategic.html): stateful segment risk, methods, periods, solver plan, and replay.
 - [Strategic portfolio API](api/strategic-portfolio.html): portfolio models, builder, and validation.
 - [Strategic monitoring API](api/strategic-monitoring.html): monitoring policy models and selection.
 - [Business-as-usual API](api/strategic-bau.html): the baseline and comparison models.

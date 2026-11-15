@@ -45,6 +45,7 @@ whenever you add a module to the project.
    optimization-budget
    optimization-telemetry
    strategic-dynamic-program
+   stateful-strategic
    strategic-portfolio
    strategic-monitoring
    strategic-bau

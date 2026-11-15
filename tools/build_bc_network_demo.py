@@ -26,6 +26,13 @@ from brushline.strategic.portfolio import (
     StrategicPortfolio,
     build_strategic_portfolio,
 )
+from brushline.strategic.stateful import (
+    StatefulConfig,
+    StatefulMethod,
+    StatefulPeriod,
+    StatefulSegment,
+    build_stateful_plan,
+)
 from brushline.tactical.access import AccessPlan, AccessWindow, RoadLink, build_access_plan
 from brushline.tactical.operations import OperationsConfig, OperationsPlan, build_operations_plan
 from brushline.tactical.program import (
@@ -383,6 +390,81 @@ def _cycle_tradeoff(segments: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 }
             )
     return results
+
+
+def _milp_plan(
+    segments: list[dict[str, Any]],
+    *,
+    name: str,
+    annual_budget: float,
+    capacity_hours: float = 6000.0,
+    risk_weight: float = 1.0,
+) -> dict[str, Any]:
+    """Solve one stateful MILP and attach the network unit ids."""
+    stateful_segments = [
+        StatefulSegment(
+            segment_id=segment["segment_id"],
+            span_id=segment["unit_id"],
+            length_m=segment["length_m"],
+            area_ha=segment["length_m"] * segment["width_m"] / 10000,
+            initial_risk=segment["base_risk"],
+        )
+        for segment in segments
+    ]
+    methods = [
+        StatefulMethod(
+            method=method,
+            cost_per_ha=params["cost_ha"],
+            hours_per_ha=params["hours_ha"],
+            risk_reduction=params["risk_reduction"],
+        )
+        for method, params in METHODS.items()
+    ]
+    periods = [
+        StatefulPeriod(
+            year=START_YEAR + offset,
+            budget=annual_budget,
+            capacity_hours=capacity_hours,
+        )
+        for offset in range(HORIZON)
+    ]
+    plan = build_stateful_plan(
+        instance_id="bc-hydro-network-2026",
+        segments=stateful_segments,
+        methods=methods,
+        periods=periods,
+        config=StatefulConfig(
+            risk_weight=risk_weight,
+            cost_weight=0.0,
+            growth_per_year=0.03,
+            max_seconds=45,
+        ),
+        created_utc=CREATED,
+    )
+    segment_map = {segment["segment_id"]: segment for segment in segments}
+    actions = [
+        {
+            **action.model_dump(mode="json"),
+            "unit_id": segment_map[action.segment_id]["unit_id"],
+        }
+        for action in plan.actions
+    ]
+    rows = [row.model_dump(mode="json") for row in plan.years]
+    return {
+        "name": name,
+        "annual_budget": annual_budget,
+        "capacity_hours": capacity_hours,
+        "solver": plan.solver,
+        "solver_status": plan.status,
+        "replay_ok": plan.replay_ok,
+        "plan": plan.model_dump(mode="json"),
+        "rows": rows,
+        "actions": actions,
+        "five_year_cost": plan.total_cost,
+        "mean_service": plan.mean_service,
+        "mean_risk": plan.mean_risk,
+        "mean_annual_hours": round(plan.total_hours / HORIZON, 1),
+    }
 
 
 def _grow_risk(risk: float) -> float:
@@ -897,7 +979,7 @@ def _summary(
         "| Scenario | Budget/yr | Five-year cost | Mean service | Mean risk | Hours/yr |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    for scenario in strategic["stateful_scenarios"]:
+    for scenario in strategic["milp_scenarios"]:
         lines.append(
             f"| {scenario['name']} | {scenario['annual_budget']:.0f} | "
             f"{scenario['five_year_cost']:.0f} | {scenario['mean_service']:.3f} | "
@@ -935,6 +1017,8 @@ def _summary(
             "",
             "## Tactical and operational plan",
             "",
+            f"MILP scenarios: {len(strategic['milp_scenarios'])}; all optimal/replayed: "
+            f"{all(item['solver_status'] == 'optimal' and item['replay_ok'] for item in strategic['milp_scenarios'])}.",
             f"Selected actions: {len(tactical['actions'])}; total cost: {tactical['total_cost']:.0f}; "
             f"resource cost: {resources['total_cost']:.0f}; contractor capacity feasible: "
             f"{resources['feasible']}; work orders: {len(operations['work_orders'])}.",
@@ -955,7 +1039,7 @@ def _summary(
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
             "- Costs, hours, productivity, access, and contractor capacities are explicit demo assumptions.",
-            "- The stateful policy is a deterministic risk-per-dollar heuristic, not an exact multi-period optimizer.",
+            "- The MILP is exact for the declared linear risk state, not for a full nonlinear vegetation model.",
             "- The BAU row is a fixed five-year mowing cycle, not a like-for-like comparison of every strategy.",
             "- No asset-owner clearance standard, outage constraint, or safety certification is claimed.",
         ]
@@ -1020,9 +1104,6 @@ def main() -> None:
             ("stateful-risk-first", 100000, 3.0),
         )
     ]
-    stateful_balanced = next(
-        item for item in stateful_scenarios if item["name"] == "stateful-balanced"
-    )
     budget_sweep = [
         _stateful_scenario(
             segments,
@@ -1039,6 +1120,26 @@ def main() -> None:
             name=f"capacity-{capacity}",
             annual_budget=100000,
             risk_weight=1.5,
+            capacity_hours=capacity,
+        )
+        for capacity in (300, 600, 1000, 1500, 2500)
+    ]
+    milp_scenarios = [
+        _milp_plan(
+            segments,
+            name=f"milp-budget-{budget}",
+            annual_budget=budget,
+            capacity_hours=6000,
+        )
+        for budget in (20000, 30000, 45000, 60000, 80000, 100000)
+    ]
+    milp_balanced = next(item for item in milp_scenarios if item["name"] == "milp-budget-60000")
+    milp_frontier = _stateful_frontier(milp_scenarios)
+    milp_capacity = [
+        _milp_plan(
+            segments,
+            name=f"milp-capacity-{capacity}",
+            annual_budget=100000,
             capacity_hours=capacity,
         )
         for capacity in (300, 600, 1000, 1500, 2500)
@@ -1063,7 +1164,7 @@ def main() -> None:
     portfolio_model = _portfolio(portfolio_segments, periods, options, 60000, 1.5)
     bau_comparison = compare_bau(portfolio_model, bau, created_utc=CREATED)
     tactical, access, resources, operations = _tactical(
-        stateful_balanced["actions"], segments, units, towers
+        milp_balanced["actions"], segments, units, towers
     )
     network = {
         "schema_version": "brushline.network-demo.v1",
@@ -1140,6 +1241,9 @@ def main() -> None:
         "periods": [period.model_dump(mode="json") for period in periods],
         "portfolios": scenarios,
         "stateful_scenarios": stateful_scenarios,
+        "milp_scenarios": milp_scenarios,
+        "milp_frontier": milp_frontier,
+        "milp_capacity": milp_capacity,
         "stateful_bau": stateful_bau,
         "stateful_cycles": stateful_cycles,
         "pareto_frontier": pareto_frontier,

@@ -355,7 +355,9 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 "feature_count": len(network.get("lines", [])),
                 "unit_count": len(network.get("units", [])),
                 "segment_count": len(network.get("segments", [])),
-                "scenario_count": len(strategic.get("portfolios", [])),
+                "scenario_count": len(
+                    strategic.get("milp_scenarios") or strategic.get("portfolios", [])
+                ),
                 "sources": network.get("sources", []),
                 "caveats": [
                     "Public-data network prototype; not an asset-owner plan.",

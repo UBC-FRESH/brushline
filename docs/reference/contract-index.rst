@@ -241,6 +241,10 @@ test suite. This page is the map.
      - ``brushline.field-comparison.v1``
      - ``compare_field_data``
      - Field/LiDAR residuals, unit bias/MAE/RMSE, sample gates, review multipliers, and treatment-evidence status
+   * - Stateful strategic plan
+     - ``brushline.stateful-strategic.v1``
+     - ``build_stateful_plan``
+     - Linear risk state, treatment transitions, budget/capacity constraints, objective, annual outcomes, solver provenance, and replay
    * - Studio
      - ``brushline.scene.v1``
      - ``Studio``
@@ -351,6 +355,8 @@ Error prefixes
      - Field validation
    * - ``FIELD-COMPARE-*``
      - Field comparison
+   * - ``STATEFUL-*``
+     - Stateful strategic plan
    * - ``STUDIO-*``
      - Studio compatibility
 

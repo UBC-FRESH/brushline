@@ -21,14 +21,16 @@ prototype assumptions for cost, productivity, access, and contractor capacity.
 ## Strategic examples
 
 The strategic model uses stateful segment risk, five annual periods from 2027 to 2031, budget and
-crew-hour constraints, and a deterministic risk-per-dollar treatment policy. The scenarios are
-deliberately different budget-and-risk postures, not an asset-owner policy.
+crew-hour constraints, and a linearized mixed-integer program solved with HiGHS through SciPy. The
+risk state is exact for the declared linear growth/treatment definition and is independently
+replayed after each solve. The scenarios are different budget postures, not an asset-owner policy.
 
 | Scenario | Annual budget | Five-year cost | Mean service | Mean risk | Hours/year |
 |---|---:|---:|---:|---:|---:|
-| Stateful constrained | 30,000 | 147,399 | 0.881 | 0.119 | 491 |
-| Stateful balanced | 60,000 | 299,859 | 0.967 | 0.033 | 1,000 |
-| Stateful risk-first | 100,000 | 395,409 | 0.985 | 0.015 | 1,318 |
+| MILP constrained | 20,000 | 99,731 | 0.826 | 0.174 | 332 |
+| MILP mid | 30,000 | 149,378 | 0.899 | 0.101 | 498 |
+| MILP balanced | 60,000 | 299,859 | 0.971 | 0.029 | 1,000 |
+| MILP risk-first | 100,000 | 499,719 | 0.991 | 0.009 | 1,620 |
 | BAU five-year mowing | unpriced | 79,082 | 0.590 | 0.410 | 264 |
 
 The budget sweep produces a non-dominated cost/risk frontier from about 98k (risk 0.200) to 395k
@@ -47,13 +49,13 @@ multi-period optimizer.
 
 ## Tactical and operational examples
 
-The stateful balanced scenario becomes a **75-action tactical program**:
+The MILP balanced scenario becomes an **84-action tactical program**:
 
 - Tactical cost: 299,859 CAD over five years.
-- Resource-plan cost: 276,103 CAD with modelling overheads.
+- Resource-plan cost: 277,093 CAD with modelling overheads.
 - Modelled contractor capacity: 9,200 hours/year.
 - Balanced demand: 1,000 hours/year, about 11 percent of modelled capacity.
-- Operations: 75 work-ready orders with crew assignments and sequence days.
+- Operations: 84 work-ready orders with crew assignments and sequence days.
 
 The resource comparison is useful in both directions: spare capacity can support recruitment
 headroom, while a capacity shortfall would trigger a contractor ramp-up or a different allocation.
@@ -70,7 +72,7 @@ context, strategic budget table, fixed-cycle risk tradeoff, and operational work
   assumptions.
 - Stand values are VRI attributes sampled to segment midpoints and VRI stand centroids, not a field
   survey or stem map.
-- The strategic policy is a deterministic heuristic, not an exact multi-period optimizer.
+- The MILP is exact for the linearized risk definition, not for a full nonlinear vegetation model.
 - The frontier and capacity tables are screening tools for budget and contractor discussions.
 - No BC Hydro clearance standard, outage constraint, access permission, or safety certification is
   claimed.

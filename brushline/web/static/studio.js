@@ -144,16 +144,16 @@ function drawSchedule(){
   $("#schedule-heading").textContent="Strategic budget and treatment schedule";
   const strategic=state.network.strategic||{};
   const tactical=state.network.tactical||{};
-  const portfolios=strategic.stateful_scenarios||strategic.portfolios||[];
+  const portfolios=strategic.milp_scenarios||strategic.stateful_scenarios||strategic.portfolios||[];
   const scenarioRows=portfolios.map(p=>`<tr><td>${esc(p.name)}</td><td>${p.annual_budget.toFixed(0)}</td><td>${p.five_year_cost.toFixed(0)}</td><td>${p.mean_service.toFixed(3)}</td><td>${p.mean_risk.toFixed(3)}</td><td>${p.mean_annual_hours.toFixed(0)}</td></tr>`).join("");
   const bau=strategic.stateful_bau||strategic.bau;
   const capacity=(state.network.network?.assumptions?.contractor_capacity||[]).reduce((sum,value)=>sum+value,0);
-  const balanced=portfolios.find(p=>p.name.includes("balanced"))||portfolios[0];
+  const balanced=portfolios.find(p=>p.name.includes("60000"))||portfolios.find(p=>p.name.includes("balanced"))||portfolios[0];
   const utilization=balanced&&capacity?`${balanced.mean_annual_hours.toFixed(0)} h/yr balanced demand (${(balanced.mean_annual_hours/capacity*100).toFixed(0)}% of modelled capacity)`:"no capacity estimate";
   const selectedScenario=portfolios.find(p=>p.name.includes("balanced"))||portfolios[0];
   const selectedRow=selectedScenario?.rows?.find(row=>row.year===state.year);
   const annual=selectedRow?`<p class="schedule-note">${state.year} selected-year projection: ${selectedRow.actions} actions; ${selectedRow.cost.toFixed(0)} cost; ${selectedRow.hours.toFixed(0)} crew-hours; service ${selectedRow.service.toFixed(3)}; risk ${selectedRow.risk.toFixed(3)}.</p>`:"";
-  $("#schedule").innerHTML=`<p class="schedule-note">Stateful budget scenarios from public line geometry and VRI-derived stand pressure. Costs, hours, access, and contractor capacity are demo assumptions. Modelled contractor capacity: ${capacity.toFixed(0)} h/yr; ${utilization}.</p><table><tr><th>Scenario</th><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${scenarioRows}${bau?`<tr><td>BAU 5-year mowing</td><td>0</td><td>${(bau.five_year_cost||0).toFixed(0)}</td><td>${(bau.mean_service??0).toFixed(3)}</td><td>${(bau.mean_risk??0).toFixed(3)}</td><td>${(bau.mean_annual_hours||0).toFixed(0)}</td></tr>`:""}</table>${annual}<p class="schedule-note">Tactical selected actions: ${tactical.actions?.length||0}; tactical cost: ${(tactical.total_cost||0).toFixed(0)}; work orders: ${state.network.operations?.work_orders?.length||0}.</p>`;
+  $("#schedule").innerHTML=`<p class="schedule-note">MILP budget scenarios from public line geometry and VRI-derived stand pressure. Costs, hours, access, and contractor capacity are demo assumptions. Modelled contractor capacity: ${capacity.toFixed(0)} h/yr; ${utilization}.</p><table><tr><th>Scenario</th><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${scenarioRows}${bau?`<tr><td>BAU 5-year mowing</td><td>0</td><td>${(bau.five_year_cost||0).toFixed(0)}</td><td>${(bau.mean_service??0).toFixed(3)}</td><td>${(bau.mean_risk??0).toFixed(3)}</td><td>${(bau.mean_annual_hours||0).toFixed(0)}</td></tr>`:""}</table>${annual}<p class="schedule-note">Tactical selected actions: ${tactical.actions?.length||0}; tactical cost: ${(tactical.total_cost||0).toFixed(0)}; work orders: ${state.network.operations?.work_orders?.length||0}.</p>`;
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";
@@ -182,7 +182,7 @@ async function toggleVariant(){const b=state.blocks.find(x=>x.block_id===state.s
 function drawPareto(){
  if(state.network){
   $("#pareto-heading").textContent="Strategy frontier and cycle tradeoff";
-  const frontier=state.network.strategic?.pareto_frontier||[];
+  const frontier=state.network.strategic?.milp_frontier||[];
   const costs=frontier.map(item=>item.five_year_cost);
   const minCost=Math.min(...costs,0),maxCost=Math.max(...costs,1);
   const maxRisk=Math.max(...frontier.map(item=>item.mean_risk),0.01);
@@ -192,9 +192,9 @@ function drawPareto(){
   const dots=frontier.map(item=>`<circle cx="${sx(item.five_year_cost).toFixed(1)}" cy="${sy(item.mean_risk).toFixed(1)}" r="5" fill="#d9691f"><title>${esc(item.name)} · ${item.five_year_cost.toFixed(0)} cost · ${item.mean_risk.toFixed(3)} risk</title></circle>`).join("");
   const chart=`<svg viewBox="0 0 620 230" role="img" aria-label="Cost versus risk frontier" style="width:100%;height:auto;background:#f4f7f2;border-radius:7px"><line x1="50" y1="185" x2="580" y2="185" stroke="#8b9a8d"/><line x1="50" y1="20" x2="50" y2="185" stroke="#8b9a8d"/><text x="50" y="205" font-size="10" fill="#59675c">lower cost → ${maxCost.toFixed(0)}</text><text x="8" y="20" font-size="10" fill="#59675c" transform="rotate(-90 8 20)">higher risk →</text><polyline points="${points}" fill="none" stroke="#d9691f" stroke-width="2" opacity=".7"/>${dots}</svg>`;
   const frontierRows=frontier.map(item=>`<tr><td>${item.annual_budget.toFixed(0)}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_service.toFixed(3)}</td><td>${item.mean_risk.toFixed(3)}</td><td>${item.mean_annual_hours.toFixed(0)}</td></tr>`).join("");
-  const capacityRows=(state.network.strategic?.capacity_sensitivity||[]).map(item=>`<tr><td>${item.name.replace("capacity-","")}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_service.toFixed(3)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
+  const capacityRows=(state.network.strategic?.milp_capacity||[]).map(item=>`<tr><td>${item.name.replace("capacity-","")}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_service.toFixed(3)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
   const cycleRows=(state.network.strategic?.stateful_cycles||[]).map(item=>`<tr><td>${esc(item.method)}</td><td>${item.cycle_years}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_annual_hours.toFixed(0)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
-  $("#pareto").innerHTML=`<p class="schedule-note">Budget/risk frontier: non-dominated stateful planning outcomes. Capacity sensitivity holds the balanced budget at 100k/yr and varies crew-hours.</p>${chart}<table><tr><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${frontierRows}</table><p class="schedule-note">Contractor capacity sensitivity</p><table><tr><th>Capacity h/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th></tr>${capacityRows}</table><p class="schedule-note">Fixed-cycle tradeoff</p><table><tr><th>Method</th><th>Cycle</th><th>5-year cost</th><th>Hours/yr</th><th>Mean risk</th></tr>${cycleRows}</table>`;
+  $("#pareto").innerHTML=`<p class="schedule-note">Budget/risk frontier: non-dominated stateful MILP outcomes. Capacity sensitivity holds the 100k/yr budget and varies crew-hours.</p>${chart}<table><tr><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${frontierRows}</table><p class="schedule-note">Contractor capacity sensitivity</p><table><tr><th>Capacity h/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th></tr>${capacityRows}</table><p class="schedule-note">Fixed-cycle tradeoff</p><table><tr><th>Method</th><th>Cycle</th><th>5-year cost</th><th>Hours/yr</th><th>Mean risk</th></tr>${cycleRows}</table>`;
   return;
  }
  $("#pareto-heading").textContent="Pareto archive";
