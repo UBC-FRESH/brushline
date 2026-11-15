@@ -94,6 +94,9 @@ def _mkrf_block(scene: dict[str, Any]) -> dict[str, Any]:
         "variant_available": False,
         "label": "MKRF southwest 500 kV power line",
         "tree_count": len(trees),
+        "understory_patch_count": scene.get("understory", {}).get("patch_count", 0),
+        "understory_corridor_count": scene.get("understory", {}).get("corridor_patch_count", 0),
+        "understory_mean_cover_pct": scene.get("understory", {}).get("mean_cover_pct"),
         "voltage_kv": power.get("voltage_kv"),
         "line_names": [line.get("name") for line in power.get("lines", [])],
         "geometry": {"lines": lines, "width_m": 70.0},
@@ -308,6 +311,10 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 "title": "MKRF southwest 500 kV power line",
                 "kind": "observed",
                 "tree_count": len(real.get("trees", [])),
+                "understory_patch_count": real.get("understory", {}).get("patch_count", 0),
+                "understory_corridor_count": real.get("understory", {}).get(
+                    "corridor_patch_count", 0
+                ),
                 "blocks": 1,
                 "status": "observed",
                 "crs": real.get("crs"),

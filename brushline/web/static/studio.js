@@ -21,7 +21,7 @@ async function loadInstance(id){
   $("#summary").textContent=`${summary.title} · ${summary.run_id} · ${summary.currency} ${summary.total_cost}`;
  }else{
   state.plan=null;state.pareto={members:[]};state.timeline=[];
-  $("#summary").textContent=`${summary.title} · observed · ${summary.tree_count} trees${summary.voltage_kv?` · ${summary.voltage_kv} kV`:""} · no treatment plan`;
+  $("#summary").textContent=`${summary.title} · observed · ${summary.tree_count} trees${summary.understory_patch_count?` · ${summary.understory_patch_count} shrubs`:""}${summary.voltage_kv?` · ${summary.voltage_kv} kV`:""} · no treatment plan`;
  }
  drawMap();drawPareto();drawTimeline();
  await selectBlock(state.blocks[0]?.block_id);
@@ -58,7 +58,9 @@ function drawProvenance(){
  const power=scene.powerline;
  const bbox=scene.location?.bbox_wgs84;
  const origin=bbox?` · WGS84 ${bbox[1].toFixed(4)}–${bbox[3].toFixed(4)} N, ${bbox[0].toFixed(4)}–${bbox[2].toFixed(4)} W`:(scene.origin_m?` · EPSG:3005 origin ${scene.origin_m[0].toFixed(0)}, ${scene.origin_m[1].toFixed(0)}`:"");
- const heading=power?`<strong>${esc(power.name)}</strong> · ${power.voltage_kv} kV · ${power.towers?.length||0} mapped towers${origin}`:"";
+ const under=scene.understory;
+ const underText=under?.patch_count?`${under.patch_count} LiDAR shrub patches · ${under.corridor_patch_count} in the 70 m corridor (${under.corridor_mean_cover_pct}% mean cover)` : "";
+ const heading=power?`<strong>${esc(power.name)}</strong> · ${power.voltage_kv} kV · ${power.towers?.length||0} mapped towers${origin}${underText?`<br>${underText}`:""}`:"";
  const sourceText=sources.map(s=>`${esc(s.name)} (${esc(s.licence)})`).join(" · ");
  const caveatText=caveats.map(c=>esc(c)).join(" ");
  $("#provenance").innerHTML=[heading,sourceText,caveatText].filter(Boolean).join("<br>");
@@ -66,12 +68,12 @@ function drawProvenance(){
 
 async function selectBlock(id){
  state.selected=id;drawMap();const b=state.blocks.find(x=>x.block_id===id);
- $("#map-hint").textContent=b?.block_kind==="powerline_block"?`${b.label} · ${b.voltage_kv} kV · ${b.height_m} m max canopy · ${b.cover_pct}% cover >3 m · ${b.tree_count} LiDAR clumps`:`${id} · ${b?.height_m??"?"} m · ${b?.cover_pct??"?"}% cover · ${b?.actions?.length||0} treatment action(s)`;
+ $("#map-hint").textContent=b?.block_kind==="powerline_block"?`${b.label} · ${b.voltage_kv} kV · ${b.height_m} m max canopy · ${b.cover_pct}% cover >3 m · ${b.tree_count} tree clumps · ${b.understory_patch_count} shrubs (${b.understory_corridor_count} in corridor)`:`${id} · ${b?.height_m??"?"} m · ${b?.cover_pct??"?"}% cover · ${b?.actions?.length||0} treatment action(s)`;
  $("#toggle").disabled=!b?.variant_available;
  const s=await api(`api/studio/scene/${id}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;drawProvenance();drawScene();
 }
 function drawScene(){
- $("#scene-caveat").textContent=state.scene?.powerline?"Real MKRF power-line location and LiDAR terrain/canopy. Towers are schematic; conductors are approximate. Context view only; not a survey or safety certification.":"Context view only. Positions are unknown unless supplied; pre/post is model state, not a survey.";
+ $("#scene-caveat").textContent=state.scene?.powerline?"Real MKRF power-line location, LiDAR terrain/canopy, and LiDAR-derived shrub patches. Towers are schematic; conductors are approximate. Tall-tree suppression is a corridor visualization choice, not observed treatment. Context view only; not a survey or safety certification.":"Context view only. Positions are unknown unless supplied; pre/post is model state, not a survey.";
  $("#walk-hud").hidden=!state.walking;
  if(state.walking)$("#walk-hud").textContent=`${state.selected} · ${state.variant} · context view`;
  $("#variant").textContent=state.variant;

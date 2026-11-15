@@ -50,9 +50,12 @@ def test_studio_endpoints_and_pov_variants() -> None:
         mk = client.get("/api/studio/blocks?instance_id=mkrf-powerline").json()["blocks"]
         assert mk[0]["block_kind"] == "powerline_block"
         assert mk[0]["geometry"]["lines"]
+        assert mk[0]["understory_patch_count"] > 0
+        assert mk[0]["understory_corridor_count"] > 0
         scene_mk = client.get("/api/studio/scene/mkrf-sw-powerline?variant=pre")
         assert scene_mk.status_code == 200
         assert scene_mk.json()["powerline"]["voltage_kv"] == 500
+        assert scene_mk.json()["understory"]["patch_count"] > 0
     for instance_id, block_id in (
         ("ubc-public-block", "ubc-real"),
         ("ubc-public-block-2", "ubc-real-2"),

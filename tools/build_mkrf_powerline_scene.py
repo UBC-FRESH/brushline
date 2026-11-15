@@ -9,17 +9,22 @@ not committed.
 from __future__ import annotations
 
 import json
+import math
+from itertools import pairwise
 from pathlib import Path
 
 import geopandas as gpd
+import laspy
 import numpy as np
 import rasterio
 from pyproj import Transformer
 from rasterio.enums import Resampling
 from rasterio.transform import from_origin
 from rasterio.windows import from_bounds
-from scipy.ndimage import maximum_filter
-from shapely.geometry import LineString, Point, box
+from scipy.ndimage import distance_transform_edt, maximum_filter
+from shapely import contains_xy
+from shapely.geometry import LineString, Point, Polygon, box
+from shapely.geometry.base import BaseGeometry
 
 ROOT = Path(__file__).resolve().parents[1]
 MKRF = ROOT.parent / "sources/mkrf-gis-2026-11-02"
@@ -28,6 +33,191 @@ BOUNDARY = MKRF / "processed/boundary.gpkg"
 DEM = MKRF / "extracted/DEMs/unpacked/DEM/DEM.asc"
 CHM = MKRF / "extracted/CHM/unpacked/CHM__CHM_5m/mkrf_2016_chm_5_meter.tif"
 OSM = ROOT / "runtime/private/mkrf-powerline/osm-power.json"
+LAS_ROOT = MKRF / "extracted/LiDAR 2016/unpacked"
+
+
+def _fill_nodata(values: np.ndarray, threshold: float = -1000.0) -> tuple[np.ndarray, int]:
+    """Fill void cells with the nearest valid value."""
+    valid = values > threshold
+    missing = int((~valid).sum())
+    if missing == 0:
+        return values, 0
+    if not valid.any():
+        raise SystemExit("terrain window contains no valid elevation cells")
+    indices = distance_transform_edt(~valid, return_distances=False, return_indices=True)
+    return values[tuple(indices)], missing
+
+
+def _las_tiles(bbox_utm: box) -> list[Path]:
+    """Return LAS tiles whose headers intersect the scene bbox."""
+    minx, miny, maxx, maxy = bbox_utm.bounds
+    found = []
+    for tile in sorted(LAS_ROOT.glob("*/*.las")):
+        with laspy.open(tile) as reader:
+            header = reader.header
+        if header.maxs[0] < minx or header.mins[0] > maxx:
+            continue
+        if header.maxs[1] < miny or header.mins[1] > maxy:
+            continue
+        found.append(tile)
+    return found
+
+
+def _distance_to_lines(x: float, y: float, lines: list[dict]) -> float:
+    best = float("inf")
+    for line in lines:
+        points = line.get("points", [])
+        for (x1, y1), (x2, y2) in pairwise(points):
+            dx, dy = x2 - x1, y2 - y1
+            length2 = dx * dx + dy * dy
+            factor = (
+                0.0
+                if length2 == 0
+                else max(0.0, min(1.0, ((x - x1) * dx + (y - y1) * dy) / length2))
+            )
+            best = min(best, math.hypot(x - (x1 + factor * dx), y - (y1 + factor * dy)))
+    return best
+
+
+def _understory(
+    perimeter: BaseGeometry,
+    bbox: Polygon,
+    origin: tuple[float, float],
+    resolution: float,
+    elevation: np.ndarray,
+    lines: list[dict],
+) -> dict:
+    """Extract low-vegetation patches from 2016 LiDAR returns."""
+    bbox_utm = gpd.GeoSeries([bbox], crs=3005).to_crs(26910).iloc[0]
+    tiles = _las_tiles(bbox_utm)
+    if not tiles:
+        return {"patches": [], "patch_count": 0, "source": "MKRF 2016 LiDAR returns"}
+    cell_m = 10.0
+    width = bbox.bounds[2] - bbox.bounds[0]
+    height = bbox.bounds[3] - bbox.bounds[1]
+    cols = math.ceil(width / cell_m)
+    rows = math.ceil(height / cell_m)
+    count = rows * cols
+    shrub_count = np.zeros(count, dtype=np.int64)
+    first_count = np.zeros(count, dtype=np.int64)
+    shrub_sum = np.zeros(count, dtype=np.float64)
+    shrub_max = np.zeros(count, dtype=np.float32)
+    to_scene = Transformer.from_crs(26910, 3005, always_xy=True)
+    points_in_block = 0
+    minx, miny, maxx, maxy = bbox_utm.bounds
+    for tile in tiles:
+        with laspy.open(tile) as reader:
+            for points in reader.chunk_iterator(1_000_000):
+                x = np.asarray(points.x, dtype=np.float64)
+                y = np.asarray(points.y, dtype=np.float64)
+                z = np.asarray(points.z, dtype=np.float64)
+                inside_bbox = (x >= minx) & (x < maxx) & (y >= miny) & (y < maxy)
+                if not inside_bbox.any():
+                    continue
+                x, y, z = x[inside_bbox], y[inside_bbox], z[inside_bbox]
+                classes = np.asarray(points.classification)[inside_bbox]
+                return_numbers = np.asarray(points.return_number)[inside_bbox]
+                x, y = to_scene.transform(x, y)
+                inside_boundary = contains_xy(perimeter, x, y)
+                if not inside_boundary.any():
+                    continue
+                x, y, z, classes, return_numbers = (
+                    x[inside_boundary],
+                    y[inside_boundary],
+                    z[inside_boundary],
+                    classes[inside_boundary],
+                    return_numbers[inside_boundary],
+                )
+                col = ((x - origin[0]) / cell_m).astype(np.int32)
+                row = ((y - origin[1]) / cell_m).astype(np.int32)
+                valid = (col >= 0) & (col < cols) & (row >= 0) & (row < rows)
+                if not valid.any():
+                    continue
+                x, y, z, classes, return_numbers = (
+                    x[valid],
+                    y[valid],
+                    z[valid],
+                    classes[valid],
+                    return_numbers[valid],
+                )
+                col, row = col[valid], row[valid]
+                elev_col = np.rint((x - origin[0]) / resolution).astype(np.int32)
+                elev_row = np.rint((y - origin[1]) / resolution).astype(np.int32)
+                valid = (
+                    (elev_col >= 0)
+                    & (elev_col < elevation.shape[1])
+                    & (elev_row >= 0)
+                    & (elev_row < elevation.shape[0])
+                )
+                if not valid.any():
+                    continue
+                x, z, classes, return_numbers = (
+                    x[valid],
+                    z[valid],
+                    classes[valid],
+                    return_numbers[valid],
+                )
+                col, row = col[valid], row[valid]
+                ground = elevation[elev_row[valid], elev_col[valid]]
+                above_ground = z - ground
+                index = row * cols + col
+                first = return_numbers == 1
+                first_count += np.bincount(index[first], minlength=count)
+                vegetation = (above_ground >= 0.3) & (above_ground <= 3.0) & (classes != 2)
+                if vegetation.any():
+                    veg_index = index[vegetation]
+                    veg_height = above_ground[vegetation]
+                    shrub_count += np.bincount(veg_index, minlength=count)
+                    shrub_sum += np.bincount(veg_index, weights=veg_height, minlength=count)
+                    np.maximum.at(shrub_max, veg_index, veg_height)
+                points_in_block += len(z)
+    cover = np.minimum(100.0, 100.0 * shrub_count / np.maximum(first_count, 1))
+    mean_height = np.divide(shrub_sum, np.maximum(shrub_count, 1))
+    patches = []
+    for row in range(rows):
+        for col in range(cols):
+            index = row * cols + col
+            if shrub_count[index] < 3 or cover[index] < 3.0 or mean_height[index] < 0.4:
+                continue
+            x = minx + (col + 0.5) * cell_m
+            y = miny + (row + 0.5) * cell_m
+            x, y = to_scene.transform(x, y)
+            local_x = x - origin[0]
+            local_y = y - origin[1]
+            corridor_distance = _distance_to_lines(local_x, local_y, lines)
+            patches.append(
+                {
+                    "x_m": round(float(local_x), 2),
+                    "y_m": round(float(local_y), 2),
+                    "height_m": round(float(min(2.8, max(0.5, mean_height[index] * 1.2 + 0.2))), 2),
+                    "width_m": round(float(min(4.0, 0.8 + 2.0 * math.sqrt(cover[index] / 100))), 2),
+                    "cover_pct": round(float(cover[index]), 1),
+                    "hits": int(shrub_count[index]),
+                    "corridor_distance_m": round(float(corridor_distance), 1),
+                    "in_corridor": corridor_distance <= 35.0,
+                }
+            )
+    corridor = [patch for patch in patches if patch["in_corridor"]]
+    return {
+        "source": "MKRF 2016 LiDAR returns",
+        "method": "Density of non-ground returns 0.3-3.0 m above the LiDAR DEM",
+        "cell_m": cell_m,
+        "band_m": [0.3, 3.0],
+        "las_tiles": [tile.name for tile in tiles],
+        "points_in_block": points_in_block,
+        "patch_count": len(patches),
+        "patches": patches,
+        "mean_cover_pct": round(float(cover[shrub_count > 0].mean()), 1)
+        if (shrub_count > 0).any()
+        else 0.0,
+        "max_height_m": round(float(shrub_max.max()), 2),
+        "corridor_patch_count": len(corridor),
+        "corridor_mean_cover_pct": round(
+            float(np.mean([patch["cover_pct"] for patch in corridor])), 1
+        )
+        if corridor
+        else 0.0,
+    }
 
 
 def main() -> None:
@@ -95,10 +285,10 @@ def main() -> None:
         canopy = chm.read(
             1, window=chm_window, out_shape=(rows, cols), resampling=Resampling.average
         )
-    elevation = (
-        np.where(np.isfinite(elevation), elevation, np.nanmedian(elevation)).astype(float).round(2)
-    )
-    canopy = np.where(np.isfinite(canopy), canopy, 0).astype(float).round(2)
+    elevation, elevation_voids = _fill_nodata(elevation.astype(float))
+    elevation = elevation.round(2)
+    canopy_voids = int((canopy <= -1000.0).sum())
+    canopy = np.where(canopy > -1000.0, canopy, 0).astype(float).round(2)
     # Local maxima are LiDAR-derived canopy clumps, not measured stems.
     maxima = (canopy == maximum_filter(canopy, size=5)) & (canopy > 3.0)
     rr, cc = np.where(maxima)
@@ -113,7 +303,7 @@ def main() -> None:
                 "x_m": round(col * resolution, 2),
                 "y_m": round(row * resolution, 2),
                 "height_m": round(h, 2),
-                "crown_width_m": round(max(1.5, h * 0.3), 2),
+                "crown_width_m": round(max(1.5, min(12.0, h * 0.22)), 2),
                 "species": "LiDAR canopy clump",
                 "source": "mkrf_2016_chm_5m",
             }
@@ -133,6 +323,7 @@ def main() -> None:
         }
         for index, p in enumerate(selected_towers)
     ]
+    understory = _understory(perimeter, bbox, origin, resolution, elevation, line_payload)
     scene = {
         "schema_version": "brushline.real-scene.v1",
         "instance_id": "mkrf-powerline-2016",
@@ -152,8 +343,11 @@ def main() -> None:
             "elevation": elevation.tolist(),
             "canopy_height": canopy.tolist(),
             "elevation_range_m": [float(elevation.min()), float(elevation.max())],
+            "nodata_filled_cells": elevation_voids,
+            "canopy_void_cells": canopy_voids,
         },
         "trees": trees,
+        "understory": understory,
         "location": {
             "bbox_3005": list(bounds.bounds),
             "bbox_wgs84": [west, south, east, north],
@@ -167,6 +361,8 @@ def main() -> None:
             "source": "OpenStreetMap via Overpass API",
             "source_timestamp": osm_timestamp,
             "corridor_length_m": round(sum(line["geometry"].length for line in selected), 1),
+            "corridor_width_m": 70.0,
+            "tree_clearance_m": 36.0,
         },
         "sources": [
             {
@@ -180,6 +376,11 @@ def main() -> None:
                 "url": "",
             },
             {
+                "name": "MKRF 2016 LiDAR understory returns",
+                "licence": "MKRF/UBC educational use only; private delivery, release not reviewed",
+                "url": "",
+            },
+            {
                 "name": "MKRF GIS boundary",
                 "licence": "MKRF private delivery (not redistributed)",
                 "url": "",
@@ -189,6 +390,11 @@ def main() -> None:
             "Real MKRF power-line location and LiDAR terrain/canopy; derived private scene.",
             "Tower geometry is schematic, not engineered; conductor height is approximate.",
             "Tree instances are LiDAR canopy maxima, not measured stems.",
+            "Understory patches are LiDAR return density in the 0.3-3 m band, not a species "
+            "inventory; no maintenance treatment is inferred.",
+            "Tall tree instances within 36 m of the line are suppressed for the 70 m corridor "
+            "view; this is a visualization choice, not an observed treatment.",
+            "DEM/CHM void cells outside valid coverage are filled with the nearest valid sample.",
             "Context view only; not survey-grade or a safety certification.",
         ],
         "treatment": None,
@@ -199,6 +405,8 @@ def main() -> None:
         OUT,
         "trees",
         len(trees),
+        "understory",
+        understory.get("patch_count"),
         "towers",
         len(tower_payload),
         "lines",
