@@ -116,6 +116,7 @@
 - [Uncertainty API](api/uncertainty.html): uncertainty config, bands, sampled outcomes, and sensitivity cases.
 - [Scenario optimization API](api/scenario-optimization.html): fixed versus re-solved scenario plans, bands, feasibility penalties, and regret.
 - [Planning brief API](api/planning-brief.html): self-contained Markdown/HTML decision record from network artifacts.
+- [Rolling policy API](api/rolling-policy.html): annual-factor episodes, two-year lookahead, fixed-versus-rolling bands, and regret.
 
 - [Mission simulation](reference/mission.html): corridor graph, endurance, footprint, weather, and cost.
 - [Monitoring value](reference/monitoring-value.html): expected loss reduction, cost, and regret per dollar.
@@ -128,6 +129,7 @@
 - [Uncertainty and sensitivity](reference/uncertainty.html): seeded cost/productivity/capacity bands, budget and shortfall probabilities, and one-at-a-time stresses.
 - [Scenario-optimized planning](reference/scenario-optimization.html): hindsight adaptive MILP re-solves, fixed-plan budget/capacity feasibility, cost/risk bands, and regret.
 - [Planning brief](reference/planning-brief.html): one-click self-contained decision record with frontier, tactical schedule, uncertainty, adaptation, caveats, and commit provenance.
+- [Rolling-horizon policy](reference/rolling-policy.html): executable persistence-forecast policy, annual re-solves, state carry-over, cost/risk bands, and limits.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

@@ -147,6 +147,22 @@ def _artifacts() -> dict[str, Any]:
         "mean_regret": 0.0752,
         "fixed_budget_violation_probability": 0.5667,
     }
+    rolling_policy = {
+        "episodes": 20,
+        "lookahead_years": 2,
+        "fixed_cost_band": {"p10": 265469, "p90": 333437},
+        "rolling_cost_band": {"p10": 298123, "p90": 299398},
+        "fixed_risk_band": {"mean": 0.0294},
+        "rolling_risk_band": {"mean": 0.0296},
+        "fixed_budget_violation_probability": 0.95,
+        "rolling_budget_violation_probability": 0.0,
+        "fixed_capacity_violation_probability": 0.0,
+        "rolling_capacity_violation_probability": 0.0,
+        "mean_fixed_objective": 0.1031,
+        "mean_rolling_objective": 0.0296,
+        "mean_regret": 0.0735,
+        "probability_rolling_improves": 1.0,
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -164,6 +180,7 @@ def _artifacts() -> dict[str, Any]:
         "uncertainty": uncertainty,
         "scenario_optimization": scenario_optimization,
         "access": access,
+        "rolling_policy": rolling_policy,
     }
 
 
@@ -183,6 +200,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Commercial check" in brief.markdown
     assert "## Execution uncertainty" in brief.markdown
     assert "## Hindsight adaptive planning" in brief.markdown
+    assert "## Rolling-horizon policy" in brief.markdown
+    assert "20 annual-factor episodes; 2-year lookahead" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown
     assert "current-mix" in brief.markdown

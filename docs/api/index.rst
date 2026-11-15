@@ -71,6 +71,7 @@ whenever you add a module to the project.
    uncertainty
    scenario-optimization
    planning-brief
+   rolling-policy
    shift-scheduling
    field
    field-comparison

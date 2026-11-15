@@ -17,6 +17,7 @@ the model outputs into a document that a reviewer can read without navigating th
 - owner cost, mock bid, delta, and fair range;
 - execution-uncertainty bands and shortfall probabilities;
 - fixed versus hindsight-adaptive cost/risk comparison;
+- rolling-horizon policy comparison;
 - heuristic scaling evidence;
 - caveats and reproduction metadata.
 

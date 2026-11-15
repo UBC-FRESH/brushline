@@ -165,6 +165,10 @@ function drawSchedule(){
   if(adaptive){
    $("#schedule").innerHTML+=`<p class="schedule-note">Hindsight adaptive planning · ${adaptive.scenarios} exact scenario re-solves · not a deployable policy</p><table><tr><th>Policy</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th></tr><tr><td>Fixed balanced plan</td><td>${adaptive.fixed_cost_band.p10.toFixed(0)}–${adaptive.fixed_cost_band.p90.toFixed(0)}</td><td>${adaptive.fixed_risk_band.mean.toFixed(4)}</td><td>${(adaptive.fixed_budget_violation_probability*100).toFixed(1)}%</td></tr><tr><td>Scenario-optimized</td><td>${adaptive.adaptive_cost_band.p10.toFixed(0)}–${adaptive.adaptive_cost_band.p90.toFixed(0)}</td><td>${adaptive.adaptive_risk_band.mean.toFixed(4)}</td><td>0.0%</td></tr></table>`;
   }
+  const rolling=state.network["rolling-policy"];
+  if(rolling){
+   $("#schedule").innerHTML+=`<p class="schedule-note">Rolling-horizon policy · ${rolling.lookahead_years}-year lookahead · ${rolling.episodes} annual-factor episodes · persistence forecast</p><table><tr><th>Policy</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th><th>Capacity violation</th></tr><tr><td>Fixed nominal</td><td>${rolling.fixed_cost_band.p10.toFixed(0)}–${rolling.fixed_cost_band.p90.toFixed(0)}</td><td>${rolling.fixed_risk_band.mean.toFixed(4)}</td><td>${(rolling.fixed_budget_violation_probability*100).toFixed(1)}%</td><td>${(rolling.fixed_capacity_violation_probability*100).toFixed(1)}%</td></tr><tr><td>Rolling policy</td><td>${rolling.rolling_cost_band.p10.toFixed(0)}–${rolling.rolling_cost_band.p90.toFixed(0)}</td><td>${rolling.rolling_risk_band.mean.toFixed(4)}</td><td>${(rolling.rolling_budget_violation_probability*100).toFixed(1)}%</td><td>${(rolling.rolling_capacity_violation_probability*100).toFixed(1)}%</td></tr></table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

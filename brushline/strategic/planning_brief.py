@@ -379,6 +379,7 @@ def build_planning_brief(
     uncertainty: Mapping[str, Any],
     scenario_optimization: Mapping[str, Any],
     access: Mapping[str, Any],
+    rolling_policy: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -391,6 +392,8 @@ def build_planning_brief(
         Loaded model artifacts. ``scenario_optimization`` and ``access`` are also required.
     workforce : sequence of mapping
         Workforce scenario results.
+    rolling_policy : mapping, optional
+        Rolling-horizon policy result. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -430,6 +433,10 @@ def build_planning_brief(
     scenario_adaptive = scenario_optimization.get("adaptive_cost_band") or {}
     scenario_fixed_risk = scenario_optimization.get("fixed_risk_band") or {}
     scenario_adaptive_risk = scenario_optimization.get("adaptive_risk_band") or {}
+    rolling_fixed_cost = (rolling_policy or {}).get("fixed_cost_band") or {}
+    rolling_adaptive_cost = (rolling_policy or {}).get("rolling_cost_band") or {}
+    rolling_fixed_risk = (rolling_policy or {}).get("fixed_risk_band") or {}
+    rolling_adaptive_risk = (rolling_policy or {}).get("rolling_risk_band") or {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -439,6 +446,8 @@ def build_planning_brief(
         "vegetation model.",
         "Scenario-optimized planning is a hindsight upper bound, not an executable "
         "forecast-update policy.",
+        "Rolling-horizon planning observes current conditions and assumes they persist over "
+        "its lookahead; it is an executable heuristic, not a stochastic dynamic program.",
         "No asset-owner clearance standard, outage constraint, safety certification, or "
         "field calibration is claimed.",
     ]
@@ -688,6 +697,58 @@ def build_planning_brief(
                 ],
             ),
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Rolling-horizon policy",
+                    paragraphs=[
+                        f"{rolling_policy.get('episodes')} annual-factor episodes; "
+                        f"{rolling_policy.get('lookahead_years')}-year lookahead. The policy "
+                        "observes current conditions, assumes persistence, re-solves the stateful "
+                        "MILP, and commits only the current year. It is executable but not a "
+                        "global optimal policy.",
+                        "The fixed nominal plan is evaluated under the same annual factors. "
+                        "The risk-equivalent objective includes the normalized budget/capacity "
+                        "penalty.",
+                    ],
+                    table=_table(
+                        [
+                            "Policy",
+                            "5-year cost P10-P90",
+                            "Mean risk",
+                            "Budget violation",
+                            "Capacity violation",
+                        ],
+                        [
+                            [
+                                "Fixed nominal",
+                                f"{_number(rolling_fixed_cost.get('p10'))}-"
+                                f"{_number(rolling_fixed_cost.get('p90'))}",
+                                _number(rolling_fixed_risk.get("mean"), 4),
+                                _percent(rolling_policy.get("fixed_budget_violation_probability")),
+                                _percent(
+                                    rolling_policy.get("fixed_capacity_violation_probability")
+                                ),
+                            ],
+                            [
+                                "Rolling policy",
+                                f"{_number(rolling_adaptive_cost.get('p10'))}-"
+                                f"{_number(rolling_adaptive_cost.get('p90'))}",
+                                _number(rolling_adaptive_risk.get("mean"), 4),
+                                _percent(
+                                    rolling_policy.get("rolling_budget_violation_probability")
+                                ),
+                                _percent(
+                                    rolling_policy.get("rolling_capacity_violation_probability")
+                                ),
+                            ],
+                        ],
+                    ),
+                )
+            ]
+            if rolling_policy
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -720,7 +781,8 @@ def build_planning_brief(
                 f"Run `{command}` from the repository root. The brief was generated from the model "
                 f"artifact set at {generated_utc or datetime.now(UTC)}.",
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
-                "workforce, bid, uncertainty, scenario-optimization, and access JSON files.",
+                "workforce, bid, uncertainty, scenario-optimization, rolling-policy, and "
+                "access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

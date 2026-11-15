@@ -63,6 +63,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    uncertainty
    scenario-optimization
    planning-brief
+   rolling-policy
    field-validation
    shift-scheduling
    field-comparison

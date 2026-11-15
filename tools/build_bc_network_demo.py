@@ -38,6 +38,7 @@ from brushline.strategic.portfolio import (
     StrategicPortfolio,
     build_strategic_portfolio,
 )
+from brushline.strategic.rolling_policy import simulate_rolling_policy
 from brushline.strategic.scenario_optimization import optimize_scenarios
 from brushline.strategic.stateful import (
     StatefulConfig,
@@ -1298,6 +1299,7 @@ def _summary(
     bid: dict[str, Any],
     uncertainty: dict[str, Any],
     scenario_optimization: dict[str, Any],
+    rolling_policy: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1436,6 +1438,30 @@ def _summary(
             f"{scenario_optimization['probability_adaptation_improves']:.1%} of scenarios under this "
             "scoring rule, which includes a normalized budget/capacity penalty for the fixed plan.",
             "",
+            "## Rolling-horizon policy",
+            "",
+            f"{rolling_policy['episodes']} annual-factor episodes; {rolling_policy['lookahead_years']}-year "
+            "lookahead. The policy observes current conditions, assumes persistence, re-solves, and "
+            "commits only the current year. It is executable but not a global optimal policy.",
+            "",
+            "| Policy | 5-year cost P10-P90 | Mean risk | Budget violation | Capacity violation |",
+            "|---|---:|---:|---:|---:|",
+            f"| Fixed nominal | {rolling_policy['fixed_cost_band']['p10']:.0f}-"
+            f"{rolling_policy['fixed_cost_band']['p90']:.0f} | "
+            f"{rolling_policy['fixed_risk_band']['mean']:.4f} | "
+            f"{rolling_policy['fixed_budget_violation_probability']:.1%} | "
+            f"{rolling_policy['fixed_capacity_violation_probability']:.1%} |",
+            f"| Rolling policy | {rolling_policy['rolling_cost_band']['p10']:.0f}-"
+            f"{rolling_policy['rolling_cost_band']['p90']:.0f} | "
+            f"{rolling_policy['rolling_risk_band']['mean']:.4f} | "
+            f"{rolling_policy['rolling_budget_violation_probability']:.1%} | "
+            f"{rolling_policy['rolling_capacity_violation_probability']:.1%} |",
+            "",
+            f"Risk-equivalent objective: fixed {rolling_policy['mean_fixed_objective']:.4f}, rolling "
+            f"{rolling_policy['mean_rolling_objective']:.4f}, mean regret "
+            f"{rolling_policy['mean_regret']:.4f}. Rolling improved "
+            f"{rolling_policy['probability_rolling_improves']:.1%} of episodes.",
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -1443,6 +1469,7 @@ def _summary(
             "- The MILP is exact for the declared linear risk state, not for a full nonlinear vegetation model.",
             "- The BAU row is a fixed five-year mowing cycle, not a like-for-like comparison of every strategy.",
             "- Scenario-optimized planning is a hindsight upper bound: it re-solves after seeing each sampled scenario and is not an executable forecast-update policy.",
+            "- The rolling policy observes current conditions only and assumes they persist over its lookahead; it is a heuristic policy, not a stochastic dynamic program.",
             "- No asset-owner clearance standard, outage constraint, or safety certification is claimed.",
         ]
     )
@@ -1598,23 +1625,36 @@ def main() -> None:
         for method, params in METHODS.items()
     ]
     fixed_plan = StatefulPlan.model_validate(milp_balanced["plan"])
+    stateful_segments = [
+        StatefulSegment(
+            segment_id=segment["segment_id"],
+            span_id=segment["unit_id"],
+            length_m=segment["length_m"],
+            area_ha=segment["length_m"] * segment["width_m"] / 10000,
+            initial_risk=segment["base_risk"],
+        )
+        for segment in segments
+    ]
     scenario_optimization = optimize_scenarios(
         instance_id="bc-hydro-network-2026",
-        segments=[
-            StatefulSegment(
-                segment_id=segment["segment_id"],
-                span_id=segment["unit_id"],
-                length_m=segment["length_m"],
-                area_ha=segment["length_m"] * segment["width_m"] / 10000,
-                initial_risk=segment["base_risk"],
-            )
-            for segment in segments
-        ],
+        segments=stateful_segments,
         methods=scenario_methods,
         periods=tactical_periods,
         fixed=fixed_plan,
         config=StatefulConfig(risk_weight=1.0, max_seconds=30),
         scenarios=30,
+        seed=7,
+        created_utc=CREATED,
+    )
+    rolling_policy = simulate_rolling_policy(
+        instance_id="bc-hydro-network-2026",
+        segments=stateful_segments,
+        methods=scenario_methods,
+        periods=tactical_periods,
+        fixed=fixed_plan,
+        config=StatefulConfig(risk_weight=1.0, max_seconds=30),
+        episodes=20,
+        lookahead_years=2,
         seed=7,
         created_utc=CREATED,
     )
@@ -1728,6 +1768,7 @@ def main() -> None:
         ("bid.json", bid),
         ("uncertainty.json", uncertainty.model_dump(mode="json")),
         ("scenario-optimization.json", scenario_optimization.model_dump(mode="json")),
+        ("rolling-policy.json", rolling_policy.model_dump(mode="json")),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -1744,6 +1785,7 @@ def main() -> None:
             bid,
             uncertainty.model_dump(mode="json"),
             scenario_optimization.model_dump(mode="json"),
+            rolling_policy.model_dump(mode="json"),
         ),
         encoding="utf-8",
     )
