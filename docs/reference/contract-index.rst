@@ -245,6 +245,10 @@ test suite. This page is the map.
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``
      - Linear risk state, treatment transitions, budget/capacity constraints, objective, annual outcomes, solver provenance, and replay
+   * - Stateful heuristic plan
+     - ``brushline.stateful-heuristic.v1``
+     - ``build_stateful_heuristic``
+     - Fresh Solutions adapter, greedy seed, linear state replay, budget/capacity feasibility, seed, iterations, evaluations, and accepted moves
    * - Shift plan
      - ``brushline.tactical-shifts.v1``
      - ``build_shift_plan``

@@ -49,6 +49,11 @@ multi-period optimizer.
 
 ## Tactical and operational examples
 
+The Fresh Solutions heuristic provides a scalable path beyond the exact MILP. On the current dev
+server, replicated cases scale from 59 segments (295 variables) to 10,030 segments (50,150 variables);
+the largest case takes about 11 seconds with 20 local-search iterations after the greedy seed. It is
+feasible-only, not an optimality proof.
+
 The MILP balanced scenario becomes an **84-action tactical program**:
 
 - Tactical cost: 299,859 CAD over five years.
@@ -65,7 +70,8 @@ headroom, while a capacity shortfall would trigger a contractor ramp-up or a dif
 ## Studio instance
 
 The instance is `bc-hydro-network` in the lab studio. It shows the network map, VRI-based 3D stand
-context, strategic budget table, fixed-cycle risk tradeoff, and operational work-order sequence.
+context, MILP budget/frontier tables, Fresh Solutions scaling evidence, workforce scenarios, and
+year-filtered shift assignments.
 
 ## Limits
 

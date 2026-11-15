@@ -10,6 +10,7 @@ runtime storage until data-sharing and release review.
 from __future__ import annotations
 
 import json
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -18,6 +19,7 @@ import geopandas as gpd
 import numpy as np
 import rasterio
 from brushline.strategic.bau import BauConfig, build_bau_plan, compare_bau
+from brushline.strategic.heuristic import build_stateful_heuristic
 from brushline.strategic.portfolio import (
     PortfolioConfig,
     PortfolioOption,
@@ -475,6 +477,65 @@ def _milp_plan(
     }
 
 
+def _scalability(segments: list[dict[str, Any]], instance_id: str) -> list[dict[str, Any]]:
+    """Benchmark the Fresh Solutions heuristic on replicated network scales."""
+    methods = [
+        StatefulMethod(
+            method=method,
+            cost_per_ha=params["cost_ha"],
+            hours_per_ha=params["hours_ha"],
+            risk_reduction=params["risk_reduction"],
+        )
+        for method, params in METHODS.items()
+    ]
+    results = []
+    for factor in (1, 10, 50, 170):
+        scaled_segments = []
+        for copy in range(factor):
+            for segment in segments:
+                scaled_segments.append(
+                    StatefulSegment(
+                        segment_id=f"{segment['segment_id']}-{copy}",
+                        span_id=f"{segment['unit_id']}-{copy}",
+                        length_m=segment["length_m"],
+                        area_ha=segment["length_m"] * segment["width_m"] / 10000,
+                        initial_risk=segment["base_risk"],
+                    )
+                )
+        periods = [
+            StatefulPeriod(
+                year=START_YEAR + offset,
+                budget=60000 * factor,
+                capacity_hours=6000 * factor,
+            )
+            for offset in range(HORIZON)
+        ]
+        started = time.perf_counter()
+        plan = build_stateful_heuristic(
+            instance_id=instance_id,
+            segments=scaled_segments,
+            methods=methods,
+            periods=periods,
+            config=StatefulConfig(risk_weight=1.0, cost_weight=0.0),
+            iterations=20,
+            seed=7,
+            created_utc=CREATED,
+        )
+        results.append(
+            {
+                "segments": len(scaled_segments),
+                "variables": len(scaled_segments) * HORIZON,
+                "seconds": round(time.perf_counter() - started, 2),
+                "status": plan.status,
+                "mean_risk": plan.mean_risk,
+                "mean_service": plan.mean_service,
+                "total_cost": plan.total_cost,
+                "evaluations": int(plan.search.get("evaluations", 0)),
+            }
+        )
+    return results
+
+
 def _grow_risk(risk: float) -> float:
     """Apply one year of unreported vegetation growth to a risk index."""
     return min(0.95, risk + 0.015 + 0.03 * (1.0 - risk))
@@ -696,6 +757,29 @@ def _portfolio(
         config=config,
         created_utc=CREATED,
     )
+
+
+def _profiles(
+    extra: tuple[tuple[str, tuple[str, ...], int, float, float], ...] = (),
+) -> list[ContractorProfile]:
+    """Build contractor profiles from the demo tuples."""
+    values = [
+        ContractorProfile(
+            contractor_id=contractor_id,
+            methods=list(methods),
+            crews=crews,
+            machines=1 if "mechanical" in methods else 0,
+            rate_per_unit=rate,
+            travel_cost_per_km=2.5,
+            supervision_rate=0.08,
+            overhead_fraction=0.10,
+            risk_fraction=0.03,
+            annual_capacity_units=capacity,
+            currency="CAD",
+        )
+        for contractor_id, methods, crews, capacity, rate in (*CONTRACTORS, *extra)
+    ]
+    return values
 
 
 def _tactical(
@@ -979,7 +1063,9 @@ def _scene(
     }
 
 
-def _shifts(actions: list[TacticalAction], instance_id: str) -> ShiftPlan:
+def _shifts(
+    actions: list[TacticalAction], instance_id: str, profiles: list[ContractorProfile]
+) -> ShiftPlan:
     """Build a deterministic crew and machine shift schedule for tactical actions."""
     work_items = [
         ShiftWorkItem(
@@ -996,21 +1082,21 @@ def _shifts(actions: list[TacticalAction], instance_id: str) -> ShiftPlan:
     ]
     crews = [
         ShiftCrew(
-            crew_id=contractor_id,
-            methods=list(methods),
+            crew_id=profile.contractor_id,
+            methods=list(profile.methods),
             shift_hours=8.0,
-            contractor_id=contractor_id,
+            contractor_id=profile.contractor_id,
         )
-        for contractor_id, methods, _crews, _capacity, _rate in CONTRACTORS
+        for profile in profiles
     ]
     machines = [
         ShiftMachine(
-            machine_id=f"{contractor_id}-machine",
-            methods=[method for method in methods if method in {"mowing", "mechanical"}],
+            machine_id=f"{profile.contractor_id}-machine",
+            methods=[method for method in profile.methods if method in {"mowing", "mechanical"}],
             shift_hours=8.0,
-            contractor_id=contractor_id,
+            contractor_id=profile.contractor_id,
         )
-        for contractor_id, methods, _crews, _capacity, _rate in CONTRACTORS
+        for profile in profiles
     ]
     machines = [machine for machine in machines if machine.methods]
     return build_shift_plan(
@@ -1024,6 +1110,84 @@ def _shifts(actions: list[TacticalAction], instance_id: str) -> ShiftPlan:
     )
 
 
+def _workforce_scenarios(actions: list[TacticalAction], instance_id: str) -> list[dict[str, Any]]:
+    """Compare current, expanded, and community-enterprise workforce scenarios."""
+    total_hours = sum(action.capacity_units for action in actions)
+    scenarios = [
+        ("current-mix", None, 0.0, 1.0, ()),
+        (
+            "expanded",
+            "expansion-crew",
+            0.25,
+            1.0,
+            (("expansion-crew", ("manual", "mowing", "mechanical"), 2, 4000.0, 40.0),),
+        ),
+        (
+            "community-enterprise",
+            "community-crew",
+            0.20,
+            1.4,
+            (("community-crew", ("manual", "mowing"), 1, 2000.0, 44.0),),
+        ),
+    ]
+    results = []
+    for name, target_contractor, target_share, productivity, extra in scenarios:
+        profiles = _profiles(extra)
+        scenario_actions = []
+        reassigned = 0.0
+        for action in actions:
+            target = None
+            if target_contractor is not None and reassigned < total_hours * target_share:
+                target_profile = next(
+                    profile for profile in profiles if profile.contractor_id == target_contractor
+                )
+                if action.method in target_profile.methods:
+                    target = target_contractor
+            if target is None:
+                scenario_actions.append(action)
+                continue
+            hours = action.capacity_units * productivity
+            scenario_actions.append(
+                action.model_copy(update={"contractor_id": target, "capacity_units": hours})
+            )
+            reassigned += action.capacity_units
+        requests = [
+            ResourceRequest(
+                request_id=f"R-{action.action_id}",
+                contractor_id=action.contractor_id,
+                method=action.method,
+                year=action.year,
+                capacity_units=action.capacity_units,
+                travel_km=40,
+            )
+            for action in scenario_actions
+        ]
+        resource_plan = build_resource_plan(
+            plan_id=f"workforce-{name}",
+            instance_id=instance_id,
+            requests=requests,
+            profiles=profiles,
+            created_utc=CREATED,
+        )
+        shift_plan = _shifts(scenario_actions, instance_id, profiles)
+        results.append(
+            {
+                "name": name,
+                "target_share": target_share,
+                "productivity_factor": productivity,
+                "total_action_hours": round(total_hours, 1),
+                "reassigned_hours": round(reassigned, 1),
+                "resource_cost": resource_plan.total_cost,
+                "resource_feasible": resource_plan.feasible,
+                "shift_feasible": shift_plan.feasible,
+                "shift_assignments": len(shift_plan.assignments),
+                "crew_hours": shift_plan.crew_utilization,
+                "contractor_cost": resource_plan.by_contractor,
+            }
+        )
+    return results
+
+
 def _summary(
     network: dict[str, Any],
     strategic: dict[str, Any],
@@ -1031,6 +1195,8 @@ def _summary(
     resources: dict[str, Any],
     operations: dict[str, Any],
     shifts: dict[str, Any],
+    workforce: list[dict[str, Any]],
+    scalability: list[dict[str, Any]],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1089,6 +1255,11 @@ def _summary(
             f"{resources['feasible']}; work orders: {len(operations['work_orders'])}; "
             f"shift assignments: {len(shifts.get('assignments', []))}.",
             "",
+            "## Workforce scenarios",
+            "",
+            "| Scenario | Reassigned h | Resource cost | Resource feasible | Shift feasible |",
+            "|---|---:|---:|---|---|",
+            "",
             "| Year | Tactical cost | Crew-hours requested |",
             "|---:|---:|---:|",
         ]
@@ -1097,6 +1268,26 @@ def _summary(
         lines.append(
             f"| {year} | {tactical['cost_by_year'].get(str(year), 0):.0f} | "
             f"{demand_by_year[year]:.0f} |"
+        )
+    for scenario in workforce:
+        lines.append(
+            f"| {scenario['name']} | {scenario['reassigned_hours']:.0f} | "
+            f"{scenario['resource_cost']:.0f} | {scenario['resource_feasible']} | "
+            f"{scenario['shift_feasible']} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Heuristic scalability",
+            "",
+            "| Segments | Variables | Seconds | Mean risk | Status | Evaluations |",
+            "|---:|---:|---:|---:|---|---:|",
+        ]
+    )
+    for item in scalability:
+        lines.append(
+            f"| {item['segments']} | {item['variables']} | {item['seconds']:.2f} | "
+            f"{item['mean_risk']:.3f} | {item['status']} | {item['evaluations']} |"
         )
     lines.extend(
         [
@@ -1232,7 +1423,10 @@ def main() -> None:
     tactical, access, resources, operations = _tactical(
         milp_balanced["actions"], segments, units, towers
     )
-    shifts = _shifts(tactical.actions, "bc-hydro-network-2026")
+    profiles = _profiles()
+    shifts = _shifts(tactical.actions, "bc-hydro-network-2026", profiles)
+    workforce = _workforce_scenarios(tactical.actions, "bc-hydro-network-2026")
+    scalability = _scalability(segments, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
         "instance_id": "bc-hydro-network-2026",
@@ -1311,6 +1505,7 @@ def main() -> None:
         "milp_scenarios": milp_scenarios,
         "milp_frontier": milp_frontier,
         "milp_capacity": milp_capacity,
+        "scalability": scalability,
         "stateful_bau": stateful_bau,
         "stateful_cycles": stateful_cycles,
         "pareto_frontier": pareto_frontier,
@@ -1337,6 +1532,7 @@ def main() -> None:
         ("resources.json", resources_payload),
         ("operations.json", operations_payload),
         ("shifts.json", shifts.model_dump(mode="json")),
+        ("workforce.json", workforce),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -1348,6 +1544,8 @@ def main() -> None:
             resources_payload,
             operations_payload,
             shifts.model_dump(mode="json"),
+            workforce,
+            scalability,
         ),
         encoding="utf-8",
     )

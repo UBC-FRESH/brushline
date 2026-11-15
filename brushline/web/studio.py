@@ -340,6 +340,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 "resources",
                 "operations",
                 "shifts",
+                "workforce",
                 "access",
             )
         }

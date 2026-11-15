@@ -124,6 +124,7 @@ class StatefulPlan(BaseModel):
     actions: list[StatefulAction]
     years: list[StatefulYear]
     replay_ok: bool
+    search: dict[str, str | int | float | bool] = Field(default_factory=dict)
     created_utc: datetime
 
 
@@ -256,7 +257,7 @@ def _build_problem(
     )
 
 
-def _replay(
+def replay_stateful_choices(
     segments: list[StatefulSegment],
     methods: list[StatefulMethod],
     periods: list[StatefulPeriod],
@@ -374,7 +375,7 @@ def build_stateful_plan(
     if result.x is None:
         raise StatefulError(f"stateful MILP infeasible: {result.message}")
     selected = {key: bool(result.x[index] > 0.5) for index, key in enumerate(x_index)}
-    actions, years, total_cost, total_hours, mean_risk = _replay(
+    actions, years, total_cost, total_hours, mean_risk = replay_stateful_choices(
         segments, methods, periods, rules, selected
     )
     if rules.max_mean_risk is not None and mean_risk > rules.max_mean_risk + 1e-5:
@@ -410,4 +411,5 @@ __all__ = [
     "StatefulSegment",
     "StatefulYear",
     "build_stateful_plan",
+    "replay_stateful_choices",
 ]
