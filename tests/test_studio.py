@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from brushline.web.studio import MKRK_SCENE_PATH, create_app
+from brushline.web.studio import BC_NETWORK_SCENE_PATH, MKRK_SCENE_PATH, create_app
 from fastapi.testclient import TestClient
 
 
@@ -61,6 +61,26 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert scene_mk.json()["powerline"]["voltage_kv"] == 500
         assert scene_mk.json()["understory"]["patch_count"] > 0
         assert scene_mk.json()["treatment_schedule"]["time_axis"][0] == 2026
+    if BC_NETWORK_SCENE_PATH.exists():
+        assert "bc-hydro-network" in {item["id"] for item in instances}
+        network_summary = client.get("/api/studio/summary?instance_id=bc-hydro-network").json()
+        assert network_summary["kind"] == "network"
+        assert network_summary["aoi_ha"] > 5000
+        network_blocks = client.get("/api/studio/blocks?instance_id=bc-hydro-network").json()[
+            "blocks"
+        ]
+        assert network_blocks[0]["block_kind"] == "network_block"
+        assert network_blocks[0]["geometry"]["lines"]
+        network_plan = client.get("/api/studio/network?instance_id=bc-hydro-network").json()
+        assert network_plan["strategic"]["portfolios"]
+        assert network_plan["tactical"]["actions"]
+        assert network_plan["operations"]["work_orders"]
+        network_scene = client.get(
+            "/api/studio/scene/bc-network?variant=pre&instance_id=bc-hydro-network"
+        )
+        assert network_scene.status_code == 200
+        assert network_scene.json()["powerline"]["lines"]
+        assert network_scene.json()["terrain"]["width"] > 0
     for instance_id, block_id in (
         ("ubc-public-block", "ubc-real"),
         ("ubc-public-block-2", "ubc-real-2"),

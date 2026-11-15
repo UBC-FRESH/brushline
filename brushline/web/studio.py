@@ -27,6 +27,8 @@ REAL_SCENES: dict[str, tuple[str, str, str]] = {
 }
 RESOURCE_ROOT = Path(__file__).resolve().parents[1] / "resources"
 MKRK_SCENE_PATH = Path(__file__).resolve().parents[2] / "runtime/private/mkrf-powerline/scene.json"
+BC_NETWORK_DIR = Path(__file__).resolve().parents[2] / "runtime/private/bc-network/model"
+BC_NETWORK_SCENE_PATH = BC_NETWORK_DIR / "scene.json"
 INSTANCES: tuple[dict[str, object], ...] = (
     {
         "id": "synthetic-corridor",
@@ -55,6 +57,16 @@ INSTANCES: tuple[dict[str, object], ...] = (
         "description": "231 UBC tree records in a third 200 m block; observed state only.",
     },
 )
+BC_NETWORK_INSTANCE: dict[str, object] = {
+    "id": "bc-hydro-network",
+    "title": "BC Hydro network prototype",
+    "kind": "network",
+    "description": (
+        "8,737 ha public-data network with four mapped power-line features and 2027-2031 plans."
+    ),
+}
+
+
 MKRK_INSTANCE: dict[str, object] = {
     "id": "mkrf-powerline",
     "title": "MKRF southwest 500 kV power line",
@@ -68,6 +80,8 @@ def available_instances() -> list[dict[str, object]]:
     values = list(INSTANCES)
     if MKRK_SCENE_PATH.exists():
         values.append(MKRK_INSTANCE)
+    if BC_NETWORK_SCENE_PATH.exists():
+        values.append(BC_NETWORK_INSTANCE)
     return values
 
 
@@ -195,6 +209,10 @@ def _segment_geometry(root: Path, block_id: str) -> dict[str, Any]:
 
 
 def _scene(root: Path, block_id: str, variant: str) -> dict[str, Any]:
+    if block_id == "bc-network":
+        if variant != "pre":
+            raise StudioError("the network prototype has no post-treatment scene")
+        return dict(json.loads(BC_NETWORK_SCENE_PATH.read_text(encoding="utf-8")))
     if block_id == "mkrf-sw-powerline":
         if variant != "pre":
             raise StudioError("the observed MKRF block has no modelled post-treatment state")
@@ -287,7 +305,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     def root_for(instance_id: str) -> Path:
         if instance_id == "synthetic-corridor":
             return root
-        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
+        if instance_id in REAL_SCENES or instance_id in {"mkrf-powerline", "bc-hydro-network"}:
             return root
         raise HTTPException(status_code=404, detail=f"unknown instance {instance_id}")
 
@@ -309,9 +327,41 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     def instances() -> dict[str, Any]:
         return {"instances": available_instances()}
 
+    @app.get("/api/studio/network")
+    def network(instance_id: str = Query(default="bc-hydro-network")) -> dict[str, Any]:
+        if instance_id != "bc-hydro-network":
+            raise HTTPException(status_code=404, detail="not a network instance")
+        return {
+            key: json.loads((BC_NETWORK_DIR / f"{key}.json").read_text(encoding="utf-8"))
+            for key in ("network", "strategic", "tactical", "resources", "operations", "access")
+        }
+
     @app.get("/api/studio/summary")
     def summary(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
+        if instance_id == "bc-hydro-network":
+            network = json.loads((BC_NETWORK_DIR / "network.json").read_text(encoding="utf-8"))
+            strategic = json.loads((BC_NETWORK_DIR / "strategic.json").read_text(encoding="utf-8"))
+            return {
+                "schema_version": STUDIO_SCHEMA_VERSION,
+                "instance_id": instance_id,
+                "title": "BC Hydro network prototype",
+                "kind": "network",
+                "tree_count": 0,
+                "blocks": 1,
+                "status": "prototype",
+                "aoi_ha": network.get("aoi_ha"),
+                "line_km": network.get("line_km"),
+                "feature_count": len(network.get("lines", [])),
+                "unit_count": len(network.get("units", [])),
+                "segment_count": len(network.get("segments", [])),
+                "scenario_count": len(strategic.get("portfolios", [])),
+                "sources": network.get("sources", []),
+                "caveats": [
+                    "Public-data network prototype; not an asset-owner plan.",
+                    "Costs, hours, access, and contractor capacity are demo assumptions.",
+                ],
+            }
         if instance_id == "mkrf-powerline":
             real = _mkrf_scene()
             power = real.get("powerline", {})
@@ -371,7 +421,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
         plan_id: str, instance_id: str = Query(default="synthetic-corridor")
     ) -> dict[str, Any]:
         root_for(instance_id)
-        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
+        if instance_id in REAL_SCENES or instance_id in {"mkrf-powerline", "bc-hydro-network"}:
             raise HTTPException(status_code=404, detail="observed block has no plan")
         try:
             return _plan_for(root, plan_id)
@@ -381,20 +431,56 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     @app.get("/api/studio/pareto")
     def pareto(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
-        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
+        if instance_id in REAL_SCENES or instance_id in {"mkrf-powerline", "bc-hydro-network"}:
             return {"members": []}
         return dict(safe_json(root, "pareto.json"))
 
     @app.get("/api/studio/timeline")
     def timeline(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
-        if instance_id in REAL_SCENES or instance_id == "mkrf-powerline":
+        if instance_id in REAL_SCENES or instance_id in {"mkrf-powerline", "bc-hydro-network"}:
             return {"events": []}
         return {"events": _read_jsonl(root, "operations_timeline.jsonl")}
 
     @app.get("/api/studio/blocks")
     def blocks(instance_id: str = Query(default="synthetic-corridor")) -> dict[str, Any]:
         root_for(instance_id)
+        if instance_id == "bc-hydro-network":
+            network = json.loads((BC_NETWORK_DIR / "network.json").read_text(encoding="utf-8"))
+            scene = json.loads(BC_NETWORK_SCENE_PATH.read_text(encoding="utf-8"))
+            origin_x, origin_y = network.get("origin_m", [0, 0])
+            towers = [
+                {
+                    "x_m": round(tower["x_3005"] - origin_x, 1),
+                    "y_m": round(tower["y_3005"] - origin_y, 1),
+                }
+                for tower in network.get("towers", [])
+            ]
+            return {
+                "blocks": [
+                    {
+                        "block_id": "bc-network",
+                        "block_kind": "network_block",
+                        "segment_ids": [],
+                        "height_m": None,
+                        "cover_pct": None,
+                        "actions": [],
+                        "variant_available": False,
+                        "label": "BC Hydro public-data network prototype",
+                        "tree_count": len(scene.get("trees", [])),
+                        "line_names": [line["name"] for line in network.get("lines", [])],
+                        "voltage_kv": None,
+                        "geometry": {
+                            "lines": [
+                                line["coordinates_3005"] for line in network.get("lines", [])
+                            ],
+                            "width_m": 70.0,
+                        },
+                        "towers": towers,
+                        "treatment_schedule": None,
+                    }
+                ]
+            }
         if instance_id == "mkrf-powerline":
             return {"blocks": [_mkrf_block(_mkrf_scene())]}
         if instance_id in REAL_SCENES:

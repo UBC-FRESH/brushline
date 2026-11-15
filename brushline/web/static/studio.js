@@ -1,4 +1,4 @@
-const state={instanceId:"synthetic-corridor",plan:null,pareto:null,timeline:[],blocks:[],selected:null,variant:"pre",walking:false,heading:0,position:0,time:0,skin:"operations-planner",year:2026,schedule:null};
+const state={instanceId:"synthetic-corridor",plan:null,pareto:null,timeline:[],blocks:[],selected:null,variant:"pre",walking:false,heading:0,position:0,time:0,skin:"operations-planner",year:2026,schedule:null,network:null};
 const $=s=>document.querySelector(s);
 const api=async p=>{const r=await fetch(p);if(!r.ok)throw new Error(await r.text());return r.json()};
 const esc=s=>String(s??"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
@@ -12,12 +12,16 @@ async function boot(){
 }
 async function loadInstance(id){
  state.instanceId=id;
- state.schedule=null;state.year=2026;$("#time-control").hidden=true;
+ state.schedule=null;state.year=2026;state.network=null;$("#time-control").hidden=true;
  const q=`?instance_id=${encodeURIComponent(id)}`;
  const [summary,blocks]=await Promise.all([api(`api/studio/summary${q}`),api(`api/studio/blocks${q}`)]);
  state.summary=summary; state.blocks=blocks.blocks||[];
  const observedSchedule=state.blocks[0]?.treatment_schedule;
- if(summary.kind==="planning"){
+ if(summary.kind==="network"){
+  state.network=await api(`api/studio/network${q}`);
+  state.plan=null;state.pareto={members:[]};state.timeline=[];
+  $("#summary").textContent=`${summary.title} · ${summary.aoi_ha} ha · ${summary.line_km} km · ${summary.feature_count} features · ${summary.scenario_count} scenarios`;
+ }else if(summary.kind==="planning"){
   const [plan,pareto,timeline]=await Promise.all([api(`api/studio/plan/current${q}`),api(`api/studio/pareto${q}`),api(`api/studio/timeline${q}`)]);
   state.plan=plan;state.pareto=pareto;state.timeline=timeline.events||[];
   $("#summary").textContent=`${summary.title} · ${summary.run_id} · ${summary.currency} ${summary.total_cost}`;
@@ -66,7 +70,7 @@ function drawMap(){
     g.appendChild(path);
    });
   }
-  const label=document.createElementNS("http://www.w3.org/2000/svg","text");label.setAttribute("x","50");label.setAttribute("y","245");label.setAttribute("class","powerline-label");label.textContent=`${[...new Set(power.line_names.filter(Boolean).map(n=>n.replace(/\s*500KV$/i,"").trim()))].join(" / ")} · ${power.voltage_kv} kV`;g.appendChild(label);
+  const label=document.createElementNS("http://www.w3.org/2000/svg","text");label.setAttribute("x","50");label.setAttribute("y","245");label.setAttribute("class","powerline-label");const names=[...new Set(power.line_names.filter(Boolean).map(n=>n.replace(/\s*500KV$/i,"").trim()))].join(" / ");label.textContent=`${names}${power.voltage_kv?` · ${power.voltage_kv} kV`:""}`;g.appendChild(label);
   svg.appendChild(g);return;
  }
  state.blocks.forEach((b,i)=>{const r=document.createElementNS("http://www.w3.org/2000/svg","rect");r.setAttribute("x",60+(i%3)*225);r.setAttribute("y",50+Math.floor(i/3)*95);r.setAttribute("width",100);r.setAttribute("height",55);r.setAttribute("rx",8);r.setAttribute("class","segment"+(b.block_id===state.selected?" selected":""));r.onclick=()=>selectBlock(b.block_id);svg.appendChild(r);const t=document.createElementNS("http://www.w3.org/2000/svg","text");t.setAttribute("x",70+(i%3)*225);t.setAttribute("y",82+Math.floor(i/3)*95);t.setAttribute("pointer-events","none");t.textContent=b.block_id;svg.appendChild(t);});
@@ -87,7 +91,7 @@ function drawProvenance(){
 async function selectBlock(id){
  const b=state.blocks.find(x=>x.block_id===id);
  state.selected=id;state.schedule=b?.treatment_schedule||null;
- $("#map-hint").textContent=b?.block_kind==="powerline_block"?`${b.label} · ${b.voltage_kv} kV · ${b.height_m} m max canopy · ${b.cover_pct}% cover >3 m · ${b.tree_count} tree clumps · ${b.understory_patch_count} shrubs (${b.understory_corridor_count} in corridor)`:`${id} · ${b?.height_m??"?"} m · ${b?.cover_pct??"?"}% cover · ${b?.actions?.length||0} treatment action(s)`;
+ $("#map-hint").textContent=b?.block_kind==="network_block"?`${b.label} · ${b.line_names?.length||0} mapped features · ${b.tree_count} VRI stand clumps · ${b.towers?.length||0} mapped towers` : b?.block_kind==="powerline_block"?`${b.label} · ${b.voltage_kv} kV · ${b.height_m} m max canopy · ${b.cover_pct}% cover >3 m · ${b.tree_count} tree clumps · ${b.understory_patch_count} shrubs (${b.understory_corridor_count} in corridor)`:`${id} · ${b?.height_m??"?"} m · ${b?.cover_pct??"?"}% cover · ${b?.actions?.length||0} treatment action(s)`;
  $("#toggle").disabled=!b?.variant_available;
  const s=await api(`api/studio/scene/${id}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;state.schedule=s.treatment_schedule||state.schedule;
  configureYear();drawProvenance();drawMap();drawSchedule();drawScene();
@@ -119,6 +123,21 @@ function setYear(year){
  window.brushline3d?.setYear(state.year);
 }
 function drawSchedule(){
+ if(state.network){
+  $("#schedule-heading").textContent="Strategic budget and treatment schedule";
+  const strategic=state.network.strategic||{};
+  const tactical=state.network.tactical||{};
+  const portfolios=strategic.portfolios||[];
+  const scenarioRows=portfolios.map(p=>`<tr><td>${esc(p.name)}</td><td>${p.annual_budget.toFixed(0)}</td><td>${p.five_year_cost.toFixed(0)}</td><td>${p.mean_service.toFixed(3)}</td><td>${p.mean_risk.toFixed(3)}</td><td>${p.mean_annual_hours.toFixed(0)}</td></tr>`).join("");
+  const bau=strategic.bau;
+  const bauCost=bau?(bau.period_summary||[]).reduce((sum,row)=>sum+row.cost,0):0;
+  const capacity=(state.network.network?.assumptions?.contractor_capacity||[]).reduce((sum,value)=>sum+value,0);
+  const balanced=portfolios.find(p=>p.name==="balanced");
+  const utilization=balanced&&capacity?`${balanced.mean_annual_hours.toFixed(0)} h/yr balanced demand (${(balanced.mean_annual_hours/capacity*100).toFixed(0)}% of modelled capacity)`:"no capacity estimate";
+  $("#schedule").innerHTML=`<p class="schedule-note">Strategic budget scenarios from public line geometry and VRI-derived stand pressure. Costs, hours, access, and contractor capacity are demo assumptions. Modelled contractor capacity: ${capacity.toFixed(0)} h/yr; ${utilization}.</p><table><tr><th>Scenario</th><th>Budget/yr</th><th>5-year cost</th><th>Service</th><th>Risk</th><th>Hours/yr</th></tr>${scenarioRows}${bau?`<tr><td>BAU 5-year mowing</td><td>0</td><td>${bauCost.toFixed(0)}</td><td>${bau.service_attainment.toFixed(3)}</td><td>${bau.risk.toFixed(3)}</td><td>${((bau.period_summary||[]).reduce((sum,row)=>sum+(row.capacity_used?.mowing||0),0)/5).toFixed(0)}</td></tr>`:""}</table><p class="schedule-note">Tactical selected actions: ${tactical.actions?.length||0}; tactical cost: ${(tactical.total_cost||0).toFixed(0)}; work orders: ${state.network.operations?.work_orders?.length||0}.</p>`;
+  return;
+ }
+ $("#schedule-heading").textContent="Corridor treatment schedule";
  const s=state.schedule;
  if(!s){$("#schedule").innerHTML="<p>No modelled treatment schedule for this block.</p>";return;}
  const rows=(s.units||[]).map(unit=>{
@@ -130,20 +149,33 @@ function drawSchedule(){
  $("#schedule").innerHTML=`<p class="schedule-note">Baseline ${s.baseline_year}: observed LiDAR. Slider is a modelled maintenance sequence; shrub response is illustrative, not field-calibrated.</p><table><tr><th>Year</th><th>Unit</th><th>Method</th><th>Area</th><th>Shrubs</th><th>Cover</th><th>Monitor</th><th>Window / status</th></tr>${rows}</table>`;
 }
 function drawScene(){
- $("#scene-caveat").textContent=state.scene?.powerline?"Real MKRF power-line location, LiDAR terrain/canopy, and LiDAR-derived shrub patches. The dark green low clumps in the corridor are mapped shrub patches. Towers are schematic; conductors are approximate. Tall-tree suppression is a corridor visualization choice, not observed treatment. Context view only; not a survey or safety certification.":"Context view only. Positions are unknown unless supplied; pre/post is model state, not a survey.";
+ $("#scene-caveat").textContent=state.network?"BC Hydro public-data network prototype: OSM line geometry, VRI stand context, and Copernicus terrain. Not an asset-owner plan or safety certification.":state.scene?.powerline?"Real MKRF power-line location, LiDAR terrain/canopy, and LiDAR-derived shrub patches. The dark green low clumps in the corridor are mapped shrub patches. Towers are schematic; conductors are approximate. Tall-tree suppression is a corridor visualization choice, not observed treatment. Context view only; not a survey or safety certification.":"Context view only. Positions are unknown unless supplied; pre/post is model state, not a survey.";
  $("#walk-hud").hidden=!state.walking;
  if(state.walking)$("#walk-hud").textContent=`${state.selected} · ${state.variant} · context view`;
  $("#variant").textContent=state.variant;
  if(window.brushline3d) window.brushline3d.setScene(state.scene,state.variant);
  else setTimeout(()=>window.brushline3d?.setScene(state.scene,state.variant),80);
- if(state.schedule) $("#variant").textContent=yearText();
+ if(state.network) $("#variant").textContent="prototype";
+ else if(state.schedule) $("#variant").textContent=yearText();
 }
 
 async function toggleVariant(){const b=state.blocks.find(x=>x.block_id===state.selected);if(!b?.variant_available)return;state.variant=state.variant==="pre"?"post":"pre";const s=await api(`api/studio/scene/${state.selected}?variant=${state.variant}&instance_id=${encodeURIComponent(state.instanceId)}`);state.scene=s;drawScene();}
 function drawPareto(){
+ if(state.network){
+  $("#pareto-heading").textContent="Treatment-cycle tradeoff";
+  const rows=(state.network.strategic?.cycle_tradeoffs||[]).map(item=>`<tr><td>${esc(item.method)}</td><td>${item.cycle_years}</td><td>${item.five_year_cost.toFixed(0)}</td><td>${item.mean_annual_hours.toFixed(0)}</td><td>${item.mean_risk.toFixed(3)}</td></tr>`).join("");
+  $("#pareto").innerHTML=`<p class="schedule-note">Fixed-cycle tradeoff: more frequent or intensive work costs more but lowers mean risk.</p><table><tr><th>Method</th><th>Cycle</th><th>5-year cost</th><th>Hours/yr</th><th>Mean risk</th></tr>${rows}</table>`;
+  return;
+ }
+ $("#pareto-heading").textContent="Pareto archive";
  const members=state.pareto?.members||[];$("#pareto").innerHTML=members.length?`<table><tr><th>Plan</th><th>Cost</th><th>Risk</th></tr>${members.map(m=>`<tr><td>${esc(m.plan_id)}</td><td>${m.objective.present_cost}</td><td>${m.objective.service_risk}</td></tr>`).join("")}</table>`:"<p>No Pareto archive for this observed instance.</p>";
 }
 function drawTimeline(){
+ if(state.network){
+  const orders=state.network.operations?.work_orders||[];
+  $("#timeline").innerHTML=orders.length?`<table><tr><th>Year</th><th>Seq. day</th><th>Unit</th><th>Method</th><th>Crew</th><th>Cost</th></tr>${orders.slice(0,20).map(o=>`<tr><td>${o.year}</td><td>${o.day}</td><td>${esc(o.unit_id)}</td><td>${esc(o.method)}</td><td>${esc(o.crew_id)}</td><td>${o.cost.toFixed(0)}</td></tr>`).join("")}</table>`:"<p>No work orders.</p>";
+  return;
+ }
  $("#timeline").innerHTML=state.timeline.length?`<table><tr><th>Event</th><th>Resource</th><th>Segment</th><th>Start</th></tr>${state.timeline.slice(0,12).map(e=>`<tr><td>${esc(e.event_type)}</td><td>${esc(e.resource_id)}</td><td>${esc(e.segment_id)}</td><td>${esc(e.start_utc)}</td></tr>`).join("")}</table>`:"<p>No operations timeline for this observed instance.</p>";
 }
 $("#walk").onclick=()=>{state.walking=!state.walking;window.brushline3d?.setWalking(state.walking);drawScene()};
