@@ -65,6 +65,7 @@ whenever you add a module to the project.
    replan
    monitoring-validation
    field
+   field-comparison
    plan-exchange
    studio
    demo-portal

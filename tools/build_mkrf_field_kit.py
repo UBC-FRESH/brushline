@@ -506,6 +506,18 @@ def _readme(scene: dict[str, Any], plots: list[dict[str, Any]]) -> str:
             "distance, duplicates, and basic ranges. The normalized JSON is the input for",
             "future calibration; it is not itself a treatment decision.",
             "",
+            "Then compare with the LiDAR targets:",
+            "",
+            "```bash",
+            "brushline field compare \\",
+            "  --observations field-observations-validated.json \\",
+            "  --plots corridor-plots.geojson \\",
+            "  --out field-comparison.json",
+            "```",
+            "",
+            "The comparison reports residuals, unit bias/MAE/RMSE, review multipliers, and",
+            "sample-size gates. It does not apply corrections automatically.",
+            "",
             "## Limits",
             "",
             "- Target metrics are 2016 LiDAR-derived, not ground truth.",
@@ -543,7 +555,9 @@ def main() -> None:
         "Run the parser before calibration. It checks the planned plot ids, unit/position "
         "matches, GPS distance, duplicates, ranges, and photo ids.\n\n"
         "```bash\nbrushline field validate --csv field-observations.csv "
-        "--plots corridor-plots.geojson --out field-observations-validated.json\n```\n",
+        "--plots corridor-plots.geojson --out field-observations-validated.json\n"
+        "brushline field compare --observations field-observations-validated.json "
+        "--plots corridor-plots.geojson --out field-comparison.json\n```\n",
         encoding="utf-8",
     )
     archive = OUT.with_suffix(".zip")

@@ -16,6 +16,7 @@ import typer
 from brushline import __version__
 from brushline.build.compiler import compile_fixture
 from brushline.demo.builder import build_demo_site
+from brushline.field.comparison import compare_field_files, write_field_comparison
 from brushline.field.validation import validate_field_csv, write_field_validation
 from brushline.fixtures.synthetic import DEFAULT_SEED, generate_fixture
 from brushline.instance_ops import (
@@ -517,6 +518,62 @@ def field_validate(
         typer.echo("VALID" if report.valid else "INVALID")
     if not report.valid:
         raise typer.Exit(code=1)
+
+
+@field_app.command("compare")
+def field_compare(
+    observations: Annotated[
+        Path, typer.Option("--observations", help="Validated field observation JSON.")
+    ],
+    plots: Annotated[Path, typer.Option("--plots", help="Planned plot targets as GeoJSON.")],
+    out: Annotated[
+        Path | None, typer.Option("--out", help="Write the comparison report to JSON.")
+    ] = None,
+    json_output: Annotated[
+        bool, typer.Option("--json", help="Print the comparison report as JSON.")
+    ] = False,
+) -> None:
+    """Compare field observations with LiDAR plot targets.
+
+    Parameters
+    ----------
+    observations : Path
+        Validated field observation JSON.
+    plots : Path
+        Planned plot targets as GeoJSON.
+    out : Path, optional
+        Comparison JSON output.
+    json_output : bool, optional
+        Print JSON instead of a text summary.
+
+    Raises
+    ------
+    typer.Exit
+        With status 1 when the inputs are invalid.
+    """
+    try:
+        report = compare_field_files(observations, plots)
+    except (OSError, ValueError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    if out is not None:
+        write_field_comparison(report, out)
+    if json_output:
+        typer.echo(report.model_dump_json(indent=2))
+    else:
+        typer.echo(f"observations_compared: {report.observations_compared}")
+        typer.echo(f"plots_compared: {report.plots_compared}")
+        typer.echo(f"status: {report.status}")
+        typer.echo(f"cover_multiplier: {report.calibration.cover_multiplier}")
+        typer.echo(f"height_multiplier: {report.calibration.height_multiplier}")
+        if report.warnings:
+            typer.echo("warnings:")
+            for message in report.warnings:
+                typer.echo(f"  {message}")
+        if report.recommendations:
+            typer.echo("recommendations:")
+            for message in report.recommendations:
+                typer.echo(f"  {message}")
 
 
 app.add_typer(field_app, name="field")

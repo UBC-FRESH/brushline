@@ -57,6 +57,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    replan
    monitoring-validation
    field-validation
+   field-comparison
    plan-exchange
    studio
    demo-portal

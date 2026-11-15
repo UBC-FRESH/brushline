@@ -237,6 +237,10 @@ test suite. This page is the map.
      - ``brushline.field-observation.v1``, ``brushline.field-validation.v1``
      - ``validate_field_csv``
      - Required columns, plot/unit/position references, GPS distance, duplicates, ranges, photo IDs, and normalized observations
+   * - Field comparison
+     - ``brushline.field-comparison.v1``
+     - ``compare_field_data``
+     - Field/LiDAR residuals, unit bias/MAE/RMSE, sample gates, review multipliers, and treatment-evidence status
    * - Studio
      - ``brushline.scene.v1``
      - ``Studio``
@@ -345,6 +349,8 @@ Error prefixes
      - Operations timeline
    * - ``FIELD-*``
      - Field validation
+   * - ``FIELD-COMPARE-*``
+     - Field comparison
    * - ``STUDIO-*``
      - Studio compatibility
 

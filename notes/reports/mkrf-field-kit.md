@@ -34,17 +34,22 @@ It contains:
 
 No MKRF coordinates, plot targets, or field kit payload are tracked in the repository.
 
-## Import gate
+## Import and comparison gates
 
 The committed `brushline field validate` command checks required columns, known plot IDs, planned
 unit and position, duplicate observations, GPS distance to the planned plot, numeric/date ranges, and
 photo IDs. It writes normalized JSON for later calibration. See
 `docs/reference/field-validation.rst` and `docs/api/field.rst`.
 
+The committed `brushline field compare` command compares that normalized JSON with the planned plot
+targets. It reports cover and height residuals, unit bias/MAE/RMSE, sample-size gates, review
+multipliers, and an explicit `not_tested` treatment-response status. It does not apply corrections
+automatically. See `docs/reference/field-comparison.rst` and `docs/api/field-comparison.rst`.
+
 ## Evidence
 
 - `python scripts/dashboard.py`: `OVERALL: GREEN`.
-- `pytest`: 785 passed, 96.99 percent coverage before the final field-kit documentation edits.
+- `pytest`: 790 passed, 96.84 percent coverage after the comparison addition.
 - End-to-end smoke test: a filled template row validated against the generated GeoJSON and wrote
   normalized JSON successfully.
 - The private kit was generated with 12 plots, two scheduled units, and a 2.8 MB archive.
