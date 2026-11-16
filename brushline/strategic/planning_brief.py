@@ -1047,10 +1047,13 @@ def build_planning_brief(
                         f"machine-day against a "
                         f"{_number(operational_remedies.get('annual_budget'))} CAD first-year "
                         "budget; these are prototype rates, not contractor quotes.",
-                        "Adding a shared crew alone did not improve completion because mowing and "
-                        "mechanical work also needs machine capacity. A shared crew plus machine "
-                        "was the strongest completion remedy but exceeded the budget; the 90-day "
-                        "window was the best budget-feasible completion case in this test.",
+                        "A crew alone or machine alone did not improve completion; the pair is "
+                        "needed for mowing/mechanical work. The crew-plus-machine case is the "
+                        "strongest full-scope completion remedy but exceeds the budget. "
+                        f"The best budget-feasible completion case is "
+                        f"{_text(operational_remedies.get('best_budget_feasible'))}; it combines a "
+                        "larger window with a proportional scope reduction, so deferred risk is "
+                        "not evaluated here.",
                     ],
                     table=_table(
                         [

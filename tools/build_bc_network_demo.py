@@ -1597,7 +1597,36 @@ def _operational_remedies(
             {"scope_factor": 0.9},
             "75-day window, 10% proportional scope reduction",
         ),
+        (
+            "20% scope reduction",
+            {"scope_factor": 0.8},
+            "75-day window, 20% proportional scope reduction",
+        ),
+        (
+            "+1 shared machine",
+            {
+                "extra_machines": [shared_machine],
+                "relief_machine_id": shared_machine.machine_id,
+            },
+            "75-day window, one shared machine",
+        ),
+        (
+            "10% scope + 90-day",
+            {"scope_factor": 0.9, "window_days": 90},
+            "90-day window, 10% scope reduction",
+        ),
+        (
+            "20% scope + 90-day",
+            {"scope_factor": 0.8, "window_days": 90},
+            "90-day window, 20% scope reduction",
+        ),
         ("90-day window", {"window_days": 90}, "90-day window, no added capacity"),
+        ("105-day window", {"window_days": 105}, "105-day window, no added capacity"),
+        (
+            "20% scope + 105-day",
+            {"scope_factor": 0.8, "window_days": 105},
+            "105-day window, 20% scope reduction",
+        ),
     ]
     stats = {
         name: {
@@ -1705,6 +1734,15 @@ def _operational_remedies(
                 },
             }
         )
+    budget_feasible = [case for case in cases if case["budget_feasibility_rate"] >= 1.0]
+    best_budget_feasible = (
+        max(
+            budget_feasible,
+            key=lambda case: (case["scenario_completion_rate"], case["mean_completion_rate"]),
+        )["name"]
+        if budget_feasible
+        else None
+    )
     return {
         "schema_version": "brushline.operational-remedies.v1",
         "instance_id": "bc-hydro-network-2026",
@@ -1717,6 +1755,7 @@ def _operational_remedies(
         "outage_days": list(outage_days),
         "weather_probability": weather_probability,
         "seed": seed,
+        "best_budget_feasible": best_budget_feasible,
         "cases": cases,
         "episodes_detail": episode_details,
         "caveats": [

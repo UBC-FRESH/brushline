@@ -195,7 +195,7 @@ function drawSchedule(){
   const remedies=state.network["operational-remedies"];
   if(remedies){
    const rows=(remedies.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.scenario_completion_rate*100).toFixed(1)}%</td><td>${(item.mean_completion_rate*100).toFixed(1)}%</td><td>${item.added_cost_band.p50.toFixed(0)}</td><td>${item.total_cost_band.p50.toFixed(0)}</td><td>${(item.budget_feasibility_rate*100).toFixed(1)}%</td></tr>`).join("");
-   $("#schedule").innerHTML+=`<p class="schedule-note">Weather/outage remedies · ${remedies.episodes} episodes · ${remedies.scenarios_per_episode} calendars each · crew-day ${remedies.crew_day_cost.toFixed(0)} / machine-day ${remedies.machine_day_cost.toFixed(0)} CAD</p><table><tr><th>Remedy</th><th>Scenario completion</th><th>Mean completion</th><th>Added cost P50</th><th>Total cost P50</th><th>Budget feasible</th></tr>${rows}</table>`;
+   $("#schedule").innerHTML+=`<p class="schedule-note">Weather/outage remedies · ${remedies.episodes} episodes · ${remedies.scenarios_per_episode} calendars each · crew-day ${remedies.crew_day_cost.toFixed(0)} / machine-day ${remedies.machine_day_cost.toFixed(0)} CAD · best budget-feasible: ${esc(remedies.best_budget_feasible||"none")}</p><table><tr><th>Remedy</th><th>Scenario completion</th><th>Mean completion</th><th>Added cost P50</th><th>Total cost P50</th><th>Budget feasible</th></tr>${rows}</table>`;
   }
   return;
  }
