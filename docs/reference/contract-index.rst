@@ -285,6 +285,10 @@ test suite. This page is the map.
      - ``brushline.risk-ranked-scope.v1``
      - ``tools/build_risk_ranked_scope.py``
      - Whole-action deferral by first-year risk reduction per hour, actual deferred fraction, risk loss, residual risk, calendar completion, cost, and budget feasibility
+   * - Risk trajectory
+     - ``brushline.risk-trajectory.v1``
+     - ``tools/build_risk_trajectory.py``
+     - Fixed-future 2027-2031 risk paths for full, risk-ranked, and proportional first-year deferral
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

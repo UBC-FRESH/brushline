@@ -202,6 +202,12 @@ function drawSchedule(){
    const rows=(riskScope.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.scenario_completion_rate*100).toFixed(1)}%</td><td>${item.mean_risk_loss.toFixed(4)}</td><td>${item.mean_residual_risk.toFixed(4)}</td><td>${item.total_cost_band.p50.toFixed(0)}</td><td>${(item.budget_feasibility_rate*100).toFixed(1)}%</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Risk-ranked scope deferral · target ${(riskScope.target_fraction*100).toFixed(0)}% of first-year hours · whole actions deferred by lowest risk reduction per hour</p><table><tr><th>Case</th><th>Scenario completion</th><th>Mean risk loss</th><th>Residual risk</th><th>Total cost P50</th><th>Budget feasible</th></tr>${rows}</table>`;
   }
+  const trajectory=state.network["risk-trajectory"];
+  if(trajectory){
+   const years=trajectory.years||[];
+   const rows=(trajectory.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td>${years.map((_,i)=>`<td>${item.annual_risk[i].toFixed(4)}</td>`).join("")}<td>${item.mean_risk_loss.toFixed(4)}</td><td>${item.final_risk_loss.toFixed(4)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Multi-year risk trajectory · first-year deferral · future actions held fixed · mean deferred ${(trajectory.mean_deferred_fraction*100).toFixed(1)}%</p><table><tr><th>Case</th>${years.map(year=>`<th>${year}</th>`).join("")}<th>Mean loss</th><th>Final loss</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

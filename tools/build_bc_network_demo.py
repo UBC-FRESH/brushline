@@ -1975,6 +1975,187 @@ def _risk_ranked_scope(
     }
 
 
+def _replay_risk_path(
+    *,
+    segments: list[dict[str, Any]],
+    initial_risks: list[float],
+    years: list[dict[str, Any]],
+    first_year: int,
+    skip: set[str],
+    scale_first: float,
+    growth_per_year: float,
+    total_length: float,
+    segment_index: dict[str, int],
+) -> tuple[list[float], list[list[float]]]:
+    risks = list(initial_risks)
+    annual: list[float] = []
+    trajectories: list[list[float]] = []
+    for year_row in years:
+        year = int(year_row["year"])
+        risks = [min(0.95, risk + growth_per_year) for risk in risks]
+        for action in year_row.get("action_details") or []:
+            segment_id = action["segment_id"]
+            if year == first_year and segment_id in skip:
+                continue
+            index = segment_index.get(segment_id)
+            if index is None:
+                continue
+            reduction = float(action["risk_before"]) - float(action["risk_after"])
+            if year == first_year and scale_first < 1:
+                reduction *= scale_first
+            risks[index] = max(0.0, risks[index] - reduction)
+        annual.append(
+            sum(risks[index] * segment["length_m"] for index, segment in enumerate(segments))
+            / total_length
+        )
+        trajectories.append([round(value, 6) for value in risks])
+    return annual, trajectories
+
+
+def _risk_trajectory(
+    rolling_policy: dict[str, Any],
+    segments: list[dict[str, Any]],
+    *,
+    target_fraction: float = 0.20,
+    growth_per_year: float = 0.03,
+) -> dict[str, Any]:
+    """Replay full versus first-year scope deferral risk paths without re-planning."""
+    if not 0 < target_fraction < 1:
+        raise ValueError("target_fraction must be in (0, 1)")
+    length_by_segment = {segment["segment_id"]: float(segment["length_m"]) for segment in segments}
+    initial_risks = [float(segment["base_risk"]) for segment in segments]
+    total_length = sum(length_by_segment.values())
+    segment_index = {segment["segment_id"]: index for index, segment in enumerate(segments)}
+    episodes = sorted(
+        rolling_policy["episodes_detail"],
+        key=lambda episode: int(episode["index"]),
+    )
+    details = []
+    for episode in episodes:
+        years = episode["years"]
+        first_year = int(years[0]["year"])
+        first_actions = [dict(action) for action in years[0].get("action_details") or []]
+        total_hours = sum(float(action["hours"]) for action in first_actions)
+        target_hours = total_hours * target_fraction
+        ranked = sorted(
+            first_actions,
+            key=lambda action: (
+                (float(action["risk_before"]) - float(action["risk_after"]))
+                / max(float(action["hours"]), 1e-9),
+                action["segment_id"],
+            ),
+        )
+        deferred = set()
+        deferred_hours = 0.0
+        for action in ranked:
+            if deferred_hours >= target_hours:
+                break
+            deferred.add(action["segment_id"])
+            deferred_hours += float(action["hours"])
+
+        full_path, _ = _replay_risk_path(
+            segments=segments,
+            initial_risks=initial_risks,
+            years=years,
+            first_year=first_year,
+            skip=set(),
+            scale_first=1.0,
+            growth_per_year=growth_per_year,
+            total_length=total_length,
+            segment_index=segment_index,
+        )
+        ranked_path, _ = _replay_risk_path(
+            segments=segments,
+            initial_risks=initial_risks,
+            years=years,
+            first_year=first_year,
+            skip=deferred,
+            scale_first=1.0,
+            growth_per_year=growth_per_year,
+            total_length=total_length,
+            segment_index=segment_index,
+        )
+        proportional_path, _ = _replay_risk_path(
+            segments=segments,
+            initial_risks=initial_risks,
+            years=years,
+            first_year=first_year,
+            skip=set(),
+            scale_first=1.0 - target_fraction,
+            growth_per_year=growth_per_year,
+            total_length=total_length,
+            segment_index=segment_index,
+        )
+        ranked_loss = [ranked - full for full, ranked in zip(full_path, ranked_path, strict=True)]
+        proportional_loss = [
+            proportional - full
+            for full, proportional in zip(full_path, proportional_path, strict=True)
+        ]
+        details.append(
+            {
+                "episode_index": episode["index"],
+                "years": [int(year["year"]) for year in years],
+                "full_risk": [round(value, 6) for value in full_path],
+                "ranked_risk": [round(value, 6) for value in ranked_path],
+                "proportional_risk": [round(value, 6) for value in proportional_path],
+                "ranked_loss": [round(value, 6) for value in ranked_loss],
+                "proportional_loss": [round(value, 6) for value in proportional_loss],
+                "deferred_actions": len(deferred),
+                "deferred_fraction": round(deferred_hours / total_hours if total_hours else 0, 4),
+            }
+        )
+    year_labels = [int(year["year"]) for year in episodes[0]["years"]] if episodes else []
+
+    def aggregate(key: str) -> list[float]:
+        return [
+            round(float(np.mean([episode[key][index] for episode in details])), 6)
+            for index in range(len(year_labels))
+        ]
+
+    full = aggregate("full_risk")
+    ranked = aggregate("ranked_risk")
+    proportional = aggregate("proportional_risk")
+    ranked_loss = [ranked[i] - full[i] for i in range(len(full))]
+    proportional_loss = [proportional[i] - full[i] for i in range(len(full))]
+    return {
+        "schema_version": "brushline.risk-trajectory.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "episodes": len(episodes),
+        "target_fraction": target_fraction,
+        "years": year_labels,
+        "mean_deferred_fraction": round(
+            float(np.mean([episode["deferred_fraction"] for episode in details])), 4
+        ),
+        "cases": [
+            {
+                "name": "full policy",
+                "annual_risk": full,
+                "mean_risk_loss": 0.0,
+                "final_risk_loss": 0.0,
+            },
+            {
+                "name": "risk-ranked first-year 20%",
+                "annual_risk": ranked,
+                "mean_risk_loss": round(float(np.mean(ranked_loss)), 6),
+                "final_risk_loss": round(ranked_loss[-1], 6),
+            },
+            {
+                "name": "proportional first-year 20%",
+                "annual_risk": proportional,
+                "mean_risk_loss": round(float(np.mean(proportional_loss)), 6),
+                "final_risk_loss": round(proportional_loss[-1], 6),
+            },
+        ],
+        "episodes_detail": details,
+        "caveats": [
+            "Future actions are held fixed; the policy is not re-optimized after deferral.",
+            "Risk ranking is first-year only and uses the action replay reductions.",
+            "Whole actions are deferred, so the actual deferred fraction can overshoot.",
+            "No multi-year re-optimization, recurrence, weather, outage, or safety model is included.",
+        ],
+    }
+
+
 def _scene(
     network: dict[str, Any],
     segments: list[dict[str, Any]],
@@ -2348,6 +2529,7 @@ def _summary(
     operational_stress_scan: dict[str, Any],
     operational_remedies: dict[str, Any],
     risk_ranked_scope: dict[str, Any],
+    risk_trajectory: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -2624,6 +2806,24 @@ def _summary(
     lines.extend(
         [
             "",
+            "## Multi-year risk trajectory",
+            "",
+            "First-year deferral replayed with future actions held fixed; no re-optimization.",
+            "",
+            "| Case | 2027 | 2028 | 2029 | 2030 | 2031 | Mean loss | Final loss |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for case in risk_trajectory["cases"]:
+        annual = case["annual_risk"]
+        lines.append(
+            f"| {case['name']} | "
+            + " | ".join(f"{value:.4f}" for value in annual)
+            + f" | {case['mean_risk_loss']:.4f} | {case['final_risk_loss']:.4f} |"
+        )
+    lines.extend(
+        [
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -2636,7 +2836,8 @@ def _summary(
             "- Static budget-headroom plans are existing frontier candidates evaluated against a common budget; no robust optimization or probabilistic guarantee is claimed.",
             "- Weather/outage stress is an assumed first-year shift calendar; it is not a forecast, outage schedule, or safety certification.",
             "- Capacity and scope remedies are hypothetical scheduling tests; added capacity cost and contractor commitments are not modelled.",
-            "- Risk-ranked scope uses first-year risk reduction per hour and defers whole actions; actual deferred fraction can overshoot, and multi-year risk is not evaluated.",
+            "- Risk-ranked scope uses first-year risk reduction per hour and defers whole actions; actual deferred fraction can overshoot.",
+            "- The multi-year trajectory holds future actions fixed; it does not re-optimize after deferral and is not a multi-year risk recommendation.",
             "- No asset-owner clearance standard, outage constraint, weather, or safety certification is claimed.",
         ]
     )
@@ -2866,6 +3067,7 @@ def main() -> None:
         towers,
         profiles,
     )
+    risk_trajectory = _risk_trajectory(rolling_policy.model_dump(mode="json"), segments)
     static_plan = evaluate_static_plans(
         instance_id="bc-hydro-network-2026",
         plans=[
@@ -3001,6 +3203,7 @@ def main() -> None:
         ("operational-stress-scan.json", operational_stress_scan),
         ("operational-remedies.json", operational_remedies),
         ("risk-ranked-scope.json", risk_ranked_scope),
+        ("risk-trajectory.json", risk_trajectory),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -3025,6 +3228,7 @@ def main() -> None:
             operational_stress_scan,
             operational_remedies,
             risk_ranked_scope,
+            risk_trajectory,
         ),
         encoding="utf-8",
     )

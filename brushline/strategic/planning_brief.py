@@ -387,6 +387,7 @@ def build_planning_brief(
     operational_stress_scan: Mapping[str, Any] | None = None,
     operational_remedies: Mapping[str, Any] | None = None,
     risk_ranked_scope: Mapping[str, Any] | None = None,
+    risk_trajectory: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -415,6 +416,8 @@ def build_planning_brief(
         Capacity and scope remedy comparison. The section is omitted when absent.
     risk_ranked_scope : mapping, optional
         Risk-ranked scope deferral comparison. The section is omitted when absent.
+    risk_trajectory : mapping, optional
+        Multi-year risk trajectory for first-year deferral. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -473,6 +476,8 @@ def build_planning_brief(
     remedy_cases = (operational_remedies or {}).get("cases") or []
     risk_scope_cases = (risk_ranked_scope or {}).get("cases") or []
     first_risk_case = risk_scope_cases[0] if risk_scope_cases else {}
+    trajectory_cases = (risk_trajectory or {}).get("cases") or []
+    trajectory_years = (risk_trajectory or {}).get("years") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1129,6 +1134,41 @@ def build_planning_brief(
             if risk_ranked_scope
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Multi-year risk trajectory",
+                    paragraphs=[
+                        f"First-year risk paths were replayed over "
+                        f"{len(trajectory_years)} years with future actions fixed; the policy is "
+                        "not re-optimized after deferral. The mean deferred fraction was "
+                        f"{_percent(risk_trajectory.get('mean_deferred_fraction'))}.",
+                        "Under this fixed-future assumption, the first-year risk loss persists "
+                        "through 2031. Re-planning could recover some of it; this trajectory does "
+                        "not model that recovery.",
+                    ],
+                    table=_table(
+                        [
+                            "Case",
+                            *[str(year) for year in trajectory_years],
+                            "Mean loss",
+                            "Final loss",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                *[_number(value, 4) for value in case.get("annual_risk", [])],
+                                _number(case.get("mean_risk_loss"), 4),
+                                _number(case.get("final_risk_loss"), 4),
+                            ]
+                            for case in trajectory_cases
+                        ],
+                    ),
+                )
+            ]
+            if risk_trajectory
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1163,8 +1203,8 @@ def build_planning_brief(
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
-                "operational-stress-scan, operational-remedies, risk-ranked-scope, and access "
-                "JSON files.",
+                "operational-stress-scan, operational-remedies, risk-ranked-scope, "
+                "risk-trajectory, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

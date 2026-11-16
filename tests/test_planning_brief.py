@@ -308,6 +308,24 @@ def _artifacts() -> dict[str, Any]:
             },
         ],
     }
+    risk_trajectory = {
+        "years": [2027, 2028, 2029, 2030, 2031],
+        "mean_deferred_fraction": 0.2131,
+        "cases": [
+            {
+                "name": "full policy",
+                "annual_risk": [0.1133, 0.0147, 0.0060, 0.0067, 0.0073],
+                "mean_risk_loss": 0.0,
+                "final_risk_loss": 0.0,
+            },
+            {
+                "name": "risk-ranked first-year 20%",
+                "annual_risk": [0.1546, 0.0560, 0.0473, 0.0480, 0.0486],
+                "mean_risk_loss": 0.0413,
+                "final_risk_loss": 0.0413,
+            },
+        ],
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -333,6 +351,7 @@ def _artifacts() -> dict[str, Any]:
         "operational_stress_scan": operational_stress_scan,
         "operational_remedies": operational_remedies,
         "risk_ranked_scope": risk_ranked_scope,
+        "risk_trajectory": risk_trajectory,
     }
 
 
@@ -367,6 +386,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "+1 shared crew + machine" in brief.markdown
     assert "## Risk-ranked scope deferral" in brief.markdown
     assert "risk-ranked 20% scope + 105-day" in brief.markdown
+    assert "## Multi-year risk trajectory" in brief.markdown
+    assert "risk-ranked first-year 20%" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown

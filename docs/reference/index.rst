@@ -68,6 +68,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    operational-stress
    operational-remedies
    risk-ranked-scope
+   risk-trajectory
    field-validation
    shift-scheduling
    field-comparison
