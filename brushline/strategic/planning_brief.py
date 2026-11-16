@@ -386,6 +386,7 @@ def build_planning_brief(
     operational_stress: Mapping[str, Any] | None = None,
     operational_stress_scan: Mapping[str, Any] | None = None,
     operational_remedies: Mapping[str, Any] | None = None,
+    risk_ranked_scope: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -412,6 +413,8 @@ def build_planning_brief(
         All-episode weather/outage scan. The section is omitted when absent.
     operational_remedies : mapping, optional
         Capacity and scope remedy comparison. The section is omitted when absent.
+    risk_ranked_scope : mapping, optional
+        Risk-ranked scope deferral comparison. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -468,6 +471,8 @@ def build_planning_brief(
     stress_scan_unscheduled = (operational_stress_scan or {}).get("unscheduled_hours_band") or {}
     stress_scan_window = (operational_stress_scan or {}).get("window_sensitivity") or []
     remedy_cases = (operational_remedies or {}).get("cases") or []
+    risk_scope_cases = (risk_ranked_scope or {}).get("cases") or []
+    first_risk_case = risk_scope_cases[0] if risk_scope_cases else {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1081,6 +1086,49 @@ def build_planning_brief(
             if operational_remedies
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Risk-ranked scope deferral",
+                    paragraphs=[
+                        f"Whole first-year actions were deferred by lowest first-year risk "
+                        f"reduction per hour, targeting "
+                        f"{_percent(risk_ranked_scope.get('target_fraction'))} of action hours. "
+                        f"Actual mean deferred fraction was "
+                        f"{_percent(first_risk_case.get('mean_deferred_fraction'))}. This is "
+                        "first-year risk ranking, not a multi-year risk model.",
+                        "The 105-day risk-ranked case has lower completion than the proportional "
+                        "20% scope case, but a smaller mean first-year risk loss. It remains a "
+                        "planning test, not a field deferral decision.",
+                    ],
+                    table=_table(
+                        [
+                            "Case",
+                            "Window days",
+                            "Scenario completion",
+                            "Mean risk loss",
+                            "Residual risk",
+                            "Total cost P50",
+                            "Budget feasible",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                case.get("window_days"),
+                                _percent(case.get("scenario_completion_rate")),
+                                _number(case.get("mean_risk_loss"), 4),
+                                _number(case.get("mean_residual_risk"), 4),
+                                _number(case.get("total_cost_band", {}).get("p50")),
+                                _percent(case.get("budget_feasibility_rate")),
+                            ]
+                            for case in risk_scope_cases
+                        ],
+                    ),
+                )
+            ]
+            if risk_ranked_scope
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1115,7 +1163,8 @@ def build_planning_brief(
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
-                "operational-stress-scan, operational-remedies, and access JSON files.",
+                "operational-stress-scan, operational-remedies, risk-ranked-scope, and access "
+                "JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

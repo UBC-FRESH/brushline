@@ -281,6 +281,10 @@ test suite. This page is the map.
      - ``brushline.operational-remedies.v1``
      - ``tools/build_operational_remedies.py``
      - Added crew/machine capacity, scope reduction, and window remedies with scenario completion, mean completion, unscheduled hours, and full-episode counts
+   * - Risk-ranked scope
+     - ``brushline.risk-ranked-scope.v1``
+     - ``tools/build_risk_ranked_scope.py``
+     - Whole-action deferral by first-year risk reduction per hour, actual deferred fraction, risk loss, residual risk, calendar completion, cost, and budget feasibility
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

@@ -134,6 +134,7 @@
 - [Static budget-headroom plans](reference/static-plan.html): frontier candidates tested against a common actual budget, with budget-violation rates and risk trade-offs.
 - [Weather and outage stress](reference/operational-stress.html): assumed first-year calendar, completion rate, and unscheduled work.
 - [Weather/outage remedies](reference/operational-remedies.html): added crew/machine capacity versus scope reduction and longer windows.
+- [Risk-ranked scope deferral](reference/risk-ranked-scope.html): whole-action deferral by first-year risk reduction per hour, with risk loss and completion trade-offs.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

@@ -1767,6 +1767,214 @@ def _operational_remedies(
     }
 
 
+def _risk_ranked_scope(
+    rolling_policy: dict[str, Any],
+    fixed_actions: list[dict[str, Any]],
+    segments: list[dict[str, Any]],
+    units: list[dict[str, Any]],
+    towers: list[dict[str, Any]],
+    profiles: list[ContractorProfile],
+    *,
+    scenarios: int = 50,
+    outage_days: tuple[int, ...] = (11, 12, 13, 14, 15),
+    weather_probability: float = 0.20,
+    seed: int = 7,
+    target_fraction: float = 0.20,
+    annual_budget: float = 60000.0,
+) -> dict[str, Any]:
+    """Defer first-year actions by lowest risk reduction per hour, then test calendars."""
+    if not 0 < target_fraction < 1:
+        raise ValueError("target_fraction must be in (0, 1)")
+    length_by_segment = {segment["segment_id"]: float(segment["length_m"]) for segment in segments}
+    total_length = sum(length_by_segment.values())
+    episodes = sorted(
+        rolling_policy["episodes_detail"],
+        key=lambda episode: int(episode["index"]),
+    )
+    case_windows = (75, 105)
+    stats = {
+        window: {
+            "scenarios": 0,
+            "feasible": 0,
+            "completion": [],
+            "unscheduled": [],
+            "total_cost": [],
+            "budget_feasible": [],
+            "residual_risk": [],
+            "risk_loss": [],
+            "proportional_risk_loss": [],
+            "deferred_fraction": [],
+        }
+        for window in case_windows
+    }
+    episodes_detail = []
+    for episode in episodes:
+        package = _policy_execution_for_episode(
+            episode,
+            fixed_actions,
+            segments,
+            units,
+            towers,
+            profiles,
+            "all rolling episodes, first year",
+        )
+        actions = [dict(action) for action in package["policy_actions"]]
+        total_hours = sum(float(action["hours"]) for action in actions)
+        target_hours = total_hours * target_fraction
+        ranked = sorted(
+            actions,
+            key=lambda action: (
+                (float(action["risk_before"]) - float(action["risk_after"]))
+                / max(float(action["hours"]), 1e-9),
+                action["segment_id"],
+            ),
+        )
+        deferred: list[dict[str, Any]] = []
+        deferred_hours = 0.0
+        for action in ranked:
+            if deferred_hours >= target_hours:
+                break
+            deferred.append(action)
+            deferred_hours += float(action["hours"])
+        deferred_ids = {action["segment_id"] for action in deferred}
+        kept = [action for action in actions if action["segment_id"] not in deferred_ids]
+        full_reduction = (
+            sum(
+                (float(action["risk_before"]) - float(action["risk_after"]))
+                * length_by_segment.get(action["segment_id"], 0.0)
+                for action in actions
+            )
+            / total_length
+        )
+        kept_reduction = (
+            sum(
+                (float(action["risk_before"]) - float(action["risk_after"]))
+                * length_by_segment.get(action["segment_id"], 0.0)
+                for action in kept
+            )
+            / total_length
+        )
+        risk_loss = max(0.0, full_reduction - kept_reduction)
+        full_risk = float(package["policy"]["risk"])
+        residual_risk = min(0.95, full_risk + risk_loss)
+        kept_cost = sum(float(action["cost"]) for action in kept)
+        source_actions = [
+            {
+                "unit_id": action["unit_id"],
+                "year": package["selection"]["year"],
+                "method": action["method"],
+                "cost": float(action["cost"]),
+                "hours": float(action["hours"]),
+                "segment_id": action["segment_id"],
+            }
+            for action in kept
+        ]
+        program, access, resources, operations = _tactical(source_actions, segments, units, towers)
+        shifts = _shifts(program.actions, "bc-hydro-network-2026", profiles)
+        reduced_package = {
+            "selection": package["selection"],
+            "policy": {
+                "cost": round(kept_cost, 2),
+                "hours": round(sum(float(action["hours"]) for action in kept), 2),
+                "risk": round(residual_risk, 6),
+            },
+            "tactical": program.model_dump(mode="json"),
+            "access": access.model_dump(mode="json"),
+            "resources": resources.model_dump(mode="json"),
+            "operations": operations.model_dump(mode="json"),
+            "shifts": shifts.model_dump(mode="json"),
+        }
+        case_values = {}
+        for window in case_windows:
+            stress = _operational_stress(
+                reduced_package,
+                profiles,
+                scenarios=scenarios,
+                window_days=window,
+                outage_days=outage_days,
+                weather_probability=weather_probability,
+                seed=seed + int(episode["index"]) * 100,
+                annual_budget=annual_budget,
+            )
+            details = stress["scenarios_detail"]
+            values = stats[window]
+            values["scenarios"] += len(details)
+            values["feasible"] += sum(item["feasible"] for item in details)
+            values["completion"].extend(item["completion_rate"] for item in details)
+            values["unscheduled"].extend(item["unscheduled_hours"] for item in details)
+            values["total_cost"].extend(item["total_cost"] for item in details)
+            values["budget_feasible"].extend(item["budget_feasible"] for item in details)
+            values["residual_risk"].append(residual_risk)
+            values["risk_loss"].append(risk_loss)
+            values["proportional_risk_loss"].append(target_fraction * full_reduction)
+            values["deferred_fraction"].append(deferred_hours / total_hours if total_hours else 0)
+            case_values[window] = stress["completion_probability"]
+        episodes_detail.append(
+            {
+                "episode_index": episode["index"],
+                "full_risk": round(full_risk, 6),
+                "residual_risk": round(residual_risk, 6),
+                "risk_loss": round(risk_loss, 6),
+                "deferred_actions": len(deferred),
+                "deferred_fraction": round(deferred_hours / total_hours if total_hours else 0, 4),
+                "kept_cost": round(kept_cost, 2),
+                "completion_by_window": case_values,
+            }
+        )
+    cases = []
+    for window, values in stats.items():
+        unscheduled = values["unscheduled"]
+        total_cost = values["total_cost"]
+        cases.append(
+            {
+                "name": f"risk-ranked {target_fraction:.0%} scope + {window}-day",
+                "window_days": window,
+                "target_fraction": target_fraction,
+                "scenario_completion_rate": (
+                    values["feasible"] / values["scenarios"] if values["scenarios"] else 0.0
+                ),
+                "mean_completion_rate": round(float(np.mean(values["completion"])), 4),
+                "unscheduled_hours_band": {
+                    "p10": round(float(np.percentile(unscheduled, 10)), 2),
+                    "p50": round(float(np.percentile(unscheduled, 50)), 2),
+                    "p90": round(float(np.percentile(unscheduled, 90)), 2),
+                },
+                "budget_feasibility_rate": (
+                    sum(values["budget_feasible"]) / len(values["budget_feasible"])
+                    if values["budget_feasible"]
+                    else 0.0
+                ),
+                "total_cost_band": {
+                    "p10": round(float(np.percentile(total_cost, 10)), 2),
+                    "p50": round(float(np.percentile(total_cost, 50)), 2),
+                    "p90": round(float(np.percentile(total_cost, 90)), 2),
+                },
+                "mean_residual_risk": round(float(np.mean(values["residual_risk"])), 6),
+                "mean_risk_loss": round(float(np.mean(values["risk_loss"])), 6),
+                "mean_proportional_risk_loss": round(
+                    float(np.mean(values["proportional_risk_loss"])), 6
+                ),
+                "mean_deferred_fraction": round(float(np.mean(values["deferred_fraction"])), 4),
+            }
+        )
+    return {
+        "schema_version": "brushline.risk-ranked-scope.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "episodes": len(episodes),
+        "scenarios_per_episode": scenarios,
+        "target_fraction": target_fraction,
+        "annual_budget": annual_budget,
+        "cases": cases,
+        "episodes_detail": episodes_detail,
+        "caveats": [
+            "Deferral is ranked by first-year risk reduction per hour, not by a full multi-year risk model.",
+            "The target is a proportion of first-year hours; whole segment actions are deferred, so the actual fraction can overshoot.",
+            "Scope reduction is a planning test, not a field deferral decision or safety prescription.",
+            "Weather and outage assumptions are prototype values, not forecasts or asset-owner schedules.",
+        ],
+    }
+
+
 def _scene(
     network: dict[str, Any],
     segments: list[dict[str, Any]],
@@ -2139,6 +2347,7 @@ def _summary(
     operational_stress: dict[str, Any],
     operational_stress_scan: dict[str, Any],
     operational_remedies: dict[str, Any],
+    risk_ranked_scope: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -2396,6 +2605,25 @@ def _summary(
     lines.extend(
         [
             "",
+            "## Risk-ranked scope deferral",
+            "",
+            f"Deferred whole first-year actions by lowest first-year risk reduction per hour, "
+            f"targeting {risk_ranked_scope['target_fraction']:.0%} of action hours.",
+            "",
+            "| Case | Scenario completion | Mean risk loss | Residual risk | Total cost P50 | Budget feasible |",
+            "|---|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for case in risk_ranked_scope["cases"]:
+        lines.append(
+            f"| {case['name']} | {case['scenario_completion_rate']:.1%} | "
+            f"{case['mean_risk_loss']:.4f} | {case['mean_residual_risk']:.4f} | "
+            f"{case['total_cost_band']['p50']:.0f} | "
+            f"{case['budget_feasibility_rate']:.1%} |"
+        )
+    lines.extend(
+        [
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -2408,6 +2636,7 @@ def _summary(
             "- Static budget-headroom plans are existing frontier candidates evaluated against a common budget; no robust optimization or probabilistic guarantee is claimed.",
             "- Weather/outage stress is an assumed first-year shift calendar; it is not a forecast, outage schedule, or safety certification.",
             "- Capacity and scope remedies are hypothetical scheduling tests; added capacity cost and contractor commitments are not modelled.",
+            "- Risk-ranked scope uses first-year risk reduction per hour and defers whole actions; actual deferred fraction can overshoot, and multi-year risk is not evaluated.",
             "- No asset-owner clearance standard, outage constraint, weather, or safety certification is claimed.",
         ]
     )
@@ -2629,6 +2858,14 @@ def main() -> None:
         towers,
         profiles,
     )
+    risk_ranked_scope = _risk_ranked_scope(
+        rolling_policy.model_dump(mode="json"),
+        milp_balanced["actions"],
+        segments,
+        units,
+        towers,
+        profiles,
+    )
     static_plan = evaluate_static_plans(
         instance_id="bc-hydro-network-2026",
         plans=[
@@ -2763,6 +3000,7 @@ def main() -> None:
         ("operational-stress.json", operational_stress),
         ("operational-stress-scan.json", operational_stress_scan),
         ("operational-remedies.json", operational_remedies),
+        ("risk-ranked-scope.json", risk_ranked_scope),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -2786,6 +3024,7 @@ def main() -> None:
             operational_stress,
             operational_stress_scan,
             operational_remedies,
+            risk_ranked_scope,
         ),
         encoding="utf-8",
     )

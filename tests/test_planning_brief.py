@@ -283,6 +283,31 @@ def _artifacts() -> dict[str, Any]:
             },
         ],
     }
+    risk_ranked_scope = {
+        "target_fraction": 0.2,
+        "cases": [
+            {
+                "name": "risk-ranked 20% scope + 105-day",
+                "window_days": 105,
+                "scenario_completion_rate": 0.874,
+                "mean_risk_loss": 0.04127,
+                "mean_residual_risk": 0.154581,
+                "mean_deferred_fraction": 0.2131,
+                "total_cost_band": {"p50": 47226.19},
+                "budget_feasibility_rate": 1.0,
+            },
+            {
+                "name": "risk-ranked 20% scope + 75-day",
+                "window_days": 75,
+                "scenario_completion_rate": 0.471,
+                "mean_risk_loss": 0.04127,
+                "mean_residual_risk": 0.154581,
+                "mean_deferred_fraction": 0.2131,
+                "total_cost_band": {"p50": 47226.19},
+                "budget_feasibility_rate": 1.0,
+            },
+        ],
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -307,6 +332,7 @@ def _artifacts() -> dict[str, Any]:
         "operational_stress": operational_stress,
         "operational_stress_scan": operational_stress_scan,
         "operational_remedies": operational_remedies,
+        "risk_ranked_scope": risk_ranked_scope,
     }
 
 
@@ -339,6 +365,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "Failure sources: fall window 10" in brief.markdown
     assert "## Weather/outage remedies" in brief.markdown
     assert "+1 shared crew + machine" in brief.markdown
+    assert "## Risk-ranked scope deferral" in brief.markdown
+    assert "risk-ranked 20% scope + 105-day" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown
