@@ -963,6 +963,27 @@ def _policy_execution(
         key=lambda episode: (float(episode["rolling_cost"]), int(episode["index"])),
     )
     episode = episodes[len(episodes) // 2]
+    return _policy_execution_for_episode(
+        episode,
+        fixed_actions,
+        segments,
+        units,
+        towers,
+        profiles,
+        "median rolling five-year cost",
+    )
+
+
+def _policy_execution_for_episode(
+    episode: dict[str, Any],
+    fixed_actions: list[dict[str, Any]],
+    segments: list[dict[str, Any]],
+    units: list[dict[str, Any]],
+    towers: list[dict[str, Any]],
+    profiles: list[ContractorProfile],
+    selection_rule: str,
+) -> dict[str, Any]:
+    """Build a first-year execution package for one rolling-policy episode."""
     year_row = episode["years"][0]
     year = int(year_row["year"])
     policy_actions = [dict(action) for action in year_row.get("action_details") or []]
@@ -994,7 +1015,7 @@ def _policy_execution(
         "schema_version": "brushline.policy-execution.v1",
         "instance_id": "bc-hydro-network-2026",
         "selection": {
-            "rule": "median rolling five-year cost",
+            "rule": selection_rule,
             "episode_index": episode["index"],
             "episode_cost": episode["rolling_cost"],
             "year": year,
@@ -1008,8 +1029,16 @@ def _policy_execution(
             "tactical_actions": len(program.actions),
             "work_orders": len(operations.work_orders),
             "shift_assignments": len(shifts.assignments),
+            "tactical_feasible": program.feasible,
+            "access_feasible": access.feasible,
+            "operation_feasible": operations.feasible,
             "resource_feasible": resources.feasible,
             "shift_feasible": shifts.feasible,
+            "access_checks": len(access.results),
+            "access_allowed": sum(bool(result.allowed) for result in access.results),
+            "resource_cost": resources.total_cost,
+            "productive_hours": shifts.total_productive_hours,
+            "travel_hours": shifts.total_travel_hours,
         },
         "fixed": {
             "actions": len(fixed_year),
@@ -1033,6 +1062,132 @@ def _policy_execution(
             "First-year execution package only; future years are re-planned by the policy.",
             "Tactical and shift assumptions are prototype values, not field rates or commitments.",
             "No outage, weather, safety, or asset-owner clearance standard is claimed.",
+        ],
+    }
+
+
+def _policy_execution_scan(
+    rolling_policy: dict[str, Any],
+    fixed_actions: list[dict[str, Any]],
+    segments: list[dict[str, Any]],
+    units: list[dict[str, Any]],
+    towers: list[dict[str, Any]],
+    profiles: list[ContractorProfile],
+) -> dict[str, Any]:
+    """Execute the first year of every rolling episode and summarize feasibility."""
+    episodes = sorted(
+        rolling_policy["episodes_detail"],
+        key=lambda episode: int(episode["index"]),
+    )
+    details = []
+    for episode in episodes:
+        package = _policy_execution_for_episode(
+            episode,
+            fixed_actions,
+            segments,
+            units,
+            towers,
+            profiles,
+            "all rolling episodes, first year",
+        )
+        policy = package["policy"]
+        fixed = package["fixed"]
+        access = package["access"]
+        reasons = []
+        for key in ("tactical", "resources", "operations", "shifts"):
+            for violation in package[key].get("violations") or []:
+                code = violation.get("code") or "violation"
+                reasons.append(f"{key}:{code}")
+        for result in access.get("results") or []:
+            if not result.get("allowed"):
+                reasons.append(f"access:{result.get('window_id')}:{result.get('reason')}")
+        feasible = all(
+            bool(policy[key])
+            for key in (
+                "tactical_feasible",
+                "access_feasible",
+                "operation_feasible",
+                "resource_feasible",
+                "shift_feasible",
+            )
+        )
+        details.append(
+            {
+                "episode_index": episode["index"],
+                "year": package["selection"]["year"],
+                "cost": policy["cost"],
+                "hours": policy["hours"],
+                "risk": policy["risk"],
+                "fixed_cost": fixed["cost"],
+                "fixed_hours": fixed["hours"],
+                "actions": policy["actions"],
+                "tactical_actions": policy["tactical_actions"],
+                "work_orders": policy["work_orders"],
+                "shift_assignments": policy["shift_assignments"],
+                "access_checks": policy["access_checks"],
+                "access_allowed": policy["access_allowed"],
+                "resource_cost": policy["resource_cost"],
+                "tactical_feasible": bool(policy["tactical_feasible"]),
+                "access_feasible": bool(policy["access_feasible"]),
+                "operation_feasible": bool(policy["operation_feasible"]),
+                "resource_feasible": bool(policy["resource_feasible"]),
+                "shift_feasible": bool(policy["shift_feasible"]),
+                "execution_feasible": feasible,
+                "failure_reasons": reasons,
+            }
+        )
+    count = len(details)
+    costs = [item["cost"] for item in details]
+    hours = [item["hours"] for item in details]
+    risks = [item["risk"] for item in details]
+    total_access = sum(item["access_checks"] for item in details)
+    allowed_access = sum(item["access_allowed"] for item in details)
+    return {
+        "schema_version": "brushline.policy-execution-scan.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "year": details[0]["year"] if details else None,
+        "episodes": count,
+        "selection": "all rolling episodes, first year",
+        "execution_feasibility_rate": (
+            sum(item["execution_feasible"] for item in details) / count if count else 0.0
+        ),
+        "tactical_feasibility_rate": (
+            sum(item["tactical_feasible"] for item in details) / count if count else 0.0
+        ),
+        "resource_feasibility_rate": (
+            sum(item["resource_feasible"] for item in details) / count if count else 0.0
+        ),
+        "operation_feasibility_rate": (
+            sum(item["operation_feasible"] for item in details) / count if count else 0.0
+        ),
+        "shift_feasibility_rate": (
+            sum(item["shift_feasible"] for item in details) / count if count else 0.0
+        ),
+        "access_open_rate": allowed_access / total_access if total_access else 0.0,
+        "cost_band": {
+            "p10": round(float(np.percentile(costs, 10)), 2),
+            "p50": round(float(np.percentile(costs, 50)), 2),
+            "p90": round(float(np.percentile(costs, 90)), 2),
+            "mean": round(float(np.mean(costs)), 2),
+        },
+        "hours_band": {
+            "p10": round(float(np.percentile(hours, 10)), 2),
+            "p50": round(float(np.percentile(hours, 50)), 2),
+            "p90": round(float(np.percentile(hours, 90)), 2),
+            "mean": round(float(np.mean(hours)), 2),
+        },
+        "risk_band": {
+            "p10": round(float(np.percentile(risks, 10)), 6),
+            "p50": round(float(np.percentile(risks, 50)), 6),
+            "p90": round(float(np.percentile(risks, 90)), 6),
+            "mean": round(float(np.mean(risks)), 6),
+        },
+        "failed_episodes": [item for item in details if not item["execution_feasible"]],
+        "episodes_detail": details,
+        "caveats": [
+            "First-year execution only; later years are re-planned by the policy.",
+            "Tactical, access, resource, and shift assumptions are prototype values.",
+            "No weather, outage, safety, asset-owner, or field-calibration claim.",
         ],
     }
 
@@ -1389,6 +1544,7 @@ def _summary(
     scenario_optimization: dict[str, Any],
     rolling_policy: dict[str, Any],
     policy_execution: dict[str, Any],
+    policy_execution_scan: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1570,6 +1726,16 @@ def _summary(
             f"| Shift assignments | {policy_execution['policy']['shift_assignments']} | n/a |",
             f"| Resource feasible | {policy_execution['policy']['resource_feasible']} | n/a |",
             f"| Shift feasible | {policy_execution['policy']['shift_feasible']} | n/a |",
+            "",
+            f"All-episode scan: {policy_execution_scan['execution_feasibility_rate']:.1%} of "
+            f"{policy_execution_scan['episodes']} first-year packages were fully feasible; access "
+            f"open rate {policy_execution_scan['access_open_rate']:.1%}; resource "
+            f"{policy_execution_scan['resource_feasibility_rate']:.1%}; shift "
+            f"{policy_execution_scan['shift_feasibility_rate']:.1%}. First-year cost P10-P90 "
+            f"{policy_execution_scan['cost_band']['p10']:.0f}-"
+            f"{policy_execution_scan['cost_band']['p90']:.0f} CAD; crew-hours "
+            f"{policy_execution_scan['hours_band']['p10']:.0f}-"
+            f"{policy_execution_scan['hours_band']['p90']:.0f}.",
             "",
             "## Caveats",
             "",
@@ -1776,6 +1942,14 @@ def main() -> None:
         towers,
         profiles,
     )
+    policy_execution_scan = _policy_execution_scan(
+        rolling_policy.model_dump(mode="json"),
+        milp_balanced["actions"],
+        segments,
+        units,
+        towers,
+        profiles,
+    )
     bid = _bid(tactical.actions, units, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
@@ -1888,6 +2062,7 @@ def main() -> None:
         ("scenario-optimization.json", scenario_optimization.model_dump(mode="json")),
         ("rolling-policy.json", rolling_policy.model_dump(mode="json")),
         ("policy-execution.json", policy_execution),
+        ("policy-execution-scan.json", policy_execution_scan),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -1906,6 +2081,7 @@ def main() -> None:
             scenario_optimization.model_dump(mode="json"),
             rolling_policy.model_dump(mode="json"),
             policy_execution,
+            policy_execution_scan,
         ),
         encoding="utf-8",
     )

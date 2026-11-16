@@ -82,6 +82,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["scenario-optimization"]["scenarios"] >= 1
         assert network_plan["rolling-policy"]["episodes"] >= 1
         assert network_plan["policy-execution"]["policy"]["shift_feasible"]
+        assert network_plan["policy-execution-scan"]["execution_feasibility_rate"] == 1.0
         brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
         assert brief.status_code == 200
         assert brief.headers["content-type"].startswith("text/html")
@@ -96,6 +97,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert "# BC Hydro public-data network planning brief" in brief_md.text
         assert "## Rolling-horizon policy" in brief_md.text
         assert "## Rolling year-one execution" in brief_md.text
+        assert "## Policy execution scan" in brief_md.text
         assert (
             client.get("/api/studio/network/brief?instance_id=synthetic-corridor").status_code
             == 404

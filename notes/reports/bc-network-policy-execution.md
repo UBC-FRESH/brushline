@@ -41,6 +41,25 @@ this test closes that handoff for one representative policy episode.
 - Shift plan: feasible; 813.7 productive hours and 8.5 travel hours.
 - Cost delta versus fixed first year: **-178 CAD**; hours delta: **-186 h**.
 
+## All-episode scan
+
+The first-year handoff was repeated for all 20 rolling episodes.
+
+- Fully feasible: **20/20 (100%)**
+- Tactical feasible: 20/20
+- Access open: 20/20
+- Resource feasible: 20/20
+- Operations feasible: 20/20
+- Shift feasible: 20/20
+- First-year cost P10-P90: **59,775-59,986 CAD**
+- First-year crew-hours P10-P90: **699-1,295**
+- First-year risk P10-P90: **0.070-0.147**
+- Shift assignments: 87-213 per episode
+- Failed episodes: 0
+
+All first-year packages were feasible under the prototype tactical, access, resource, and shift
+assumptions. This is an operability result for the assumptions, not a field guarantee.
+
 ## Interpretation
 
 The median-cost policy episode can be handed to the tactical and shift layers for its first year. The

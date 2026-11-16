@@ -10,7 +10,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tools.build_bc_network_demo import _policy_execution, _profiles  # noqa: E402
+from tools.build_bc_network_demo import (  # noqa: E402
+    _policy_execution,
+    _policy_execution_scan,
+    _profiles,
+)
 
 MODEL = ROOT / "runtime/private/bc-network/model"
 
@@ -23,16 +27,28 @@ def main() -> None:
     selected = next(
         scenario for scenario in strategic["milp_scenarios"] if "60000" in scenario["name"]
     )
+    profiles = _profiles()
     execution = _policy_execution(
         rolling,
         selected["plan"]["actions"],
         network["segments"],
         network["units"],
         network["towers"],
-        _profiles(),
+        profiles,
+    )
+    scan = _policy_execution_scan(
+        rolling,
+        selected["plan"]["actions"],
+        network["segments"],
+        network["units"],
+        network["towers"],
+        profiles,
     )
     (MODEL / "policy-execution.json").write_text(
         json.dumps(execution, indent=2) + "\n", encoding="utf-8"
+    )
+    (MODEL / "policy-execution-scan.json").write_text(
+        json.dumps(scan, indent=2) + "\n", encoding="utf-8"
     )
     print(
         json.dumps(
@@ -47,6 +63,9 @@ def main() -> None:
                 "shift_assignments": execution["policy"]["shift_assignments"],
                 "resource_feasible": execution["policy"]["resource_feasible"],
                 "shift_feasible": execution["policy"]["shift_feasible"],
+                "scan_episodes": scan["episodes"],
+                "scan_execution_feasibility": scan["execution_feasibility_rate"],
+                "scan_access_open": scan["access_open_rate"],
             },
             indent=2,
         )

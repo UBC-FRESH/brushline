@@ -177,6 +177,17 @@ def _artifacts() -> dict[str, Any]:
         },
         "fixed": {"actions": 46, "cost": 59972, "hours": 1000},
     }
+    policy_execution_scan = {
+        "episodes": 20,
+        "execution_feasibility_rate": 1.0,
+        "tactical_feasibility_rate": 1.0,
+        "access_open_rate": 1.0,
+        "resource_feasibility_rate": 1.0,
+        "operation_feasibility_rate": 1.0,
+        "shift_feasibility_rate": 1.0,
+        "cost_band": {"p10": 59775, "p90": 59986},
+        "hours_band": {"p10": 699, "p90": 1295},
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -196,6 +207,7 @@ def _artifacts() -> dict[str, Any]:
         "access": access,
         "rolling_policy": rolling_policy,
         "policy_execution": policy_execution,
+        "policy_execution_scan": policy_execution_scan,
     }
 
 
@@ -219,6 +231,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "20 annual-factor episodes; 2-year lookahead" in brief.markdown
     assert "## Rolling year-one execution" in brief.markdown
     assert "Selected episode 18" in brief.markdown
+    assert "## Policy execution scan" in brief.markdown
+    assert "Fully feasible: 100.0%" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown
     assert "current-mix" in brief.markdown

@@ -261,6 +261,10 @@ test suite. This page is the map.
      - ``brushline.policy-execution.v1``
      - ``tools/build_policy_execution.py``
      - Median rolling episode, first-year segment actions, tactical/access/resource/work-order/shift handoff, feasibility, and fixed-year comparison
+   * - Policy execution scan
+     - ``brushline.policy-execution-scan.v1``
+     - ``tools/build_policy_execution.py``
+     - All-episode first-year handoff feasibility, access checks, cost/hours/risk bands, and failure reasons
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

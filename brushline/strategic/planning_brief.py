@@ -381,6 +381,7 @@ def build_planning_brief(
     access: Mapping[str, Any],
     rolling_policy: Mapping[str, Any] | None = None,
     policy_execution: Mapping[str, Any] | None = None,
+    policy_execution_scan: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -397,6 +398,8 @@ def build_planning_brief(
         Rolling-horizon policy result. The section is omitted when absent.
     policy_execution : mapping, optional
         First-year policy execution package. The section is omitted when absent.
+    policy_execution_scan : mapping, optional
+        All-episode first-year execution scan. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -443,6 +446,8 @@ def build_planning_brief(
     execution_policy = (policy_execution or {}).get("policy") or {}
     execution_fixed = (policy_execution or {}).get("fixed") or {}
     execution_selection = (policy_execution or {}).get("selection") or {}
+    scan_cost = (policy_execution_scan or {}).get("cost_band") or {}
+    scan_hours = (policy_execution_scan or {}).get("hours_band") or {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -819,6 +824,63 @@ def build_planning_brief(
             if policy_execution
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Policy execution scan",
+                    paragraphs=[
+                        f"First-year packages were built for all "
+                        f"{policy_execution_scan.get('episodes')} rolling episodes. Fully "
+                        f"feasible: "
+                        f"{_percent(policy_execution_scan.get('execution_feasibility_rate'))}; "
+                        f"access open: "
+                        f"{_percent(policy_execution_scan.get('access_open_rate'))}; "
+                        f"resource feasible: "
+                        f"{_percent(policy_execution_scan.get('resource_feasibility_rate'))}; "
+                        f"shift feasible: "
+                        f"{_percent(policy_execution_scan.get('shift_feasibility_rate'))}.",
+                        f"First-year cost P10-P90 {_number(scan_cost.get('p10'))}-"
+                        f"{_number(scan_cost.get('p90'))} CAD; crew-hours "
+                        f"{_number(scan_hours.get('p10'))}-{_number(scan_hours.get('p90'))}. "
+                        "This is an execution scan, not a guarantee of field operability.",
+                    ],
+                    table=_table(
+                        [
+                            "Check",
+                            "Feasible share",
+                        ],
+                        [
+                            [
+                                "Fully feasible",
+                                _percent(policy_execution_scan.get("execution_feasibility_rate")),
+                            ],
+                            [
+                                "Tactical",
+                                _percent(policy_execution_scan.get("tactical_feasibility_rate")),
+                            ],
+                            [
+                                "Access open",
+                                _percent(policy_execution_scan.get("access_open_rate")),
+                            ],
+                            [
+                                "Resources",
+                                _percent(policy_execution_scan.get("resource_feasibility_rate")),
+                            ],
+                            [
+                                "Operations",
+                                _percent(policy_execution_scan.get("operation_feasibility_rate")),
+                            ],
+                            [
+                                "Shifts",
+                                _percent(policy_execution_scan.get("shift_feasibility_rate")),
+                            ],
+                        ],
+                    ),
+                )
+            ]
+            if policy_execution_scan
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -852,7 +914,7 @@ def build_planning_brief(
                 f"artifact set at {generated_utc or datetime.now(UTC)}.",
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
-                "policy-execution, and access JSON files.",
+                "policy-execution, policy-execution-scan, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

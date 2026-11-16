@@ -64,6 +64,7 @@ def _network_artifacts() -> dict[str, Any]:
             "scenario-optimization",
             "rolling-policy",
             "policy-execution",
+            "policy-execution-scan",
             "access",
         )
     }
@@ -396,6 +397,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 access=artifacts["access"],
                 rolling_policy=artifacts["rolling-policy"],
                 policy_execution=artifacts["policy-execution"],
+                policy_execution_scan=artifacts["policy-execution-scan"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

@@ -87,6 +87,11 @@ The policy package is resource- and shift-feasible: 17/17 access checks open, 42
 resource cost, 813.7 productive hours, and 8.5 travel hours. It is one median-cost episode, not an
 operability guarantee for every episode.
 
+The first-year handoff was repeated for all 20 episodes. All 20 packages were tactical-, access-,
+resource-, operations-, and shift-feasible under the prototype assumptions. First-year cost ranged
+from 59,775 to 59,986 CAD, crew-hours from 699 to 1,295, and annual risk from 0.070 to 0.147. Failed
+episodes: 0. This is an operability result for the assumptions, not a field guarantee.
+
 ## Scale test
 
 The same policy was run on a replicated 590-segment stress instance with tenfold annual budget and

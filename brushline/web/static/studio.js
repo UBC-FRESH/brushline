@@ -173,6 +173,10 @@ function drawSchedule(){
   if(execution){
    $("#schedule").innerHTML+=`<p class="schedule-note">Rolling year-one execution · median-cost episode ${execution.selection.episode_index} · year ${execution.selection.year}</p><table><tr><th>Metric</th><th>Policy year 1</th><th>Fixed year 1</th></tr><tr><td>Segment treatments</td><td>${execution.policy.actions}</td><td>${execution.fixed.actions}</td></tr><tr><td>Cost</td><td>${execution.policy.cost.toFixed(0)}</td><td>${execution.fixed.cost.toFixed(0)}</td></tr><tr><td>Crew-hours</td><td>${execution.policy.hours.toFixed(0)}</td><td>${execution.fixed.hours.toFixed(0)}</td></tr><tr><td>Tactical / work orders / shifts</td><td>${execution.policy.tactical_actions} / ${execution.policy.work_orders} / ${execution.policy.shift_assignments}</td><td>n/a</td></tr><tr><td>Feasibility</td><td>resource ${execution.policy.resource_feasible} · shift ${execution.policy.shift_feasible}</td><td>n/a</td></tr></table>`;
   }
+  const scan=state.network["policy-execution-scan"];
+  if(scan){
+   $("#schedule").innerHTML+=`<p class="schedule-note">Policy execution scan · all ${scan.episodes} episodes · first year</p><table><tr><th>Check</th><th>Feasible share</th></tr><tr><td>Fully feasible</td><td>${(scan.execution_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>Access open</td><td>${(scan.access_open_rate*100).toFixed(1)}%</td></tr><tr><td>Resources</td><td>${(scan.resource_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>Shifts</td><td>${(scan.shift_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>First-year cost P10–P90</td><td>${scan.cost_band.p10.toFixed(0)}–${scan.cost_band.p90.toFixed(0)}</td></tr><tr><td>First-year crew-hours P10–P90</td><td>${scan.hours_band.p10.toFixed(0)}–${scan.hours_band.p90.toFixed(0)}</td></tr></table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";
