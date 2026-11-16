@@ -74,6 +74,7 @@ def _network_artifacts() -> dict[str, Any]:
             "rolling-recovery",
             "out-of-sample-recovery",
             "deferral-frontier",
+            "frontier-validation",
             "access",
         )
     }
@@ -416,6 +417,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 rolling_recovery=artifacts["rolling-recovery"],
                 out_of_sample_recovery=artifacts["out-of-sample-recovery"],
                 deferral_frontier=artifacts["deferral-frontier"],
+                frontier_validation=artifacts["frontier-validation"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

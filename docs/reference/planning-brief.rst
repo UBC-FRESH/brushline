@@ -7,7 +7,7 @@ commercial check, execution uncertainty, hindsight-adaptive comparison, rolling-
 first-year policy execution and all-episode scan, static budget-headroom candidates, weather and
 outage stress and all-episode calendar scan, capacity/scope remedies, risk-ranked scope deferral,
 multi-year risk trajectory, rolling recovery, out-of-sample recovery, deferral-fraction frontier,
-scaling evidence, caveats, and reproduction metadata into one document.
+frontier validation, scaling evidence, caveats, and reproduction metadata into one document.
 
 The brief is generated on demand from the network artifact set. It is not a new model result and it
 does not hide the underlying assumptions:

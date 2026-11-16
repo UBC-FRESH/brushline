@@ -72,6 +72,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    rolling-recovery
    out-of-sample-recovery
    deferral-frontier
+   frontier-validation
    field-validation
    shift-scheduling
    field-comparison

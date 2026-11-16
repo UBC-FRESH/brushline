@@ -301,6 +301,10 @@ test suite. This page is the map.
      - ``brushline.deferral-frontier.v1``
      - ``tools/build_deferral_frontier.py``
      - 0-25% risk-ranked first-year deferral sweep with calendar completion, fixed and recovered risk gaps, and five-year cost
+   * - Frontier validation
+     - ``brushline.frontier-validation.v1``
+     - ``tools/build_frontier_validation.py``
+     - Out-of-sample risk gaps, recovery, budget, and cost for every deferral candidate
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

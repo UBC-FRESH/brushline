@@ -391,6 +391,7 @@ def build_planning_brief(
     rolling_recovery: Mapping[str, Any] | None = None,
     out_of_sample_recovery: Mapping[str, Any] | None = None,
     deferral_frontier: Mapping[str, Any] | None = None,
+    frontier_validation: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -427,6 +428,8 @@ def build_planning_brief(
         Resampled-future recovery test. The section is omitted when absent.
     deferral_frontier : mapping, optional
         Risk-ranked deferral fraction sweep. The section is omitted when absent.
+    frontier_validation : mapping, optional
+        Out-of-sample validation of frontier candidates. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -496,6 +499,7 @@ def build_planning_brief(
     oos_full_cost = (out_of_sample_recovery or {}).get("full_cost_band") or {}
     oos_probability = (out_of_sample_recovery or {}).get("probability_final_gap_at_most_0_005")
     frontier_cases = (deferral_frontier or {}).get("cases") or []
+    validation_cases = (frontier_validation or {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1333,6 +1337,48 @@ def build_planning_brief(
             if deferral_frontier
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Frontier out-of-sample validation",
+                    paragraphs=[
+                        "Every frontier candidate was retested with resampled future factors: "
+                        "100 paths for 0% and 20%, and 40 paths for the other points. "
+                        "Completion remains from the fixed-factor calendar scan; this section "
+                        "validates risk recovery and cost.",
+                        "All tested fractions remain budget-feasible and recover most of the "
+                        "fixed-future risk gap. The 25% point has the highest recovery and "
+                        "lowest median "
+                        "reoptimized cost, but also the largest fixed-future risk loss.",
+                    ],
+                    table=_table(
+                        [
+                            "Target",
+                            "Paths",
+                            "Final gap P50",
+                            "Final gap P90",
+                            "Recovery P50",
+                            "Within 0.005",
+                            "Reopt cost P50",
+                        ],
+                        [
+                            [
+                                _percent(case.get("target_fraction"), 0),
+                                case.get("paths_total"),
+                                _number(case.get("final_loss_band", {}).get("p50"), 4),
+                                _number(case.get("final_loss_band", {}).get("p90"), 4),
+                                _number(case.get("recovery_band", {}).get("p50"), 4),
+                                _percent(case.get("probability_final_gap_at_most_0_005")),
+                                _number(case.get("reopt_cost_band", {}).get("p50")),
+                            ]
+                            for case in validation_cases
+                        ],
+                    ),
+                )
+            ]
+            if frontier_validation
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1369,7 +1415,7 @@ def build_planning_brief(
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
                 "operational-stress-scan, operational-remedies, risk-ranked-scope, "
                 "risk-trajectory, rolling-recovery, out-of-sample-recovery, deferral-frontier, "
-                "and access JSON files.",
+                "frontier-validation, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

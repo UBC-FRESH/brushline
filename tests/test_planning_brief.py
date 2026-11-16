@@ -386,6 +386,26 @@ def _artifacts() -> dict[str, Any]:
             },
         ],
     }
+    frontier_validation = {
+        "cases": [
+            {
+                "target_fraction": 0.0,
+                "paths_total": 100,
+                "final_loss_band": {"p50": 0.0, "p90": 0.0},
+                "recovery_band": {"p50": 0.0},
+                "probability_final_gap_at_most_0_005": 1.0,
+                "reopt_cost_band": {"p50": 295899},
+            },
+            {
+                "target_fraction": 0.2,
+                "paths_total": 100,
+                "final_loss_band": {"p50": -0.001029, "p90": 0.007205},
+                "recovery_band": {"p50": 0.042105},
+                "probability_final_gap_at_most_0_005": 0.87,
+                "reopt_cost_band": {"p50": 285927},
+            },
+        ],
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -415,6 +435,7 @@ def _artifacts() -> dict[str, Any]:
         "rolling_recovery": rolling_recovery,
         "out_of_sample_recovery": out_of_sample_recovery,
         "deferral_frontier": deferral_frontier,
+        "frontier_validation": frontier_validation,
     }
 
 
@@ -457,6 +478,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "100 paths" in brief.markdown
     assert "## Deferral-fraction frontier" in brief.markdown
     assert "21.3%" in brief.markdown
+    assert "## Frontier out-of-sample validation" in brief.markdown
+    assert "87.0%" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown

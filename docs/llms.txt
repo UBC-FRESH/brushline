@@ -139,6 +139,7 @@
 - [Rolling recovery](reference/rolling-recovery.html): future re-optimization after first-year deferral, recovery gaps, and cost.
 - [Out-of-sample recovery](reference/out-of-sample-recovery.html): resampled future factors, recovery bands, final gaps, and cost.
 - [Deferral-fraction frontier](reference/deferral-frontier.html): 0-25% risk-ranked scope sweep with completion, residual risk, recovery, and cost.
+- [Frontier validation](reference/frontier-validation.html): out-of-sample recovery and cost for every frontier candidate.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 
