@@ -91,6 +91,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["risk-trajectory"]["years"]
         assert network_plan["rolling-recovery"]["final_recovery"] > 0
         assert network_plan["out-of-sample-recovery"]["paths_total"] >= 1
+        assert network_plan["deferral-frontier"]["cases"]
         brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
         assert brief.status_code == 200
         assert brief.headers["content-type"].startswith("text/html")
@@ -114,6 +115,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert "## Multi-year risk trajectory" in brief_md.text
         assert "## Rolling recovery after deferral" in brief_md.text
         assert "## Out-of-sample recovery" in brief_md.text
+        assert "## Deferral-fraction frontier" in brief_md.text
         assert (
             client.get("/api/studio/network/brief?instance_id=synthetic-corridor").status_code
             == 404

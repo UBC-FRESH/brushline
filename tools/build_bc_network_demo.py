@@ -1784,8 +1784,8 @@ def _risk_ranked_scope(
     annual_budget: float = 60000.0,
 ) -> dict[str, Any]:
     """Defer first-year actions by lowest risk reduction per hour, then test calendars."""
-    if not 0 < target_fraction < 1:
-        raise ValueError("target_fraction must be in (0, 1)")
+    if not 0 <= target_fraction < 1:
+        raise ValueError("target_fraction must be in [0, 1)")
     length_by_segment = {segment["segment_id"]: float(segment["length_m"]) for segment in segments}
     total_length = sum(length_by_segment.values())
     episodes = sorted(
@@ -1859,6 +1859,7 @@ def _risk_ranked_scope(
         full_risk = float(package["policy"]["risk"])
         residual_risk = min(0.95, full_risk + risk_loss)
         kept_cost = sum(float(action["cost"]) for action in kept)
+        kept_hours = sum(float(action["hours"]) for action in kept)
         source_actions = [
             {
                 "unit_id": action["unit_id"],
@@ -1919,6 +1920,8 @@ def _risk_ranked_scope(
                 "deferred_actions": len(deferred),
                 "deferred_fraction": round(deferred_hours / total_hours if total_hours else 0, 4),
                 "kept_cost": round(kept_cost, 2),
+                "kept_hours": round(kept_hours, 2),
+                "first_year_budget_feasible": kept_cost <= 60000.0 + 1e-9,
                 "completion_by_window": case_values,
             }
         )
@@ -2021,8 +2024,8 @@ def _risk_trajectory(
     growth_per_year: float = 0.03,
 ) -> dict[str, Any]:
     """Replay full versus first-year scope deferral risk paths without re-planning."""
-    if not 0 < target_fraction < 1:
-        raise ValueError("target_fraction must be in (0, 1)")
+    if not 0 <= target_fraction < 1:
+        raise ValueError("target_fraction must be in [0, 1)")
     length_by_segment = {segment["segment_id"]: float(segment["length_m"]) for segment in segments}
     initial_risks = [float(segment["base_risk"]) for segment in segments]
     total_length = sum(length_by_segment.values())
@@ -2168,8 +2171,8 @@ def _rolling_recovery(
     max_seconds: float = 30.0,
 ) -> dict[str, Any]:
     """Re-optimize future years after a first-year risk-ranked deferral."""
-    if not 0 < target_fraction < 1:
-        raise ValueError("target_fraction must be in (0, 1)")
+    if not 0 <= target_fraction < 1:
+        raise ValueError("target_fraction must be in [0, 1)")
     length_by_segment = {segment["segment_id"]: float(segment["length_m"]) for segment in segments}
     initial_risks = [float(segment["base_risk"]) for segment in segments]
     total_length = sum(length_by_segment.values())
@@ -2385,8 +2388,8 @@ def _out_of_sample_recovery(
     max_seconds: float = 30.0,
 ) -> dict[str, Any]:
     """Resample future factors after fixed first-year deferral and reoptimize."""
-    if not 0 < target_fraction < 1:
-        raise ValueError("target_fraction must be in (0, 1)")
+    if not 0 <= target_fraction < 1:
+        raise ValueError("target_fraction must be in [0, 1)")
     if paths_per_episode < 1:
         raise ValueError("paths_per_episode must be positive")
     length_by_segment = {segment["segment_id"]: float(segment["length_m"]) for segment in segments}
@@ -2639,6 +2642,103 @@ def _out_of_sample_recovery(
             "First-year risk-ranked deferral is fixed; future factors are resampled independently.",
             "Future years are re-solved with the rolling persistence forecast, not a stochastic dynamic program.",
             "Risk ranking is first-year only and whole actions are deferred.",
+            "No recurrence, weather, outage, safety, or asset-owner priority model is included.",
+        ],
+    }
+
+
+def _deferral_frontier(
+    rolling_policy: dict[str, Any],
+    fixed_actions: list[dict[str, Any]],
+    segments: list[dict[str, Any]],
+    units: list[dict[str, Any]],
+    towers: list[dict[str, Any]],
+    profiles: list[ContractorProfile],
+    methods: list[StatefulMethod],
+    periods: list[StatefulPeriod],
+    *,
+    targets: tuple[float, ...] = (0.0, 0.05, 0.10, 0.15, 0.20, 0.25),
+    scenarios: int = 50,
+    seed: int = 7,
+) -> dict[str, Any]:
+    """Sweep risk-ranked first-year deferral fractions with fixed-factor recovery."""
+    cases = []
+    for target in targets:
+        scope = _risk_ranked_scope(
+            rolling_policy,
+            fixed_actions,
+            segments,
+            units,
+            towers,
+            profiles,
+            scenarios=scenarios,
+            seed=seed,
+            target_fraction=target,
+        )
+        recovery = _rolling_recovery(
+            rolling_policy,
+            segments,
+            methods,
+            periods,
+            target_fraction=target,
+            lookahead_years=2,
+        )
+        scope_details = scope["episodes_detail"]
+        recovery_details = recovery["episodes_detail"]
+        cases.append(
+            {
+                "target_fraction": target,
+                "mean_deferred_fraction": round(
+                    float(np.mean([item["deferred_fraction"] for item in scope_details])), 4
+                ),
+                "first_year_cost_mean": round(
+                    float(np.mean([item["kept_cost"] for item in scope_details])), 2
+                ),
+                "first_year_hours_mean": round(
+                    float(np.mean([item["kept_hours"] for item in scope_details])), 2
+                ),
+                "first_year_budget_feasibility_rate": sum(
+                    item["first_year_budget_feasible"] for item in scope_details
+                )
+                / len(scope_details),
+                "completion_75": scope["cases"][0]["scenario_completion_rate"],
+                "completion_105": scope["cases"][1]["scenario_completion_rate"],
+                "unscheduled_75_p50": scope["cases"][0]["unscheduled_hours_band"]["p50"],
+                "unscheduled_105_p50": scope["cases"][1]["unscheduled_hours_band"]["p50"],
+                "fixed_future_mean_loss": recovery["cases"][1]["mean_risk_loss"],
+                "fixed_future_final_loss": recovery["cases"][1]["final_risk_loss"],
+                "recovery_mean_loss": recovery["cases"][2]["mean_risk_loss"],
+                "recovery_final_loss": recovery["cases"][2]["final_risk_loss"],
+                "mean_recovery": recovery["mean_recovery"],
+                "final_recovery": recovery["final_recovery"],
+                "full_cost_mean": round(
+                    float(np.mean([item["full_cost"] for item in recovery_details])), 2
+                ),
+                "no_reopt_cost_mean": round(
+                    float(np.mean([item["no_reopt_cost"] for item in recovery_details])), 2
+                ),
+                "reopt_cost_mean": round(
+                    float(np.mean([item["reopt_cost"] for item in recovery_details])), 2
+                ),
+            }
+        )
+    for case in cases:
+        extra = case["reopt_cost_mean"] - case["no_reopt_cost_mean"]
+        case["recovery_per_1000_cad"] = (
+            round(case["mean_recovery"] / extra * 1000, 6) if extra > 1e-9 else None
+        )
+    return {
+        "schema_version": "brushline.deferral-frontier.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "episodes": len(rolling_policy["episodes_detail"]),
+        "scenarios_per_episode": scenarios,
+        "targets": list(targets),
+        "seed": seed,
+        "cases": cases,
+        "caveats": [
+            "Recovery uses fixed annual factors; this is a screening frontier, not out-of-sample validation.",
+            "Risk ranking is first-year only and whole actions are deferred; actual fractions can overshoot.",
+            "Risk, completion, and cost are separate metrics; no single utility is optimized.",
             "No recurrence, weather, outage, safety, or asset-owner priority model is included.",
         ],
     }
@@ -3020,6 +3120,7 @@ def _summary(
     risk_trajectory: dict[str, Any],
     rolling_recovery: dict[str, Any],
     out_of_sample_recovery: dict[str, Any],
+    deferral_frontier: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -3359,6 +3460,22 @@ def _summary(
     lines.extend(
         [
             "",
+            "## Deferral-fraction frontier",
+            "",
+            "| Target | Actual deferred | Completion 75 | Completion 105 | Fixed final loss | Recovery final loss | Reopt cost |",
+            "|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for case in deferral_frontier["cases"]:
+        lines.append(
+            f"| {case['target_fraction']:.0%} | {case['mean_deferred_fraction']:.1%} | "
+            f"{case['completion_75']:.1%} | {case['completion_105']:.1%} | "
+            f"{case['fixed_future_final_loss']:.4f} | "
+            f"{case['recovery_final_loss']:.6f} | {case['reopt_cost_mean']:.0f} |"
+        )
+    lines.extend(
+        [
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -3375,6 +3492,7 @@ def _summary(
             "- The multi-year trajectory holds future actions fixed; it does not re-optimize after deferral and is not a multi-year risk recommendation.",
             "- Rolling recovery re-solves future years with fixed annual factors and the persistence forecast; it is not a stochastic multi-year policy guarantee.",
             "- Out-of-sample recovery resamples future factors but keeps the first-year deferral fixed; it is not a full stochastic dynamic program.",
+            "- The deferral frontier uses fixed-factor recovery for screening; only the 20% point has out-of-sample validation.",
             "- No asset-owner clearance standard, outage constraint, weather, or safety certification is claimed.",
         ]
     )
@@ -3617,6 +3735,16 @@ def main() -> None:
         scenario_methods,
         tactical_periods,
     )
+    deferral_frontier = _deferral_frontier(
+        rolling_policy.model_dump(mode="json"),
+        milp_balanced["actions"],
+        segments,
+        units,
+        towers,
+        profiles,
+        scenario_methods,
+        tactical_periods,
+    )
     static_plan = evaluate_static_plans(
         instance_id="bc-hydro-network-2026",
         plans=[
@@ -3755,6 +3883,7 @@ def main() -> None:
         ("risk-trajectory.json", risk_trajectory),
         ("rolling-recovery.json", rolling_recovery),
         ("out-of-sample-recovery.json", out_of_sample_recovery),
+        ("deferral-frontier.json", deferral_frontier),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -3782,6 +3911,7 @@ def main() -> None:
             risk_trajectory,
             rolling_recovery,
             out_of_sample_recovery,
+            deferral_frontier,
         ),
         encoding="utf-8",
     )

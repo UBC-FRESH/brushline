@@ -390,6 +390,7 @@ def build_planning_brief(
     risk_trajectory: Mapping[str, Any] | None = None,
     rolling_recovery: Mapping[str, Any] | None = None,
     out_of_sample_recovery: Mapping[str, Any] | None = None,
+    deferral_frontier: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -424,6 +425,8 @@ def build_planning_brief(
         Future re-optimization after first-year deferral. The section is omitted when absent.
     out_of_sample_recovery : mapping, optional
         Resampled-future recovery test. The section is omitted when absent.
+    deferral_frontier : mapping, optional
+        Risk-ranked deferral fraction sweep. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -492,6 +495,7 @@ def build_planning_brief(
     oos_no_cost = (out_of_sample_recovery or {}).get("no_reopt_cost_band") or {}
     oos_full_cost = (out_of_sample_recovery or {}).get("full_cost_band") or {}
     oos_probability = (out_of_sample_recovery or {}).get("probability_final_gap_at_most_0_005")
+    frontier_cases = (deferral_frontier or {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1285,6 +1289,50 @@ def build_planning_brief(
             if out_of_sample_recovery
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Deferral-fraction frontier",
+                    paragraphs=[
+                        "Risk-ranked deferral fractions were swept from 0% to 25% of first-year "
+                        "hours. Completion uses the assumed 75/105-day calendars; recovery uses "
+                        "fixed future factors. This is a screening frontier, not out-of-sample "
+                        "validation for every point.",
+                        "Higher deferral improves first-year calendar completion and lowers "
+                        "five-year reoptimized cost, but increases fixed-future residual risk. "
+                        "Recovery "
+                        "closes nearly all of the final risk gap at every tested fraction.",
+                    ],
+                    table=_table(
+                        [
+                            "Target",
+                            "Actual deferred",
+                            "Completion 75",
+                            "Completion 105",
+                            "Fixed final loss",
+                            "Recovery final loss",
+                            "Reopt cost",
+                            "Budget feasible",
+                        ],
+                        [
+                            [
+                                _percent(case.get("target_fraction"), 0),
+                                _percent(case.get("mean_deferred_fraction")),
+                                _percent(case.get("completion_75")),
+                                _percent(case.get("completion_105")),
+                                _number(case.get("fixed_future_final_loss"), 4),
+                                _number(case.get("recovery_final_loss"), 6),
+                                _number(case.get("reopt_cost_mean")),
+                                _percent(case.get("first_year_budget_feasibility_rate")),
+                            ]
+                            for case in frontier_cases
+                        ],
+                    ),
+                )
+            ]
+            if deferral_frontier
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1320,8 +1368,8 @@ def build_planning_brief(
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
                 "operational-stress-scan, operational-remedies, risk-ranked-scope, "
-                "risk-trajectory, rolling-recovery, out-of-sample-recovery, and access JSON "
-                "files.",
+                "risk-trajectory, rolling-recovery, out-of-sample-recovery, deferral-frontier, "
+                "and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

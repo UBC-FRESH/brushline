@@ -297,6 +297,10 @@ test suite. This page is the map.
      - ``brushline.out-of-sample-recovery.v1``
      - ``tools/build_out_of_sample_recovery.py``
      - Resampled future factors, final risk gaps, recovery bands, cost bands, and budget outcomes
+   * - Deferral frontier
+     - ``brushline.deferral-frontier.v1``
+     - ``tools/build_deferral_frontier.py``
+     - 0-25% risk-ranked first-year deferral sweep with calendar completion, fixed and recovered risk gaps, and five-year cost
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

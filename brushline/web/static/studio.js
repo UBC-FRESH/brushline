@@ -219,6 +219,11 @@ function drawSchedule(){
    const f=oos.final_loss_band, rec=oos.recovery_band;
    $("#schedule").innerHTML+=`<p class="schedule-note">Out-of-sample future recovery · ${oos.paths_total} paths across ${oos.episodes} episodes · fixed first-year deferral</p><table><tr><th>Metric</th><th>P10</th><th>P50</th><th>P90</th><th>Mean</th></tr><tr><td>Final risk gap</td><td>${f.p10.toFixed(4)}</td><td>${f.p50.toFixed(4)}</td><td>${f.p90.toFixed(4)}</td><td>${f.mean.toFixed(4)}</td></tr><tr><td>Recovery</td><td>${rec.p10.toFixed(4)}</td><td>${rec.p50.toFixed(4)}</td><td>${rec.p90.toFixed(4)}</td><td>${rec.mean.toFixed(4)}</td></tr><tr><td>Final gap ≤ 0.005</td><td colspan="4">${(oos.probability_final_gap_at_most_0_005*100).toFixed(1)}% of paths</td></tr></table>`;
   }
+  const frontier=state.network["deferral-frontier"];
+  if(frontier){
+   const rows=(frontier.cases||[]).map(item=>`<tr><td>${(item.target_fraction*100).toFixed(0)}%</td><td>${(item.mean_deferred_fraction*100).toFixed(1)}%</td><td>${(item.completion_75*100).toFixed(1)}%</td><td>${(item.completion_105*100).toFixed(1)}%</td><td>${item.fixed_future_final_loss.toFixed(4)}</td><td>${item.recovery_final_loss.toFixed(6)}</td><td>${item.reopt_cost_mean.toFixed(0)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Deferral-fraction frontier · risk-ranked first-year scope · fixed-factor recovery</p><table><tr><th>Target</th><th>Actual deferred</th><th>Completion 75</th><th>Completion 105</th><th>Fixed final loss</th><th>Recovery final loss</th><th>Reopt cost</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";
