@@ -192,6 +192,11 @@ function drawSchedule(){
    const sources=stressScan.failure_sources||{};
    $("#schedule").innerHTML+=`<p class="schedule-note">All-episode weather/outage scan · ${stressScan.episodes} episodes · ${stressScan.scenarios_per_episode} calendars each</p><table><tr><th>Metric</th><th>Value</th></tr><tr><td>Baseline 75-day feasible</td><td>${(stressScan.baseline_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>Scenario full completion</td><td>${(stressScan.scenario_completion_rate*100).toFixed(1)}%</td></tr><tr><td>Mean work completion</td><td>${(stressScan.mean_completion_rate*100).toFixed(1)}%</td></tr><tr><td>Unscheduled hours P50 / P90</td><td>${stressScan.unscheduled_hours_band.p50.toFixed(0)} / ${stressScan.unscheduled_hours_band.p90.toFixed(0)}</td></tr><tr><td>Failure sources</td><td>window ${sources.fall_window||0} · weather ${sources.weather_outage_calendar||0} · crew ${sources.crew_capacity||0} · none ${sources.none||0}</td></tr></table><table><tr><th>Window days</th><th>Scenario completion</th><th>Mean unscheduled h</th></tr>${windowRows}</table>`;
   }
+  const remedies=state.network["operational-remedies"];
+  if(remedies){
+   const rows=(remedies.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.scenario_completion_rate*100).toFixed(1)}%</td><td>${(item.mean_completion_rate*100).toFixed(1)}%</td><td>${item.unscheduled_hours_band.p50.toFixed(0)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Weather/outage remedies · ${remedies.episodes} episodes · ${remedies.scenarios_per_episode} calendars each · capacity cost not modelled</p><table><tr><th>Remedy</th><th>Scenario completion</th><th>Mean completion</th><th>Unscheduled P50</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

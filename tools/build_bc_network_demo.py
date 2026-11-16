@@ -1203,11 +1203,24 @@ def _operational_stress(
     outage_days: tuple[int, ...] = (11, 12, 13, 14, 15),
     weather_probability: float = 0.20,
     seed: int = 7,
+    extra_crews: list[ShiftCrew] | None = None,
+    extra_machines: list[ShiftMachine] | None = None,
+    scope_factor: float = 1.0,
 ) -> dict[str, Any]:
     """Stress the first-year package with assumed weather and outage closures."""
+    if not 0 < scope_factor <= 1:
+        raise ValueError("scope_factor must be in (0, 1]")
     actions = [
         TacticalAction.model_validate(item) for item in policy_execution["tactical"]["actions"]
     ]
+    if scope_factor < 1:
+        actions = [
+            action.model_copy(
+                update={"capacity_units": round(action.capacity_units * scope_factor, 2)}
+            )
+            for action in actions
+            if action.capacity_units * scope_factor > 0
+        ]
     year = int(policy_execution["selection"]["year"])
     total_hours = sum(action.capacity_units for action in actions)
     baseline = _shifts(
@@ -1215,6 +1228,8 @@ def _operational_stress(
         "bc-hydro-network-2026",
         profiles,
         max_days_per_year=window_days,
+        extra_crews=extra_crews,
+        extra_machines=extra_machines,
     )
     rng = random.Random(seed)
     details = []
@@ -1229,6 +1244,8 @@ def _operational_stress(
             profiles,
             blocked_days={year: sorted(blocked)},
             max_days_per_year=window_days,
+            extra_crews=extra_crews,
+            extra_machines=extra_machines,
         )
         productive = plan.total_productive_hours
         details.append(
@@ -1468,6 +1485,146 @@ def _operational_stress_scan(
     }
 
 
+def _operational_remedies(
+    rolling_policy: dict[str, Any],
+    fixed_actions: list[dict[str, Any]],
+    segments: list[dict[str, Any]],
+    units: list[dict[str, Any]],
+    towers: list[dict[str, Any]],
+    profiles: list[ContractorProfile],
+    *,
+    scenarios: int = 50,
+    window_days: int = 75,
+    outage_days: tuple[int, ...] = (11, 12, 13, 14, 15),
+    weather_probability: float = 0.20,
+    seed: int = 7,
+) -> dict[str, Any]:
+    """Compare added shift capacity with a smaller first-year scope."""
+    shared_crew = ShiftCrew(
+        crew_id="shared-relief-crew",
+        methods=["manual", "mowing", "mechanical"],
+        shift_hours=8.0,
+        contractor_id=None,
+    )
+    shared_machine = ShiftMachine(
+        machine_id="shared-relief-machine",
+        methods=["mowing", "mechanical"],
+        shift_hours=8.0,
+        contractor_id=None,
+    )
+    case_specs = [
+        ("baseline", {}, "75-day window, no added capacity"),
+        ("+1 shared crew", {"extra_crews": [shared_crew]}, "75-day window, one shared crew"),
+        (
+            "+1 shared crew + machine",
+            {"extra_crews": [shared_crew], "extra_machines": [shared_machine]},
+            "75-day window, one shared crew and machine",
+        ),
+        (
+            "10% scope reduction",
+            {"scope_factor": 0.9},
+            "75-day window, 10% proportional scope reduction",
+        ),
+        ("90-day window", {"window_days": 90}, "90-day window, no added capacity"),
+    ]
+    stats = {
+        name: {
+            "scenarios": 0,
+            "feasible": 0,
+            "unscheduled": [],
+            "assignments": [],
+            "completion": [],
+            "full_episodes": 0,
+        }
+        for name, _kwargs, _description in case_specs
+    }
+    episode_details = []
+    episodes = sorted(
+        rolling_policy["episodes_detail"],
+        key=lambda episode: int(episode["index"]),
+    )
+    for episode in episodes:
+        package = _policy_execution_for_episode(
+            episode,
+            fixed_actions,
+            segments,
+            units,
+            towers,
+            profiles,
+            "all rolling episodes, first year",
+        )
+        episode_index = int(episode["index"])
+        case_values = {}
+        for name, kwargs, _description in case_specs:
+            stress = _operational_stress(
+                package,
+                profiles,
+                scenarios=scenarios,
+                window_days=kwargs.get("window_days", window_days),
+                outage_days=outage_days,
+                weather_probability=weather_probability,
+                seed=seed + episode_index * 100,
+                extra_crews=kwargs.get("extra_crews"),
+                extra_machines=kwargs.get("extra_machines"),
+                scope_factor=kwargs.get("scope_factor", 1.0),
+            )
+            details = stress["scenarios_detail"]
+            values = stats[name]
+            values["scenarios"] += len(details)
+            values["feasible"] += sum(item["feasible"] for item in details)
+            values["unscheduled"].extend(item["unscheduled_hours"] for item in details)
+            values["assignments"].extend(item["assignments"] for item in details)
+            values["completion"].extend(item["completion_rate"] for item in details)
+            values["full_episodes"] += stress["completion_probability"] == 1
+            case_values[name] = stress["completion_probability"]
+        episode_details.append({"episode_index": episode_index, "cases": case_values})
+    cases = []
+    for name, _kwargs, description in case_specs:
+        values = stats[name]
+        unscheduled = values["unscheduled"]
+        assignments = values["assignments"]
+        cases.append(
+            {
+                "name": name,
+                "description": description,
+                "scenario_completion_rate": (
+                    values["feasible"] / values["scenarios"] if values["scenarios"] else 0.0
+                ),
+                "mean_completion_rate": round(float(np.mean(values["completion"])), 4),
+                "unscheduled_hours_band": {
+                    "p10": round(float(np.percentile(unscheduled, 10)), 2),
+                    "p50": round(float(np.percentile(unscheduled, 50)), 2),
+                    "p90": round(float(np.percentile(unscheduled, 90)), 2),
+                    "mean": round(float(np.mean(unscheduled)), 2),
+                },
+                "shift_assignments_band": {
+                    "p10": round(float(np.percentile(assignments, 10)), 1),
+                    "p50": round(float(np.percentile(assignments, 50)), 1),
+                    "p90": round(float(np.percentile(assignments, 90)), 1),
+                },
+                "episodes_with_full_completion": values["full_episodes"],
+            }
+        )
+    return {
+        "schema_version": "brushline.operational-remedies.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "episodes": len(episodes),
+        "scenarios_per_episode": scenarios,
+        "window_days": window_days,
+        "outage_days": list(outage_days),
+        "weather_probability": weather_probability,
+        "seed": seed,
+        "cases": cases,
+        "episodes_detail": episode_details,
+        "caveats": [
+            "Capacity and scope remedies are hypothetical scheduling tests, not contractor commitments.",
+            "Weather loss is independent per day and the outage block is assumed, not a forecast or outage schedule.",
+            "Scope reduction is a proportional hours test, not a risk-ranked deferral policy.",
+            "Only first-year shift scheduling is tested; access, later years, and safety are not certified.",
+        ],
+    }
+
+
 def _scene(
     network: dict[str, Any],
     segments: list[dict[str, Any]],
@@ -1603,6 +1760,8 @@ def _shifts(
     *,
     blocked_days: dict[int, list[int]] | None = None,
     max_days_per_year: int = 260,
+    extra_crews: list[ShiftCrew] | None = None,
+    extra_machines: list[ShiftMachine] | None = None,
 ) -> ShiftPlan:
     """Build a deterministic crew and machine shift schedule for tactical actions."""
     work_items = [
@@ -1637,6 +1796,10 @@ def _shifts(
         for profile in profiles
     ]
     machines = [machine for machine in machines if machine.methods]
+    if extra_crews:
+        crews.extend(extra_crews)
+    if extra_machines:
+        machines.extend(extra_machines)
     return build_shift_plan(
         plan_id="shifts-bc-network",
         instance_id=instance_id,
@@ -1833,6 +1996,7 @@ def _summary(
     static_plan: dict[str, Any],
     operational_stress: dict[str, Any],
     operational_stress_scan: dict[str, Any],
+    operational_remedies: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -2074,6 +2238,21 @@ def _summary(
             f"{operational_stress_scan['failure_sources']['crew_capacity']}, none "
             f"{operational_stress_scan['failure_sources']['none']}.",
             "",
+            "## Weather/outage remedies",
+            "",
+            "| Remedy | Scenario completion | Mean completion | Unscheduled P50 |",
+            "|---|---:|---:|---:|",
+        ]
+    )
+    for case in operational_remedies["cases"]:
+        lines.append(
+            f"| {case['name']} | {case['scenario_completion_rate']:.1%} | "
+            f"{case['mean_completion_rate']:.1%} | "
+            f"{case['unscheduled_hours_band']['p50']:.0f} |"
+        )
+    lines.extend(
+        [
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -2085,6 +2264,7 @@ def _summary(
             "- The year-one execution package selects the median-cost episode and uses prototype tactical, access, resource, and shift assumptions; it is not a commitment.",
             "- Static budget-headroom plans are existing frontier candidates evaluated against a common budget; no robust optimization or probabilistic guarantee is claimed.",
             "- Weather/outage stress is an assumed first-year shift calendar; it is not a forecast, outage schedule, or safety certification.",
+            "- Capacity and scope remedies are hypothetical scheduling tests; added capacity cost and contractor commitments are not modelled.",
             "- No asset-owner clearance standard, outage constraint, weather, or safety certification is claimed.",
         ]
     )
@@ -2298,6 +2478,14 @@ def main() -> None:
         towers,
         profiles,
     )
+    operational_remedies = _operational_remedies(
+        rolling_policy.model_dump(mode="json"),
+        milp_balanced["actions"],
+        segments,
+        units,
+        towers,
+        profiles,
+    )
     static_plan = evaluate_static_plans(
         instance_id="bc-hydro-network-2026",
         plans=[
@@ -2431,6 +2619,7 @@ def main() -> None:
         ("static-robust.json", static_plan.model_dump(mode="json")),
         ("operational-stress.json", operational_stress),
         ("operational-stress-scan.json", operational_stress_scan),
+        ("operational-remedies.json", operational_remedies),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -2453,6 +2642,7 @@ def main() -> None:
             static_plan.model_dump(mode="json"),
             operational_stress,
             operational_stress_scan,
+            operational_remedies,
         ),
         encoding="utf-8",
     )

@@ -133,6 +133,7 @@
 - [Rolling-horizon policy](reference/rolling-policy.html): executable persistence-forecast policy, annual re-solves, state carry-over, cost/risk bands, and limits.
 - [Static budget-headroom plans](reference/static-plan.html): frontier candidates tested against a common actual budget, with budget-violation rates and risk trade-offs.
 - [Weather and outage stress](reference/operational-stress.html): assumed first-year calendar, completion rate, and unscheduled work.
+- [Weather/outage remedies](reference/operational-remedies.html): added crew/machine capacity versus scope reduction and longer windows.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

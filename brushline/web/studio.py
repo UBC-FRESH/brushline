@@ -68,6 +68,7 @@ def _network_artifacts() -> dict[str, Any]:
             "static-robust",
             "operational-stress",
             "operational-stress-scan",
+            "operational-remedies",
             "access",
         )
     }
@@ -404,6 +405,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 static_plan=artifacts["static-robust"],
                 operational_stress=artifacts["operational-stress"],
                 operational_stress_scan=artifacts["operational-stress-scan"],
+                operational_remedies=artifacts["operational-remedies"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

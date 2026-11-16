@@ -385,6 +385,7 @@ def build_planning_brief(
     static_plan: Mapping[str, Any] | None = None,
     operational_stress: Mapping[str, Any] | None = None,
     operational_stress_scan: Mapping[str, Any] | None = None,
+    operational_remedies: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -409,6 +410,8 @@ def build_planning_brief(
         Weather/outage shift stress. The section is omitted when absent.
     operational_stress_scan : mapping, optional
         All-episode weather/outage scan. The section is omitted when absent.
+    operational_remedies : mapping, optional
+        Capacity and scope remedy comparison. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -464,6 +467,7 @@ def build_planning_brief(
     stress_scan_sources = (operational_stress_scan or {}).get("failure_sources") or {}
     stress_scan_unscheduled = (operational_stress_scan or {}).get("unscheduled_hours_band") or {}
     stress_scan_window = (operational_stress_scan or {}).get("window_sensitivity") or []
+    remedy_cases = (operational_remedies or {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1029,6 +1033,42 @@ def build_planning_brief(
             if operational_stress_scan
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Weather/outage remedies",
+                    paragraphs=[
+                        f"Same {operational_remedies.get('episodes')} episodes and "
+                        f"{operational_remedies.get('scenarios_per_episode')} calendars. "
+                        "Capacity and scope remedies are hypothetical scheduling tests; added "
+                        "capacity cost and contractor commitments are not modelled.",
+                        "Adding a shared crew alone did not improve completion because mowing and "
+                        "mechanical work also needs machine capacity. A shared crew plus machine "
+                        "was the strongest capacity remedy; a 10% proportional scope reduction was "
+                        "modest; a longer window helped but did not close the gap.",
+                    ],
+                    table=_table(
+                        [
+                            "Remedy",
+                            "Scenario full completion",
+                            "Mean completion",
+                            "Unscheduled P50",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                _percent(case.get("scenario_completion_rate")),
+                                _percent(case.get("mean_completion_rate")),
+                                _number(case.get("unscheduled_hours_band", {}).get("p50")),
+                            ]
+                            for case in remedy_cases
+                        ],
+                    ),
+                )
+            ]
+            if operational_remedies
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1063,7 +1103,7 @@ def build_planning_brief(
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
-                "operational-stress-scan, and access JSON files.",
+                "operational-stress-scan, operational-remedies, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",
