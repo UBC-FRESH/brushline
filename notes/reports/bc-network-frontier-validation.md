@@ -18,11 +18,11 @@ resampled rather than fixed?
 | Target | Paths | Final gap P50 | Final gap P90 | Recovery P50 | Within 0.005 | Reopt cost P50 |
 |---:|---:|---:|---:|---:|---:|---:|
 | 0% | 100 | 0.0000 | 0.0000 | 0.0000 | 100.0% | 295,899 |
-| 5% | 100 | -0.0010 | 0.0072 | 0.0117 | 87.0% | 295,043 |
-| 10% | 100 | -0.0010 | 0.0072 | 0.0217 | 87.0% | 291,878 |
-| 15% | 100 | -0.0010 | 0.0072 | 0.0314 | 87.0% | 289,012 |
+| 5% | 100 | -0.0010 | 0.0072 | 0.0112 | 87.0% | 295,043 |
+| 10% | 100 | -0.0010 | 0.0072 | 0.0214 | 87.0% | 291,878 |
+| 15% | 100 | -0.0010 | 0.0072 | 0.0312 | 87.0% | 289,012 |
 | 20% | 100 | -0.0010 | 0.0072 | 0.0421 | 87.0% | 285,927 |
-| 25% | 100 | -0.0010 | 0.0072 | 0.0517 | 87.0% | 283,018 |
+| 25% | 100 | -0.0010 | 0.0072 | 0.0516 | 87.0% | 283,018 |
 
 All tested fractions remain budget-feasible and recover most or all of the fixed-future risk gap.
 The 25% point has the highest recovery and lowest median reoptimized cost, but also the largest
