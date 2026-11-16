@@ -63,6 +63,7 @@ def _network_artifacts() -> dict[str, Any]:
             "uncertainty",
             "scenario-optimization",
             "rolling-policy",
+            "policy-execution",
             "access",
         )
     }
@@ -394,6 +395,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 scenario_optimization=artifacts["scenario-optimization"],
                 access=artifacts["access"],
                 rolling_policy=artifacts["rolling-policy"],
+                policy_execution=artifacts["policy-execution"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

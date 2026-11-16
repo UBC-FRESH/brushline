@@ -91,6 +91,8 @@ def test_rolling_policy_bands_and_determinism() -> None:
     assert first.fixed_cost_band.p10 <= first.fixed_cost_band.p50 <= first.fixed_cost_band.p90
     assert first.rolling_cost_band.p10 <= first.rolling_cost_band.p50 <= first.rolling_cost_band.p90
     assert all(item.status == "optimal" for item in first.episodes_detail[0].years)
+    assert all(item.action_details for item in first.episodes_detail[0].years)
+    assert first.episodes_detail[0].years[0].action_details[0].unit_id
     assert first.rolling_budget_violation_probability == 0
     assert first.fixed_budget_violation_probability >= 0
     assert first.mean_rolling_objective <= first.mean_fixed_objective

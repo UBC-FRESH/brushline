@@ -380,6 +380,7 @@ def build_planning_brief(
     scenario_optimization: Mapping[str, Any],
     access: Mapping[str, Any],
     rolling_policy: Mapping[str, Any] | None = None,
+    policy_execution: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -394,6 +395,8 @@ def build_planning_brief(
         Workforce scenario results.
     rolling_policy : mapping, optional
         Rolling-horizon policy result. The section is omitted when absent.
+    policy_execution : mapping, optional
+        First-year policy execution package. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -437,6 +440,9 @@ def build_planning_brief(
     rolling_adaptive_cost = (rolling_policy or {}).get("rolling_cost_band") or {}
     rolling_fixed_risk = (rolling_policy or {}).get("fixed_risk_band") or {}
     rolling_adaptive_risk = (rolling_policy or {}).get("rolling_risk_band") or {}
+    execution_policy = (policy_execution or {}).get("policy") or {}
+    execution_fixed = (policy_execution or {}).get("fixed") or {}
+    execution_selection = (policy_execution or {}).get("selection") or {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -749,6 +755,70 @@ def build_planning_brief(
             if rolling_policy
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Rolling year-one execution",
+                    paragraphs=[
+                        f"Selected episode {execution_selection.get('episode_index')} by median "
+                        f"rolling five-year cost for {execution_selection.get('year')}. "
+                        f"The first-year policy actions were mapped to "
+                        f"{execution_policy.get('tactical_actions')} tactical actions, access "
+                        "checks, resources, work orders, and shifts.",
+                        f"Policy cost {_number(execution_policy.get('cost'))} CAD and "
+                        f"{_number(execution_policy.get('hours'))} crew-hours; fixed year-one "
+                        f"reference {_number(execution_fixed.get('cost'))} CAD and "
+                        f"{_number(execution_fixed.get('hours'))} crew-hours. "
+                        "Resource feasibility: "
+                        f"{_text(execution_policy.get('resource_feasible'))}; shift feasibility: "
+                        f"{_text(execution_policy.get('shift_feasible'))}.",
+                        "This is an execution test for one representative policy episode, not a "
+                        "commitment or a claim that every episode is operable in the same way.",
+                    ],
+                    table=_table(
+                        [
+                            "Metric",
+                            "Policy year 1",
+                            "Fixed year 1",
+                        ],
+                        [
+                            [
+                                "Segment treatments",
+                                execution_policy.get("actions"),
+                                execution_fixed.get("actions"),
+                            ],
+                            [
+                                "Cost",
+                                _number(execution_policy.get("cost")),
+                                _number(execution_fixed.get("cost")),
+                            ],
+                            [
+                                "Crew-hours",
+                                _number(execution_policy.get("hours")),
+                                _number(execution_fixed.get("hours")),
+                            ],
+                            [
+                                "Tactical actions",
+                                execution_policy.get("tactical_actions"),
+                                "n/a",
+                            ],
+                            [
+                                "Work orders",
+                                execution_policy.get("work_orders"),
+                                "n/a",
+                            ],
+                            [
+                                "Shift assignments",
+                                execution_policy.get("shift_assignments"),
+                                "n/a",
+                            ],
+                        ],
+                    ),
+                )
+            ]
+            if policy_execution
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -781,8 +851,8 @@ def build_planning_brief(
                 f"Run `{command}` from the repository root. The brief was generated from the model "
                 f"artifact set at {generated_utc or datetime.now(UTC)}.",
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
-                "workforce, bid, uncertainty, scenario-optimization, rolling-policy, and "
-                "access JSON files.",
+                "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
+                "policy-execution, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

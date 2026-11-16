@@ -18,6 +18,7 @@ the model outputs into a document that a reviewer can read without navigating th
 - execution-uncertainty bands and shortfall probabilities;
 - fixed versus hindsight-adaptive cost/risk comparison;
 - rolling-horizon policy comparison;
+- first-year rolling execution handoff;
 - heuristic scaling evidence;
 - caveats and reproduction metadata.
 

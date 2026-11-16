@@ -81,6 +81,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["uncertainty"]["cost_band"]["p50"] > 0
         assert network_plan["scenario-optimization"]["scenarios"] >= 1
         assert network_plan["rolling-policy"]["episodes"] >= 1
+        assert network_plan["policy-execution"]["policy"]["shift_feasible"]
         brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
         assert brief.status_code == 200
         assert brief.headers["content-type"].startswith("text/html")
@@ -94,6 +95,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert brief_md.headers["content-type"].startswith("text/markdown")
         assert "# BC Hydro public-data network planning brief" in brief_md.text
         assert "## Rolling-horizon policy" in brief_md.text
+        assert "## Rolling year-one execution" in brief_md.text
         assert (
             client.get("/api/studio/network/brief?instance_id=synthetic-corridor").status_code
             == 404
@@ -132,6 +134,7 @@ def test_studio_static_contains_pre_post_and_skin_hooks() -> None:
     assert "variant" in js
     assert "network/brief" in js
     assert "Rolling-horizon policy" in js
+    assert "Rolling year-one execution" in js
     assert (
         "Walk this block"
         in (__import__("pathlib").Path("brushline/web/static/studio.html")).read_text()

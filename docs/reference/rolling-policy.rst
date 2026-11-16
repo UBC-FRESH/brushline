@@ -53,6 +53,40 @@ The rolling policy trades a small amount of nominal risk reduction for a much na
 annual budget feasibility. It adapts the current-year actions to observed conditions rather than
 committing the nominal five-year schedule.
 
+## First-year execution
+
+The median-cost policy episode (episode 18) was converted into a first-year tactical, access,
+resource, work-order, and shift package. This is an execution test, not a new optimization.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Metric
+     - Policy year 1
+     - Fixed year 1
+   * - Segment treatments
+     - 45
+     - 46
+   * - Cost
+     - 59,794 CAD
+     - 59,972 CAD
+   * - Crew-hours
+     - 814
+     - 1,000
+   * - Tactical actions
+     - 17
+     - n/a
+   * - Work orders
+     - 17
+     - n/a
+   * - Shift assignments
+     - 116
+     - n/a
+
+The policy package is resource- and shift-feasible: 17/17 access checks open, 42,522 CAD modelled
+resource cost, 813.7 productive hours, and 8.5 travel hours. It is one median-cost episode, not an
+operability guarantee for every episode.
+
 ## Scale test
 
 The same policy was run on a replicated 590-segment stress instance with tenfold annual budget and

@@ -949,6 +949,94 @@ def _tactical(
     return program, access, resources, operations
 
 
+def _policy_execution(
+    rolling_policy: dict[str, Any],
+    fixed_actions: list[dict[str, Any]],
+    segments: list[dict[str, Any]],
+    units: list[dict[str, Any]],
+    towers: list[dict[str, Any]],
+    profiles: list[ContractorProfile],
+) -> dict[str, Any]:
+    """Turn the median rolling-policy episode into a first-year execution package."""
+    episodes = sorted(
+        rolling_policy["episodes_detail"],
+        key=lambda episode: (float(episode["rolling_cost"]), int(episode["index"])),
+    )
+    episode = episodes[len(episodes) // 2]
+    year_row = episode["years"][0]
+    year = int(year_row["year"])
+    policy_actions = [dict(action) for action in year_row.get("action_details") or []]
+    if not policy_actions:
+        raise ValueError("rolling-policy episode has no first-year action details")
+    source_actions = [
+        {
+            "unit_id": action["unit_id"],
+            "year": year,
+            "method": action["method"],
+            "cost": float(action["cost"]),
+            "hours": float(action["hours"]),
+            "segment_id": action["segment_id"],
+        }
+        for action in policy_actions
+    ]
+    program, access, resources, operations = _tactical(source_actions, segments, units, towers)
+    shifts = _shifts(program.actions, "bc-hydro-network-2026", profiles)
+    fixed_year = [action for action in fixed_actions if int(action["year"]) == year]
+    fixed_cost = sum(float(action["cost"]) for action in fixed_year)
+    fixed_hours = sum(float(action["hours"]) for action in fixed_year)
+    policy_cost = float(year_row["cost"])
+    policy_hours = float(year_row["hours"])
+    factors = next(
+        (factor for factor in episode["factors"] if int(factor["year"]) == year),
+        {},
+    )
+    return {
+        "schema_version": "brushline.policy-execution.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "selection": {
+            "rule": "median rolling five-year cost",
+            "episode_index": episode["index"],
+            "episode_cost": episode["rolling_cost"],
+            "year": year,
+            "factors": factors,
+        },
+        "policy": {
+            "actions": len(policy_actions),
+            "cost": round(policy_cost, 2),
+            "hours": round(policy_hours, 2),
+            "risk": year_row["risk"],
+            "tactical_actions": len(program.actions),
+            "work_orders": len(operations.work_orders),
+            "shift_assignments": len(shifts.assignments),
+            "resource_feasible": resources.feasible,
+            "shift_feasible": shifts.feasible,
+        },
+        "fixed": {
+            "actions": len(fixed_year),
+            "cost": round(fixed_cost, 2),
+            "hours": round(fixed_hours, 2),
+        },
+        "comparison": {
+            "cost_delta": round(policy_cost - fixed_cost, 2),
+            "hours_delta": round(policy_hours - fixed_hours, 2),
+            "cost_ratio": round(policy_cost / fixed_cost, 4) if fixed_cost else None,
+            "hours_ratio": round(policy_hours / fixed_hours, 4) if fixed_hours else None,
+        },
+        "policy_actions": policy_actions,
+        "tactical": program.model_dump(mode="json"),
+        "access": access.model_dump(mode="json"),
+        "resources": resources.model_dump(mode="json"),
+        "operations": operations.model_dump(mode="json"),
+        "shifts": shifts.model_dump(mode="json"),
+        "caveats": [
+            "Selected from the median rolling five-year cost, not the best or worst episode.",
+            "First-year execution package only; future years are re-planned by the policy.",
+            "Tactical and shift assumptions are prototype values, not field rates or commitments.",
+            "No outage, weather, safety, or asset-owner clearance standard is claimed.",
+        ],
+    }
+
+
 def _scene(
     network: dict[str, Any],
     segments: list[dict[str, Any]],
@@ -1300,6 +1388,7 @@ def _summary(
     uncertainty: dict[str, Any],
     scenario_optimization: dict[str, Any],
     rolling_policy: dict[str, Any],
+    policy_execution: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1462,6 +1551,26 @@ def _summary(
             f"{rolling_policy['mean_regret']:.4f}. Rolling improved "
             f"{rolling_policy['probability_rolling_improves']:.1%} of episodes.",
             "",
+            "## Rolling year-one execution",
+            "",
+            f"Selected episode {policy_execution['selection']['episode_index']} by median rolling "
+            f"five-year cost. First-year policy actions are converted to tactical/access/resource "
+            f"and shift plans. This is an execution test, not a new optimization.",
+            "",
+            "| Metric | Policy year 1 | Fixed year 1 |",
+            "|---|---:|---:|",
+            f"| Segment treatments | {policy_execution['policy']['actions']} | "
+            f"{policy_execution['fixed']['actions']} |",
+            f"| Cost | {policy_execution['policy']['cost']:.0f} | "
+            f"{policy_execution['fixed']['cost']:.0f} |",
+            f"| Crew-hours | {policy_execution['policy']['hours']:.0f} | "
+            f"{policy_execution['fixed']['hours']:.0f} |",
+            f"| Tactical actions | {policy_execution['policy']['tactical_actions']} | n/a |",
+            f"| Work orders | {policy_execution['policy']['work_orders']} | n/a |",
+            f"| Shift assignments | {policy_execution['policy']['shift_assignments']} | n/a |",
+            f"| Resource feasible | {policy_execution['policy']['resource_feasible']} | n/a |",
+            f"| Shift feasible | {policy_execution['policy']['shift_feasible']} | n/a |",
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -1470,7 +1579,8 @@ def _summary(
             "- The BAU row is a fixed five-year mowing cycle, not a like-for-like comparison of every strategy.",
             "- Scenario-optimized planning is a hindsight upper bound: it re-solves after seeing each sampled scenario and is not an executable forecast-update policy.",
             "- The rolling policy observes current conditions only and assumes they persist over its lookahead; it is a heuristic policy, not a stochastic dynamic program.",
-            "- No asset-owner clearance standard, outage constraint, or safety certification is claimed.",
+            "- The year-one execution package selects the median-cost episode and uses prototype tactical, access, resource, and shift assumptions; it is not a commitment.",
+            "- No asset-owner clearance standard, outage constraint, weather, or safety certification is claimed.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -1658,6 +1768,14 @@ def main() -> None:
         seed=7,
         created_utc=CREATED,
     )
+    policy_execution = _policy_execution(
+        rolling_policy.model_dump(mode="json"),
+        milp_balanced["actions"],
+        segments,
+        units,
+        towers,
+        profiles,
+    )
     bid = _bid(tactical.actions, units, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
@@ -1769,6 +1887,7 @@ def main() -> None:
         ("uncertainty.json", uncertainty.model_dump(mode="json")),
         ("scenario-optimization.json", scenario_optimization.model_dump(mode="json")),
         ("rolling-policy.json", rolling_policy.model_dump(mode="json")),
+        ("policy-execution.json", policy_execution),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -1786,6 +1905,7 @@ def main() -> None:
             uncertainty.model_dump(mode="json"),
             scenario_optimization.model_dump(mode="json"),
             rolling_policy.model_dump(mode="json"),
+            policy_execution,
         ),
         encoding="utf-8",
     )

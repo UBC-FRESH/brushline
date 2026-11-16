@@ -257,6 +257,10 @@ test suite. This page is the map.
      - ``brushline.rolling-policy.v1``
      - ``simulate_rolling_policy``
      - Annual-factor episodes, observed current conditions, persistence forecast, short lookahead, committed-year state carry-over, fixed-versus-rolling bands, and regret
+   * - Policy execution
+     - ``brushline.policy-execution.v1``
+     - ``tools/build_policy_execution.py``
+     - Median rolling episode, first-year segment actions, tactical/access/resource/work-order/shift handoff, feasibility, and fixed-year comparison
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

@@ -45,6 +45,20 @@ class AnnualFactors(BaseModel):
     capacity_factor: float = Field(gt=0)
 
 
+class RollingAction(BaseModel):
+    """One committed segment treatment in a rolling-policy year."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    segment_id: str
+    unit_id: str
+    method: str
+    cost: float = Field(ge=0)
+    hours: float = Field(ge=0)
+    risk_before: float = Field(ge=0, le=0.95)
+    risk_after: float = Field(ge=0, le=0.95)
+
+
 class RollingYear(BaseModel):
     """One committed year in a rolling-policy episode."""
 
@@ -52,6 +66,7 @@ class RollingYear(BaseModel):
 
     year: int
     actions: int = Field(ge=0)
+    action_details: list[RollingAction] = Field(default_factory=list)
     cost: float = Field(ge=0)
     hours: float = Field(ge=0)
     risk: float = Field(ge=0, le=0.95)
@@ -337,6 +352,7 @@ def simulate_rolling_policy(
         rolling_capacity = 0.0
         annual_risks: list[float] = []
         total_length = sum(segment.length_m for segment in segments)
+        segment_units = {segment.segment_id: segment.span_id for segment in segments}
         for offset, period in enumerate(periods):
             factor = factors[offset]
             scenario_segments = [
@@ -426,6 +442,18 @@ def simulate_rolling_policy(
                 RollingYear(
                     year=period.year,
                     actions=len(year_actions),
+                    action_details=[
+                        RollingAction(
+                            segment_id=action.segment_id,
+                            unit_id=segment_units.get(action.segment_id, "unknown"),
+                            method=str(action.method),
+                            cost=action.cost,
+                            hours=action.hours,
+                            risk_before=action.risk_before,
+                            risk_after=action.risk_after,
+                        )
+                        for action in year_actions
+                    ],
                     cost=round(year_cost, 2),
                     hours=round(year_hours, 2),
                     risk=round(annual_risk, 6),
@@ -510,6 +538,7 @@ def simulate_rolling_policy(
 __all__ = [
     "ROLLING_POLICY_SCHEMA_VERSION",
     "AnnualFactors",
+    "RollingAction",
     "RollingBand",
     "RollingEpisode",
     "RollingPolicyError",

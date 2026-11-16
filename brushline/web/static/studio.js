@@ -169,6 +169,10 @@ function drawSchedule(){
   if(rolling){
    $("#schedule").innerHTML+=`<p class="schedule-note">Rolling-horizon policy · ${rolling.lookahead_years}-year lookahead · ${rolling.episodes} annual-factor episodes · persistence forecast</p><table><tr><th>Policy</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th><th>Capacity violation</th></tr><tr><td>Fixed nominal</td><td>${rolling.fixed_cost_band.p10.toFixed(0)}–${rolling.fixed_cost_band.p90.toFixed(0)}</td><td>${rolling.fixed_risk_band.mean.toFixed(4)}</td><td>${(rolling.fixed_budget_violation_probability*100).toFixed(1)}%</td><td>${(rolling.fixed_capacity_violation_probability*100).toFixed(1)}%</td></tr><tr><td>Rolling policy</td><td>${rolling.rolling_cost_band.p10.toFixed(0)}–${rolling.rolling_cost_band.p90.toFixed(0)}</td><td>${rolling.rolling_risk_band.mean.toFixed(4)}</td><td>${(rolling.rolling_budget_violation_probability*100).toFixed(1)}%</td><td>${(rolling.rolling_capacity_violation_probability*100).toFixed(1)}%</td></tr></table>`;
   }
+  const execution=state.network["policy-execution"];
+  if(execution){
+   $("#schedule").innerHTML+=`<p class="schedule-note">Rolling year-one execution · median-cost episode ${execution.selection.episode_index} · year ${execution.selection.year}</p><table><tr><th>Metric</th><th>Policy year 1</th><th>Fixed year 1</th></tr><tr><td>Segment treatments</td><td>${execution.policy.actions}</td><td>${execution.fixed.actions}</td></tr><tr><td>Cost</td><td>${execution.policy.cost.toFixed(0)}</td><td>${execution.fixed.cost.toFixed(0)}</td></tr><tr><td>Crew-hours</td><td>${execution.policy.hours.toFixed(0)}</td><td>${execution.fixed.hours.toFixed(0)}</td></tr><tr><td>Tactical / work orders / shifts</td><td>${execution.policy.tactical_actions} / ${execution.policy.work_orders} / ${execution.policy.shift_assignments}</td><td>n/a</td></tr><tr><td>Feasibility</td><td>resource ${execution.policy.resource_feasible} · shift ${execution.policy.shift_feasible}</td><td>n/a</td></tr></table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

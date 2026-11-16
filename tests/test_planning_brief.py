@@ -163,6 +163,20 @@ def _artifacts() -> dict[str, Any]:
         "mean_regret": 0.0735,
         "probability_rolling_improves": 1.0,
     }
+    policy_execution = {
+        "selection": {"episode_index": 18, "year": 2027},
+        "policy": {
+            "actions": 45,
+            "cost": 59794,
+            "hours": 814,
+            "tactical_actions": 17,
+            "work_orders": 17,
+            "shift_assignments": 116,
+            "resource_feasible": True,
+            "shift_feasible": True,
+        },
+        "fixed": {"actions": 46, "cost": 59972, "hours": 1000},
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -181,6 +195,7 @@ def _artifacts() -> dict[str, Any]:
         "scenario_optimization": scenario_optimization,
         "access": access,
         "rolling_policy": rolling_policy,
+        "policy_execution": policy_execution,
     }
 
 
@@ -202,6 +217,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Hindsight adaptive planning" in brief.markdown
     assert "## Rolling-horizon policy" in brief.markdown
     assert "20 annual-factor episodes; 2-year lookahead" in brief.markdown
+    assert "## Rolling year-one execution" in brief.markdown
+    assert "Selected episode 18" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown
     assert "current-mix" in brief.markdown

@@ -77,6 +77,7 @@ from brushline.strategic.reports import (
 from brushline.strategic.rolling_policy import (
     ROLLING_POLICY_SCHEMA_VERSION,
     AnnualFactors,
+    RollingAction,
     RollingBand,
     RollingEpisode,
     RollingPolicyError,
@@ -191,6 +192,7 @@ __all__ = [
     "PortfolioSelection",
     "PortfolioViolation",
     "ReportError",
+    "RollingAction",
     "RollingBand",
     "RollingEpisode",
     "RollingPolicyError",
