@@ -102,6 +102,7 @@ class RollingPolicyResult(BaseModel):
     schema_version: Literal["brushline.rolling-policy.v1"] = ROLLING_POLICY_SCHEMA_VERSION
     instance_id: str
     policy: Literal["persistence-forecast-v1"] = "persistence-forecast-v1"
+    solver: Literal["exact", "heuristic"]
     lookahead_years: int = Field(ge=1)
     episodes: int = Field(ge=1)
     seed: int
@@ -234,6 +235,8 @@ def simulate_rolling_policy(
     config: StatefulConfig | None = None,
     episodes: int = 30,
     lookahead_years: int | None = None,
+    solver: Literal["exact", "heuristic"] = "exact",
+    heuristic_iterations: int = 100,
     seed: int = 7,
     cost_sigma: float = 0.18,
     hours_sigma: float = 0.15,
@@ -262,6 +265,10 @@ def simulate_rolling_policy(
     lookahead_years : int, optional
         Number of years in each re-solve. The current year is always committed; the default
         solves the remaining horizon. A shorter window is faster and more myopic.
+    solver : {"exact", "heuristic"}, optional
+        Use the exact MILP or the Fresh Solutions feasible heuristic for each annual re-solve.
+    heuristic_iterations : int, optional
+        Local-search iterations when ``solver="heuristic"``.
     seed : int, optional
         Deterministic sampler seed.
     cost_sigma, hours_sigma, capacity_sigma : float, optional
@@ -285,6 +292,8 @@ def simulate_rolling_policy(
         raise RollingPolicyError("segments, methods, and periods must be non-empty")
     if episodes < 1:
         raise RollingPolicyError("episodes must be positive")
+    if heuristic_iterations < 1:
+        raise RollingPolicyError("heuristic_iterations must be positive")
     window = len(periods) if lookahead_years is None else lookahead_years
     if window < 1:
         raise RollingPolicyError("lookahead_years must be positive")
@@ -351,22 +360,37 @@ def simulate_rolling_policy(
                 )
                 for item in periods[offset : offset + window]
             ]
+            scenario_config = StatefulConfig(
+                risk_weight=rules.risk_weight,
+                cost_weight=rules.cost_weight,
+                hours_weight=rules.hours_weight,
+                growth_per_year=rules.growth_per_year,
+                max_mean_risk=rules.max_mean_risk,
+                max_seconds=max_seconds_per_solve,
+            )
             try:
-                plan = build_stateful_plan(
-                    instance_id=f"{instance_id}-rolling-{episode_index}-{period.year}",
-                    segments=scenario_segments,
-                    methods=scenario_methods,
-                    periods=scenario_periods,
-                    config=StatefulConfig(
-                        risk_weight=rules.risk_weight,
-                        cost_weight=rules.cost_weight,
-                        hours_weight=rules.hours_weight,
-                        growth_per_year=rules.growth_per_year,
-                        max_mean_risk=rules.max_mean_risk,
-                        max_seconds=max_seconds_per_solve,
-                    ),
-                    created_utc=created_utc,
-                )
+                if solver == "heuristic":
+                    from brushline.strategic.heuristic import build_stateful_heuristic
+
+                    plan = build_stateful_heuristic(
+                        instance_id=f"{instance_id}-rolling-{episode_index}-{period.year}",
+                        segments=scenario_segments,
+                        methods=scenario_methods,
+                        periods=scenario_periods,
+                        config=scenario_config,
+                        iterations=heuristic_iterations,
+                        seed=seed + episode_index * 10 + offset,
+                        created_utc=created_utc,
+                    )
+                else:
+                    plan = build_stateful_plan(
+                        instance_id=f"{instance_id}-rolling-{episode_index}-{period.year}",
+                        segments=scenario_segments,
+                        methods=scenario_methods,
+                        periods=scenario_periods,
+                        config=scenario_config,
+                        created_utc=created_utc,
+                    )
             except Exception as exc:  # pragma: no cover - defensive solver boundary
                 raise RollingPolicyError(
                     f"episode {episode_index} year {period.year} failed: {exc}"
@@ -447,6 +471,7 @@ def simulate_rolling_policy(
         regrets.append(regret)
     return RollingPolicyResult(
         instance_id=instance_id,
+        solver=solver,
         lookahead_years=window,
         episodes=episodes,
         seed=seed,

@@ -94,6 +94,21 @@ def test_rolling_policy_bands_and_determinism() -> None:
     assert first.rolling_budget_violation_probability == 0
     assert first.fixed_budget_violation_probability >= 0
     assert first.mean_rolling_objective <= first.mean_fixed_objective
+    heuristic = simulate_rolling_policy(
+        instance_id="rolling-heuristic",
+        segments=segments,
+        methods=methods,
+        periods=periods,
+        fixed=_fixed_plan(),
+        config=StatefulConfig(risk_weight=1.0, max_seconds=30),
+        episodes=1,
+        solver="heuristic",
+        heuristic_iterations=20,
+        seed=4,
+        created_utc=CREATED,
+    )
+    assert heuristic.solver == "heuristic"
+    assert heuristic.episodes_detail[0].years[0].status == "feasible"
 
 
 def test_rolling_policy_validation() -> None:

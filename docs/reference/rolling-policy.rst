@@ -53,6 +53,44 @@ The rolling policy trades a small amount of nominal risk reduction for a much na
 annual budget feasibility. It adapts the current-year actions to observed conditions rather than
 committing the nominal five-year schedule.
 
+## Scale test
+
+The same policy was run on a replicated 590-segment stress instance with tenfold annual budget and
+capacity. The fixed plan was solved exactly; the rolling policy used the Fresh Solutions heuristic for
+each annual re-solve.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Segments
+     - Policy
+     - 5-year cost P10-P90
+     - Mean risk
+     - Budget violation
+   * - 59
+     - Fixed nominal
+     - 265,469-333,437
+     - 0.0294
+     - 95.0%
+   * - 59
+     - Rolling exact
+     - 298,123-299,398
+     - 0.0296
+     - 0.0%
+   * - 590
+     - Fixed exact
+     - 2,655,911-3,335,908
+     - 0.0291
+     - 95.0%
+   * - 590
+     - Rolling heuristic
+     - 2,902,237-2,998,129
+     - 0.0297
+     - 0.0%
+
+The 590-segment case is a replicated stress instance, not a real network. The rolling annual plans
+are feasible heuristic incumbents, not optimal plans.
+
 ## Limits
 
 - Persistence forecast: current factors are assumed to persist over the two-year lookahead.
