@@ -269,6 +269,10 @@ test suite. This page is the map.
      - ``brushline.static-plan.v1``
      - ``evaluate_static_plans``
      - Frontier candidate stress against a common actual budget, annual-factor cost/hours bands, budget/capacity violations, and budget-risk recommendation
+   * - Operational stress
+     - ``brushline.operational-stress.v1``
+     - ``tools/build_operational_stress.py``
+     - Assumed weather/outage shift calendar, completion rate, blocked days, unscheduled hours, and failure reporting
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

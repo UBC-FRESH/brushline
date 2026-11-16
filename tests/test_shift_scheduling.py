@@ -63,6 +63,20 @@ def test_shift_plan_splits_work_across_days() -> None:
     assert plan.crew_utilization["crew-a"] == pytest.approx(13)
 
 
+def test_shift_plan_skips_blocked_days() -> None:
+    plan = build_shift_plan(
+        plan_id="s1",
+        instance_id="i1",
+        work_items=[_item()],
+        crews=_crews(),
+        machines=_machines(),
+        config=ShiftConfig(max_days_per_year=10, blocked_days={2027: [1, 2]}),
+        created_utc=CREATED,
+    )
+    assert plan.feasible
+    assert {item.day for item in plan.assignments}.isdisjoint({1, 2})
+
+
 def test_shift_plan_rejects_unknown_skill() -> None:
     plan = build_shift_plan(
         plan_id="s1",

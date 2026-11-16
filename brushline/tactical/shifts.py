@@ -64,6 +64,7 @@ class ShiftConfig(BaseModel):
 
     max_days_per_year: int = Field(default=260, ge=1, le=366)
     include_travel: bool = True
+    blocked_days: dict[int, list[int]] = Field(default_factory=dict)
 
 
 class ShiftAssignment(BaseModel):
@@ -171,7 +172,10 @@ def build_shift_plan(
         remaining = item.hours
         travel_remaining = item.travel_hours if rules.include_travel else 0.0
         delivered = False
+        blocked = set(rules.blocked_days.get(item.year, []))
         for day in range(1, rules.max_days_per_year + 1):
+            if day in blocked:
+                continue
             available_crews = [
                 (
                     candidate,

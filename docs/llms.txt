@@ -132,6 +132,7 @@
 - [Planning brief](reference/planning-brief.html): one-click self-contained decision record with frontier, tactical schedule, uncertainty, adaptation, caveats, and commit provenance.
 - [Rolling-horizon policy](reference/rolling-policy.html): executable persistence-forecast policy, annual re-solves, state carry-over, cost/risk bands, and limits.
 - [Static budget-headroom plans](reference/static-plan.html): frontier candidates tested against a common actual budget, with budget-violation rates and risk trade-offs.
+- [Weather and outage stress](reference/operational-stress.html): assumed first-year calendar, completion rate, and unscheduled work.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

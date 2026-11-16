@@ -383,6 +383,7 @@ def build_planning_brief(
     policy_execution: Mapping[str, Any] | None = None,
     policy_execution_scan: Mapping[str, Any] | None = None,
     static_plan: Mapping[str, Any] | None = None,
+    operational_stress: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -403,6 +404,8 @@ def build_planning_brief(
         All-episode first-year execution scan. The section is omitted when absent.
     static_plan : mapping, optional
         Static frontier-plan stress evaluation. The section is omitted when absent.
+    operational_stress : mapping, optional
+        Weather/outage shift stress. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -452,6 +455,9 @@ def build_planning_brief(
     scan_cost = (policy_execution_scan or {}).get("cost_band") or {}
     scan_hours = (policy_execution_scan or {}).get("hours_band") or {}
     static_plans = (static_plan or {}).get("plans") or []
+    stress_baseline = (operational_stress or {}).get("baseline") or {}
+    stress_unscheduled = (operational_stress or {}).get("unscheduled_hours_band") or {}
+    stress_assignments = (operational_stress or {}).get("shift_assignments_band") or {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -926,6 +932,59 @@ def build_planning_brief(
             if static_plan
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Weather and outage stress",
+                    paragraphs=[
+                        f"First-year shift calendar: {operational_stress.get('scenarios')} "
+                        f"scenarios, {operational_stress.get('window_days')}-day fall window, "
+                        f"fixed outage days {operational_stress.get('outage_days')}, and "
+                        f"{_percent(operational_stress.get('weather_probability'), 0)} independent "
+                        "weather-loss probability per day. This is an assumed operational "
+                        "calendar, not a forecast or outage schedule.",
+                        f"Baseline feasible: {_text(stress_baseline.get('feasible'))}; "
+                        f"stress fully feasible: "
+                        f"{_percent(operational_stress.get('completion_probability'))}; mean "
+                        f"completion: "
+                        f"{_percent(operational_stress.get('mean_completion_rate'))}. Median "
+                        f"unscheduled work: {_number(stress_unscheduled.get('p50'))} hours; P90 "
+                        f"{_number(stress_unscheduled.get('p90'))} hours.",
+                    ],
+                    table=_table(
+                        [
+                            "Metric",
+                            "Baseline",
+                            "Stress",
+                        ],
+                        [
+                            [
+                                "Fully feasible",
+                                _text(stress_baseline.get("feasible")),
+                                _percent(operational_stress.get("completion_probability")),
+                            ],
+                            [
+                                "Shift assignments",
+                                stress_baseline.get("assignments"),
+                                _number(stress_assignments.get("p50")),
+                            ],
+                            [
+                                "Unscheduled hours P50",
+                                _number(stress_baseline.get("unscheduled_hours")),
+                                _number(stress_unscheduled.get("p50")),
+                            ],
+                            [
+                                "Unscheduled hours P90",
+                                _number(stress_baseline.get("unscheduled_hours")),
+                                _number(stress_unscheduled.get("p90")),
+                            ],
+                        ],
+                    ),
+                )
+            ]
+            if operational_stress
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -959,7 +1018,8 @@ def build_planning_brief(
                 f"artifact set at {generated_utc or datetime.now(UTC)}.",
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
-                "policy-execution, policy-execution-scan, static-robust, and access JSON files.",
+                "policy-execution, policy-execution-scan, static-robust, operational-stress, "
+                "and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

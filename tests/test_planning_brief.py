@@ -209,6 +209,21 @@ def _artifacts() -> dict[str, Any]:
             },
         ],
     }
+    operational_stress = {
+        "scenarios": 50,
+        "window_days": 75,
+        "outage_days": [11, 12, 13, 14, 15],
+        "weather_probability": 0.2,
+        "completion_probability": 0.0,
+        "mean_completion_rate": 0.9341,
+        "baseline": {
+            "feasible": True,
+            "assignments": 116,
+            "unscheduled_hours": 0.0,
+        },
+        "unscheduled_hours_band": {"p50": 50.2, "p90": 97.7},
+        "shift_assignments_band": {"p50": 107.0},
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -230,6 +245,7 @@ def _artifacts() -> dict[str, Any]:
         "policy_execution": policy_execution,
         "policy_execution_scan": policy_execution_scan,
         "static_plan": static_plan,
+        "operational_stress": operational_stress,
     }
 
 
@@ -256,6 +272,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Policy execution scan" in brief.markdown
     assert "Fully feasible: 100.0%" in brief.markdown
     assert "## Static budget-headroom plans" in brief.markdown
+    assert "## Weather and outage stress" in brief.markdown
+    assert "stress fully feasible: 0.0%" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown

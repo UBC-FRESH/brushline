@@ -182,6 +182,10 @@ function drawSchedule(){
    const rows=(staticPlan.plans||[]).map(plan=>`<tr><td>${esc(plan.name)}${plan.name===staticPlan.recommended?" *":""}</td><td>${plan.nominal_budget.toFixed(0)}</td><td>${plan.cost_band.p10.toFixed(0)}–${plan.cost_band.p90.toFixed(0)}</td><td>${plan.risk.toFixed(4)}</td><td>${(plan.budget_violation_probability*100).toFixed(1)}%</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Static budget-headroom plans · actual budget 60000/yr · 20 episodes · * meets 5% budget-risk limit</p><table><tr><th>Candidate</th><th>Nominal budget</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th></tr>${rows}</table>`;
   }
+  const stress=state.network["operational-stress"];
+  if(stress){
+   $("#schedule").innerHTML+=`<p class="schedule-note">Weather and outage stress · ${stress.scenarios} scenarios · ${stress.window_days}-day fall window · ${stress.outage_days.length}-day outage · ${(stress.weather_probability*100).toFixed(0)}% weather loss/day</p><table><tr><th>Metric</th><th>Baseline</th><th>Stress</th></tr><tr><td>Fully feasible</td><td>${stress.baseline.feasible}</td><td>${(stress.completion_probability*100).toFixed(1)}%</td></tr><tr><td>Mean completion</td><td>100%</td><td>${(stress.mean_completion_rate*100).toFixed(1)}%</td></tr><tr><td>Shift assignments</td><td>${stress.baseline.assignments}</td><td>${stress.shift_assignments_band.p50.toFixed(0)}</td></tr><tr><td>Unscheduled hours P50 / P90</td><td>${stress.baseline.unscheduled_hours.toFixed(0)}</td><td>${stress.unscheduled_hours_band.p50.toFixed(0)} / ${stress.unscheduled_hours_band.p90.toFixed(0)}</td></tr></table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";
