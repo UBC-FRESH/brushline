@@ -6,8 +6,8 @@ selected frontier point, annual MILP schedule, tactical demand, shift summary, w
 commercial check, execution uncertainty, hindsight-adaptive comparison, rolling-horizon policy,
 first-year policy execution and all-episode scan, static budget-headroom candidates, weather and
 outage stress and all-episode calendar scan, capacity/scope remedies, risk-ranked scope deferral,
-multi-year risk trajectory, scaling evidence, caveats, and reproduction metadata into one
-document.
+multi-year risk trajectory, rolling recovery, scaling evidence, caveats, and reproduction metadata
+into one document.
 
 The brief is generated on demand from the network artifact set. It is not a new model result and it
 does not hide the underlying assumptions:

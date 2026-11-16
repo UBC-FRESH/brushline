@@ -2156,6 +2156,221 @@ def _risk_trajectory(
     }
 
 
+def _rolling_recovery(
+    rolling_policy: dict[str, Any],
+    segments: list[dict[str, Any]],
+    methods: list[StatefulMethod],
+    periods: list[StatefulPeriod],
+    *,
+    target_fraction: float = 0.20,
+    lookahead_years: int = 2,
+    max_seconds: float = 30.0,
+) -> dict[str, Any]:
+    """Re-optimize future years after a first-year risk-ranked deferral."""
+    if not 0 < target_fraction < 1:
+        raise ValueError("target_fraction must be in (0, 1)")
+    length_by_segment = {segment["segment_id"]: float(segment["length_m"]) for segment in segments}
+    initial_risks = [float(segment["base_risk"]) for segment in segments]
+    total_length = sum(length_by_segment.values())
+    segment_index = {segment["segment_id"]: index for index, segment in enumerate(segments)}
+    rules = StatefulConfig(risk_weight=1.0, cost_weight=0.0, max_seconds=max_seconds)
+    episodes = sorted(
+        rolling_policy["episodes_detail"],
+        key=lambda episode: int(episode["index"]),
+    )
+    details = []
+    for episode in episodes:
+        years = episode["years"]
+        first_year = int(years[0]["year"])
+        actions_by_year = {
+            int(year_row["year"]): [dict(action) for action in year_row.get("action_details") or []]
+            for year_row in years
+        }
+        first_actions = actions_by_year[first_year]
+        total_hours = sum(float(action["hours"]) for action in first_actions)
+        target_hours = total_hours * target_fraction
+        ranked = sorted(
+            first_actions,
+            key=lambda action: (
+                (float(action["risk_before"]) - float(action["risk_after"]))
+                / max(float(action["hours"]), 1e-9),
+                action["segment_id"],
+            ),
+        )
+        deferred = set()
+        deferred_hours = 0.0
+        for action in ranked:
+            if deferred_hours >= target_hours:
+                break
+            deferred.add(action["segment_id"])
+            deferred_hours += float(action["hours"])
+
+        def replay_fixed(skip_first: set[str]) -> tuple[list[float], float]:
+            risks = list(initial_risks)
+            annual: list[float] = []
+            cost = 0.0
+            for year_row in years:  # noqa: B023
+                year = int(year_row["year"])
+                risks = [min(0.95, risk + rules.growth_per_year) for risk in risks]
+                for action in year_row.get("action_details") or []:
+                    segment_id = action["segment_id"]
+                    if year == first_year and segment_id in skip_first:  # noqa: B023
+                        continue
+                    index = segment_index.get(segment_id)
+                    if index is None:
+                        continue
+                    reduction = float(action["risk_before"]) - float(action["risk_after"])
+                    risks[index] = max(0.0, risks[index] - reduction)
+                    cost += float(action["cost"])
+                annual.append(
+                    sum(
+                        risks[index] * segment["length_m"] for index, segment in enumerate(segments)
+                    )
+                    / total_length
+                )
+            return annual, cost
+
+        full_path, full_cost = replay_fixed(set())
+        no_reopt_path, no_reopt_cost = replay_fixed(deferred)
+        risks = list(initial_risks)
+        reopt_path: list[float] = []
+        reopt_cost = 0.0
+        for offset, year in enumerate(periods):
+            if offset == 0:
+                risks = [min(0.95, risk + rules.growth_per_year) for risk in risks]
+                for action in first_actions:
+                    if action["segment_id"] in deferred:
+                        continue
+                    index = segment_index.get(action["segment_id"])
+                    if index is None:
+                        continue
+                    reduction = float(action["risk_before"]) - float(action["risk_after"])
+                    risks[index] = max(0.0, risks[index] - reduction)
+                    reopt_cost += float(action["cost"])
+            else:
+                factor = next(item for item in episode["factors"] if int(item["year"]) == year.year)
+                current_segments = [
+                    StatefulSegment(
+                        segment_id=segment["segment_id"],
+                        span_id=segment["unit_id"],
+                        length_m=segment["length_m"],
+                        area_ha=segment["length_m"] * segment["width_m"] / 10000,
+                        initial_risk=risks[index],
+                    )
+                    for index, segment in enumerate(segments)
+                ]
+                scenario_methods = [
+                    method.model_copy(
+                        update={
+                            "cost_per_ha": method.cost_per_ha * factor["cost_factor"],
+                            "hours_per_ha": method.hours_per_ha * factor["hours_factor"],
+                        }
+                    )
+                    for method in methods
+                ]
+                scenario_periods = [
+                    item.model_copy(
+                        update={"capacity_hours": item.capacity_hours * factor["capacity_factor"]}
+                    )
+                    for item in periods[offset : offset + lookahead_years]
+                ]
+                plan = build_stateful_plan(
+                    instance_id=f"recovery-{episode['index']}-{year.year}",
+                    segments=current_segments,
+                    methods=scenario_methods,
+                    periods=scenario_periods,
+                    config=rules,
+                )
+                year_actions = [action for action in plan.actions if action.year == year.year]
+                grown = [min(0.95, risk + rules.growth_per_year) for risk in risks]
+                treated = {action.segment_id: action.risk_after for action in year_actions}
+                risks = [
+                    treated.get(segment["segment_id"], grown[index])
+                    for index, segment in enumerate(segments)
+                ]
+                reopt_cost += sum(action.cost for action in year_actions)
+            reopt_path.append(
+                sum(risks[index] * segment["length_m"] for index, segment in enumerate(segments))
+                / total_length
+            )
+        full_loss = [0.0 for _ in full_path]
+        no_reopt_loss = [no_reopt_path[i] - full_path[i] for i in range(len(full_path))]
+        reopt_loss = [reopt_path[i] - full_path[i] for i in range(len(full_path))]
+        recovery = [no_reopt_loss[i] - reopt_loss[i] for i in range(len(full_path))]
+        details.append(
+            {
+                "episode_index": episode["index"],
+                "years": [int(year["year"]) for year in years],
+                "full_risk": [round(value, 6) for value in full_path],
+                "no_reopt_risk": [round(value, 6) for value in no_reopt_path],
+                "reopt_risk": [round(value, 6) for value in reopt_path],
+                "full_loss": full_loss,
+                "no_reopt_loss": [round(value, 6) for value in no_reopt_loss],
+                "reopt_loss": [round(value, 6) for value in reopt_loss],
+                "recovery": [round(value, 6) for value in recovery],
+                "deferred_fraction": round(deferred_hours / total_hours if total_hours else 0, 4),
+                "full_cost": round(full_cost, 2),
+                "no_reopt_cost": round(no_reopt_cost, 2),
+                "reopt_cost": round(reopt_cost, 2),
+            }
+        )
+    year_labels = [int(year["year"]) for year in episodes[0]["years"]] if episodes else []
+
+    def aggregate(key: str) -> list[float]:
+        return [
+            round(float(np.mean([episode[key][index] for episode in details])), 6)
+            for index in range(len(year_labels))
+        ]
+
+    full = aggregate("full_risk")
+    no_reopt = aggregate("no_reopt_risk")
+    reopt = aggregate("reopt_risk")
+    no_loss = aggregate("no_reopt_loss")
+    re_loss = aggregate("reopt_loss")
+    recovery = aggregate("recovery")
+    return {
+        "schema_version": "brushline.risk-recovery.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "episodes": len(episodes),
+        "target_fraction": target_fraction,
+        "lookahead_years": lookahead_years,
+        "years": year_labels,
+        "mean_deferred_fraction": round(
+            float(np.mean([episode["deferred_fraction"] for episode in details])), 4
+        ),
+        "cases": [
+            {
+                "name": "full policy",
+                "annual_risk": full,
+                "mean_risk_loss": 0.0,
+                "final_risk_loss": 0.0,
+            },
+            {
+                "name": "deferred, no reoptimization",
+                "annual_risk": no_reopt,
+                "mean_risk_loss": round(float(np.mean(no_loss)), 6),
+                "final_risk_loss": round(no_loss[-1], 6),
+            },
+            {
+                "name": "deferred, rolling reoptimization",
+                "annual_risk": reopt,
+                "mean_risk_loss": round(float(np.mean(re_loss)), 6),
+                "final_risk_loss": round(re_loss[-1], 6),
+            },
+        ],
+        "mean_recovery_by_year": recovery,
+        "mean_recovery": round(float(np.mean(recovery)), 6),
+        "final_recovery": round(recovery[-1], 6),
+        "episodes_detail": details,
+        "caveats": [
+            "Future years are re-solved with the rolling persistence forecast and fixed annual factors.",
+            "Only first-year actions are deferred; later planning is not allowed to undo the first-year calendar decision.",
+            "Risk ranking is first-year only; whole actions are deferred and the actual fraction can overshoot.",
+            "No multi-year risk, recurrence, weather, outage, safety, or asset-owner optimization is included.",
+        ],
+    }
+
+
 def _scene(
     network: dict[str, Any],
     segments: list[dict[str, Any]],
@@ -2530,6 +2745,7 @@ def _summary(
     operational_remedies: dict[str, Any],
     risk_ranked_scope: dict[str, Any],
     risk_trajectory: dict[str, Any],
+    rolling_recovery: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -2824,6 +3040,26 @@ def _summary(
     lines.extend(
         [
             "",
+            "## Rolling recovery after deferral",
+            "",
+            f"Future years re-solved with the rolling persistence forecast and fixed annual factors. "
+            f"Mean recovery {rolling_recovery['mean_recovery']:.4f}; final recovery "
+            f"{rolling_recovery['final_recovery']:.4f}.",
+            "",
+            "| Case | 2027 | 2028 | 2029 | 2030 | 2031 | Mean loss | Final loss |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for case in rolling_recovery["cases"]:
+        annual = case["annual_risk"]
+        lines.append(
+            f"| {case['name']} | "
+            + " | ".join(f"{value:.4f}" for value in annual)
+            + f" | {case['mean_risk_loss']:.4f} | {case['final_risk_loss']:.6f} |"
+        )
+    lines.extend(
+        [
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -2838,6 +3074,7 @@ def _summary(
             "- Capacity and scope remedies are hypothetical scheduling tests; added capacity cost and contractor commitments are not modelled.",
             "- Risk-ranked scope uses first-year risk reduction per hour and defers whole actions; actual deferred fraction can overshoot.",
             "- The multi-year trajectory holds future actions fixed; it does not re-optimize after deferral and is not a multi-year risk recommendation.",
+            "- Rolling recovery re-solves future years with fixed annual factors and the persistence forecast; it is not a stochastic multi-year policy guarantee.",
             "- No asset-owner clearance standard, outage constraint, weather, or safety certification is claimed.",
         ]
     )
@@ -3068,6 +3305,12 @@ def main() -> None:
         profiles,
     )
     risk_trajectory = _risk_trajectory(rolling_policy.model_dump(mode="json"), segments)
+    rolling_recovery = _rolling_recovery(
+        rolling_policy.model_dump(mode="json"),
+        segments,
+        scenario_methods,
+        tactical_periods,
+    )
     static_plan = evaluate_static_plans(
         instance_id="bc-hydro-network-2026",
         plans=[
@@ -3204,6 +3447,7 @@ def main() -> None:
         ("operational-remedies.json", operational_remedies),
         ("risk-ranked-scope.json", risk_ranked_scope),
         ("risk-trajectory.json", risk_trajectory),
+        ("rolling-recovery.json", rolling_recovery),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -3229,6 +3473,7 @@ def main() -> None:
             operational_remedies,
             risk_ranked_scope,
             risk_trajectory,
+            rolling_recovery,
         ),
         encoding="utf-8",
     )

@@ -208,6 +208,12 @@ function drawSchedule(){
    const rows=(trajectory.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td>${years.map((_,i)=>`<td>${item.annual_risk[i].toFixed(4)}</td>`).join("")}<td>${item.mean_risk_loss.toFixed(4)}</td><td>${item.final_risk_loss.toFixed(4)}</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Multi-year risk trajectory · first-year deferral · future actions held fixed · mean deferred ${(trajectory.mean_deferred_fraction*100).toFixed(1)}%</p><table><tr><th>Case</th>${years.map(year=>`<th>${year}</th>`).join("")}<th>Mean loss</th><th>Final loss</th></tr>${rows}</table>`;
   }
+  const recovery=state.network["rolling-recovery"];
+  if(recovery){
+   const years=recovery.years||[];
+   const rows=(recovery.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td>${years.map((_,i)=>`<td>${item.annual_risk[i].toFixed(4)}</td>`).join("")}<td>${item.mean_risk_loss.toFixed(4)}</td><td>${item.final_risk_loss.toFixed(6)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Rolling recovery after first-year deferral · ${recovery.lookahead_years}-year lookahead · mean recovery ${recovery.mean_recovery.toFixed(4)} · final recovery ${recovery.final_recovery.toFixed(4)}</p><table><tr><th>Case</th>${years.map(year=>`<th>${year}</th>`).join("")}<th>Mean loss</th><th>Final loss</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

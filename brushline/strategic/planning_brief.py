@@ -388,6 +388,7 @@ def build_planning_brief(
     operational_remedies: Mapping[str, Any] | None = None,
     risk_ranked_scope: Mapping[str, Any] | None = None,
     risk_trajectory: Mapping[str, Any] | None = None,
+    rolling_recovery: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -418,6 +419,8 @@ def build_planning_brief(
         Risk-ranked scope deferral comparison. The section is omitted when absent.
     risk_trajectory : mapping, optional
         Multi-year risk trajectory for first-year deferral. The section is omitted when absent.
+    rolling_recovery : mapping, optional
+        Future re-optimization after first-year deferral. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -478,6 +481,8 @@ def build_planning_brief(
     first_risk_case = risk_scope_cases[0] if risk_scope_cases else {}
     trajectory_cases = (risk_trajectory or {}).get("cases") or []
     trajectory_years = (risk_trajectory or {}).get("years") or []
+    recovery_cases = (rolling_recovery or {}).get("cases") or []
+    recovery_years = (rolling_recovery or {}).get("years") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1169,6 +1174,45 @@ def build_planning_brief(
             if risk_trajectory
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Rolling recovery after deferral",
+                    paragraphs=[
+                        f"After first-year risk-ranked deferral, future years were re-solved "
+                        f"with the rolling persistence forecast, a "
+                        f"{rolling_recovery.get('lookahead_years')}-year lookahead, and the same "
+                        f"annual factors. Mean recovery: "
+                        f"{_number(rolling_recovery.get('mean_recovery'), 4)}; final recovery: "
+                        f"{_number(rolling_recovery.get('final_recovery'), 4)}.",
+                        f"Final risk gap versus the full policy falls to "
+                        f"{_number(recovery_cases[-1].get('final_risk_loss'), 6)}; mean gap is "
+                        f"{_number(recovery_cases[-1].get('mean_risk_loss'), 4)}. This is a "
+                        "fixed-factor, fixed-selection recovery test, not a stochastic multi-year "
+                        "policy guarantee.",
+                    ],
+                    table=_table(
+                        [
+                            "Case",
+                            *[str(year) for year in recovery_years],
+                            "Mean loss",
+                            "Final loss",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                *[_number(value, 4) for value in case.get("annual_risk", [])],
+                                _number(case.get("mean_risk_loss"), 4),
+                                _number(case.get("final_risk_loss"), 6),
+                            ]
+                            for case in recovery_cases
+                        ],
+                    ),
+                )
+            ]
+            if rolling_recovery
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1204,7 +1248,7 @@ def build_planning_brief(
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
                 "operational-stress-scan, operational-remedies, risk-ranked-scope, "
-                "risk-trajectory, and access JSON files.",
+                "risk-trajectory, rolling-recovery, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

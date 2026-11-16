@@ -289,6 +289,10 @@ test suite. This page is the map.
      - ``brushline.risk-trajectory.v1``
      - ``tools/build_risk_trajectory.py``
      - Fixed-future 2027-2031 risk paths for full, risk-ranked, and proportional first-year deferral
+   * - Rolling recovery
+     - ``brushline.risk-recovery.v1``
+     - ``tools/build_rolling_recovery.py``
+     - Future-year re-optimization after first-year deferral, annual risk paths, recovery gaps, and five-year cost
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``
