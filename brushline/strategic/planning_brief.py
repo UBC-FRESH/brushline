@@ -1342,10 +1342,9 @@ def build_planning_brief(
                 BriefSection(
                     heading="Frontier out-of-sample validation",
                     paragraphs=[
-                        "Every frontier candidate was retested with resampled future factors: "
-                        "100 paths for 0% and 20%, and 40 paths for the other points. "
-                        "Completion remains from the fixed-factor calendar scan; this section "
-                        "validates risk recovery and cost.",
+                        "Every frontier candidate was retested with the same resampled future "
+                        "factors: 100 paths per target. Completion remains from the fixed-factor "
+                        "calendar scan; this section validates risk recovery and cost.",
                         "All tested fractions remain budget-feasible and recover most of the "
                         "fixed-future risk gap. The 25% point has the highest recovery and "
                         "lowest median "

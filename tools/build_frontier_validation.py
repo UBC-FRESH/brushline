@@ -15,6 +15,8 @@ from tools.build_bc_network_demo import _out_of_sample_recovery  # noqa: E402
 
 MODEL = ROOT / "runtime/private/bc-network/model"
 TARGETS = (0.0, 0.05, 0.10, 0.15, 0.20, 0.25)
+PATHS_PER_EPISODE = 5
+SEED = 11
 
 
 def _case(target: float, result: dict, paths_total: int) -> dict:
@@ -87,8 +89,8 @@ def main() -> None:
                 methods,
                 periods,
                 target_fraction=target,
-                paths_per_episode=2,
-                seed=31 + int(target * 100),
+                paths_per_episode=PATHS_PER_EPISODE,
+                seed=SEED,
             )
             cases.append(_case(target, result, result["paths_total"]))
     fixed_by_target = {case["target_fraction"]: case for case in frontier["cases"]}

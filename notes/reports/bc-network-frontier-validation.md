@@ -18,11 +18,11 @@ resampled rather than fixed?
 | Target | Paths | Final gap P50 | Final gap P90 | Recovery P50 | Within 0.005 | Reopt cost P50 |
 |---:|---:|---:|---:|---:|---:|---:|
 | 0% | 100 | 0.0000 | 0.0000 | 0.0000 | 100.0% | 295,899 |
-| 5% | 40 | -0.0008 | 0.0082 | 0.0121 | 85.0% | 294,942 |
-| 10% | 40 | -0.0022 | 0.0076 | 0.0225 | 85.0% | 292,022 |
-| 15% | 40 | 0.0003 | 0.0068 | 0.0291 | 82.5% | 289,025 |
+| 5% | 100 | -0.0010 | 0.0072 | 0.0117 | 87.0% | 295,043 |
+| 10% | 100 | -0.0010 | 0.0072 | 0.0217 | 87.0% | 291,878 |
+| 15% | 100 | -0.0010 | 0.0072 | 0.0314 | 87.0% | 289,012 |
 | 20% | 100 | -0.0010 | 0.0072 | 0.0421 | 87.0% | 285,927 |
-| 25% | 40 | -0.0015 | 0.0050 | 0.0530 | 90.0% | 283,134 |
+| 25% | 100 | -0.0010 | 0.0072 | 0.0517 | 87.0% | 283,018 |
 
 All tested fractions remain budget-feasible and recover most or all of the fixed-future risk gap.
 The 25% point has the highest recovery and lowest median reoptimized cost, but also the largest
@@ -30,8 +30,8 @@ fixed-future risk loss.
 
 ## Interpretation
 
-The frontier’s recovery conclusion holds out of sample at every tested fraction. Path counts differ,
-so the tail estimates for 5/10/15/25 are less stable than for 0/20. The table does not select a risk
+The frontier’s recovery conclusion holds out of sample at every tested fraction with 100 paths per
+target and a common future path set. The table does not select a risk
 appetite.
 
 ## Limits

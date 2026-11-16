@@ -227,7 +227,7 @@ function drawSchedule(){
   const validation=state.network["frontier-validation"];
   if(validation){
    const rows=(validation.cases||[]).map(item=>`<tr><td>${(item.target_fraction*100).toFixed(0)}%</td><td>${item.paths_total}</td><td>${item.final_loss_band.p50.toFixed(4)}</td><td>${item.final_loss_band.p90.toFixed(4)}</td><td>${item.recovery_band.p50.toFixed(4)}</td><td>${(item.probability_final_gap_at_most_0_005*100).toFixed(1)}%</td><td>${item.reopt_cost_band.p50.toFixed(0)}</td></tr>`).join("");
-   $("#schedule").innerHTML+=`<p class="schedule-note">Frontier out-of-sample validation · 100 paths for 0% and 20%, 40 paths for others</p><table><tr><th>Target</th><th>Paths</th><th>Final gap P50</th><th>Final gap P90</th><th>Recovery P50</th><th>Within 0.005</th><th>Reopt cost P50</th></tr>${rows}</table>`;
+   $("#schedule").innerHTML+=`<p class="schedule-note">Frontier out-of-sample validation · 100 paths per target</p><table><tr><th>Target</th><th>Paths</th><th>Final gap P50</th><th>Final gap P90</th><th>Recovery P50</th><th>Within 0.005</th><th>Reopt cost P50</th></tr>${rows}</table>`;
   }
   return;
  }
