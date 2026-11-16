@@ -135,6 +135,8 @@ def _build_problem(
     periods: list[StatefulPeriod],
     config: StatefulConfig,
     robust_factors: list[list[tuple[int, float, float, float]]] | None = None,
+    chance_factors: list[list[tuple[int, float, float, float]]] | None = None,
+    max_budget_violations: int | None = None,
 ) -> tuple[
     np.ndarray,
     np.ndarray,
@@ -150,7 +152,8 @@ def _build_problem(
     n_methods = len(methods)
     n_x = n_segments * n_periods * n_methods
     n_r = n_segments * n_periods
-    n_variables = n_x + n_r
+    n_c = len(chance_factors or []) * n_periods
+    n_variables = n_x + n_r + n_c
     x_index: list[tuple[int, int, int]] = [
         (segment, period, method)
         for segment in range(n_segments)
@@ -163,6 +166,9 @@ def _build_problem(
 
     def r_i(segment: int, period: int) -> int:
         return n_x + segment * n_periods + period
+
+    def c_i(path: int, period: int) -> int:
+        return n_x + n_r + path * n_periods + period
 
     c = np.zeros(n_variables)
     total_length = sum(segment.length_m for segment in segments)
@@ -185,9 +191,11 @@ def _build_problem(
     lower = np.zeros(n_variables)
     upper = np.zeros(n_variables)
     integrality = np.zeros(n_variables)
-    upper[n_x:] = 0.95
+    upper[n_x : n_x + n_r] = 0.95
     upper[:n_x] = 1.0
+    upper[n_x + n_r :] = 1.0
     integrality[:n_x] = 1
+    integrality[n_x + n_r :] = 1
 
     rows: list[int] = []
     cols: list[int] = []
@@ -284,6 +292,55 @@ def _build_problem(
                     0.0,
                     robust_period.capacity_hours * capacity_factor,
                 )
+    if chance_factors:
+        if max_budget_violations is None:
+            raise ValueError("max_budget_violations is required with chance_factors")
+        if not 0 <= max_budget_violations <= len(chance_factors):
+            raise ValueError("max_budget_violations is out of range")
+        max_cost_factor = max(
+            (cost for path in chance_factors for _year, cost, _hours, _capacity in path),
+            default=1.0,
+        )
+        max_action_cost = sum(
+            segment.area_ha * max(method.cost_per_ha for method in methods) for segment in segments
+        )
+        big_m = max(1.0, max_cost_factor * max_action_cost)
+        for path_index, factors in enumerate(chance_factors):
+            factor_by_year = {
+                year: (cost, hours, capacity) for year, cost, hours, capacity in factors
+            }
+            for period_index, robust_period in enumerate(periods):
+                cost_factor, hours_factor, capacity_factor = factor_by_year.get(
+                    robust_period.year, (1.0, 1.0, 1.0)
+                )
+                entries = [
+                    (
+                        x_i(segment, period_index, method),
+                        segments[segment].area_ha * methods[method].cost_per_ha * cost_factor,
+                    )
+                    for segment in range(n_segments)
+                    for method in range(n_methods)
+                ]
+                entries.append((c_i(path_index, period_index), -big_m))
+                add_row(entries, 0.0, robust_period.budget)
+                add_row(
+                    [
+                        (
+                            x_i(segment, period_index, method),
+                            segments[segment].area_ha * methods[method].hours_per_ha * hours_factor,
+                        )
+                        for segment in range(n_segments)
+                        for method in range(n_methods)
+                    ],
+                    0.0,
+                    robust_period.capacity_hours * capacity_factor,
+                )
+        for period_index in range(n_periods):
+            add_row(
+                [(c_i(path_index, period_index), 1.0) for path_index in range(len(chance_factors))],
+                0.0,
+                float(max_budget_violations),
+            )
     matrix = coo_matrix((values, (rows, cols)), shape=(len(row_lower), n_variables)).tocsr()
     return (
         c,
@@ -366,6 +423,8 @@ def build_stateful_plan(
     periods: list[StatefulPeriod],
     config: StatefulConfig | None = None,
     robust_factors: list[list[tuple[int, float, float, float]]] | None = None,
+    chance_factors: list[list[tuple[int, float, float, float]]] | None = None,
+    max_budget_violations: int | None = None,
     created_utc: datetime | None = None,
 ) -> StatefulPlan:
     """Solve the linearized stateful strategic MILP and replay the result.
@@ -385,6 +444,11 @@ def build_stateful_plan(
     robust_factors : list of list of tuple, optional
         Scenario paths for budget/capacity robustness. Each tuple is
         ``(year, cost_factor, hours_factor, capacity_factor)``.
+    chance_factors : list of list of tuple, optional
+        Paths used for a sampled budget chance constraint. Each tuple is
+        ``(year, cost_factor, hours_factor, capacity_factor)``.
+    max_budget_violations : int, optional
+        Maximum number of chance paths allowed to exceed budget in each period.
     created_utc : datetime, optional
         Creation time.
 
@@ -406,7 +470,13 @@ def build_stateful_plan(
         raise StatefulError("period years must be unique")
     rules = config or StatefulConfig()
     c, integrality, bounds, matrix, row_lower, row_upper, x_index = _build_problem(
-        segments, methods, periods, rules, robust_factors
+        segments,
+        methods,
+        periods,
+        rules,
+        robust_factors,
+        chance_factors,
+        max_budget_violations,
     )
     result = milp(
         c,

@@ -309,6 +309,10 @@ test suite. This page is the map.
      - ``brushline.robust-plan.v1``
      - ``tools/build_robust_plan.py``
      - Scenario-robust static MILP with training-path budget/capacity constraints and independent out-of-sample evaluation
+   * - Chance plan
+     - ``brushline.chance-plan.v1``
+     - ``tools/build_chance_plan.py``
+     - Sampled budget chance constraint with hard capacity, training-path budget rows, and independent out-of-sample evaluation
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

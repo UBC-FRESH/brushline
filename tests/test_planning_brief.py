@@ -428,6 +428,33 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    chance_plan = {
+        "training_paths": 20,
+        "max_budget_violations": 2,
+        "plan": {"mean_risk": 0.0516, "total_cost": 220976},
+        "test": {
+            "plans": [
+                {
+                    "name": "chance-constrained",
+                    "cost_band": {"p10": 198743, "p90": 247028},
+                    "risk": 0.0516,
+                    "budget_violation_probability": 0.21,
+                },
+                {
+                    "name": "scenario-robust",
+                    "cost_band": {"p10": 199567, "p90": 248028},
+                    "risk": 0.0516,
+                    "budget_violation_probability": 0.23,
+                },
+                {
+                    "name": "nominal-balanced",
+                    "cost_band": {"p10": 269679, "p90": 333777},
+                    "risk": 0.0294,
+                    "budget_violation_probability": 0.93,
+                },
+            ]
+        },
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -459,6 +486,7 @@ def _artifacts() -> dict[str, Any]:
         "deferral_frontier": deferral_frontier,
         "frontier_validation": frontier_validation,
         "robust_plan": robust_plan,
+        "chance_plan": chance_plan,
     }
 
 
@@ -505,6 +533,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "87.0%" in brief.markdown
     assert "## Scenario-robust static plan" in brief.markdown
     assert "scenario-robust" in brief.markdown
+    assert "## Sampled budget chance constraint" in brief.markdown
+    assert "chance-constrained" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown

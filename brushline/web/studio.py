@@ -76,6 +76,7 @@ def _network_artifacts() -> dict[str, Any]:
             "deferral-frontier",
             "frontier-validation",
             "robust-plan",
+            "chance-plan",
             "access",
         )
     }
@@ -420,6 +421,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 deferral_frontier=artifacts["deferral-frontier"],
                 frontier_validation=artifacts["frontier-validation"],
                 robust_plan=artifacts["robust-plan"],
+                chance_plan=artifacts["chance-plan"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

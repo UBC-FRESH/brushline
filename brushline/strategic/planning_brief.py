@@ -393,6 +393,7 @@ def build_planning_brief(
     deferral_frontier: Mapping[str, Any] | None = None,
     frontier_validation: Mapping[str, Any] | None = None,
     robust_plan: Mapping[str, Any] | None = None,
+    chance_plan: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -433,6 +434,8 @@ def build_planning_brief(
         Out-of-sample validation of frontier candidates. The section is omitted when absent.
     robust_plan : mapping, optional
         Scenario-robust static plan evaluation. The section is omitted when absent.
+    chance_plan : mapping, optional
+        Sampled budget chance-constrained plan. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -505,6 +508,8 @@ def build_planning_brief(
     validation_cases = (frontier_validation or {}).get("cases") or []
     robust_cases = (robust_plan or {}).get("test", {}).get("plans") or []
     robust_summary = (robust_plan or {}).get("plan") or {}
+    chance_cases = (chance_plan or {}).get("test", {}).get("plans") or []
+    chance_summary = (chance_plan or {}).get("plan") or {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1422,6 +1427,40 @@ def build_planning_brief(
             if robust_plan
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Sampled budget chance constraint",
+                    paragraphs=[
+                        f"A chance-constrained plan allows at most "
+                        f"{chance_plan.get('max_budget_violations')} of "
+                        f"{chance_plan.get('training_paths')} training paths to exceed the "
+                        "annual budget in each year, while keeping capacity hard. It is tested on "
+                        "100 independent paths.",
+                        f"Chance plan risk: {_number(chance_summary.get('mean_risk'), 4)}; "
+                        f"cost: {_number(chance_summary.get('total_cost'))} CAD. Relaxing budget "
+                        "chance alone barely changes out-of-sample budget violations because "
+                        "capacity is binding. This is a sampled constraint, not a distributional "
+                        "guarantee.",
+                    ],
+                    table=_table(
+                        ["Plan", "5-year cost P10-P90", "Mean risk", "Budget violation"],
+                        [
+                            [
+                                case.get("name"),
+                                f"{_number(case.get('cost_band', {}).get('p10'))}-"
+                                f"{_number(case.get('cost_band', {}).get('p90'))}",
+                                _number(case.get("risk"), 4),
+                                _percent(case.get("budget_violation_probability")),
+                            ]
+                            for case in chance_cases
+                        ],
+                    ),
+                )
+            ]
+            if chance_plan
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1458,7 +1497,7 @@ def build_planning_brief(
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
                 "operational-stress-scan, operational-remedies, risk-ranked-scope, "
                 "risk-trajectory, rolling-recovery, out-of-sample-recovery, deferral-frontier, "
-                "frontier-validation, robust-plan, and access JSON files.",
+                "frontier-validation, robust-plan, chance-plan, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

@@ -74,6 +74,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    deferral-frontier
    frontier-validation
    robust-plan
+   chance-plan
    field-validation
    shift-scheduling
    field-comparison
