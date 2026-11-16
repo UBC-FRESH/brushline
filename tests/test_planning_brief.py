@@ -352,6 +352,16 @@ def _artifacts() -> dict[str, Any]:
             },
         ],
     }
+    out_of_sample_recovery = {
+        "episodes": 20,
+        "paths_total": 100,
+        "final_loss_band": {"p10": -0.007771, "p50": -0.001029, "p90": 0.007205, "mean": -0.000793},
+        "recovery_band": {"p10": 0.033975, "p50": 0.042105, "p90": 0.04905, "mean": 0.042063},
+        "probability_final_gap_at_most_0_005": 0.87,
+        "reopt_cost_band": {"p10": 284835, "p50": 285927, "p90": 286788, "mean": 285868},
+        "no_reopt_cost_band": {"p10": 227290, "p50": 249930, "p90": 272072, "mean": 251312},
+        "full_cost_band": {"p10": 273213, "p50": 295899, "p90": 326472, "mean": 299052},
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -379,6 +389,7 @@ def _artifacts() -> dict[str, Any]:
         "risk_ranked_scope": risk_ranked_scope,
         "risk_trajectory": risk_trajectory,
         "rolling_recovery": rolling_recovery,
+        "out_of_sample_recovery": out_of_sample_recovery,
     }
 
 
@@ -417,6 +428,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "risk-ranked first-year 20%" in brief.markdown
     assert "## Rolling recovery after deferral" in brief.markdown
     assert "deferred, rolling reoptimization" in brief.markdown
+    assert "## Out-of-sample recovery" in brief.markdown
+    assert "100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown

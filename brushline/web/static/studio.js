@@ -214,6 +214,11 @@ function drawSchedule(){
    const rows=(recovery.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td>${years.map((_,i)=>`<td>${item.annual_risk[i].toFixed(4)}</td>`).join("")}<td>${item.mean_risk_loss.toFixed(4)}</td><td>${item.final_risk_loss.toFixed(6)}</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Rolling recovery after first-year deferral · ${recovery.lookahead_years}-year lookahead · mean recovery ${recovery.mean_recovery.toFixed(4)} · final recovery ${recovery.final_recovery.toFixed(4)}</p><table><tr><th>Case</th>${years.map(year=>`<th>${year}</th>`).join("")}<th>Mean loss</th><th>Final loss</th></tr>${rows}</table>`;
   }
+  const oos=state.network["out-of-sample-recovery"];
+  if(oos){
+   const f=oos.final_loss_band, rec=oos.recovery_band;
+   $("#schedule").innerHTML+=`<p class="schedule-note">Out-of-sample future recovery · ${oos.paths_total} paths across ${oos.episodes} episodes · fixed first-year deferral</p><table><tr><th>Metric</th><th>P10</th><th>P50</th><th>P90</th><th>Mean</th></tr><tr><td>Final risk gap</td><td>${f.p10.toFixed(4)}</td><td>${f.p50.toFixed(4)}</td><td>${f.p90.toFixed(4)}</td><td>${f.mean.toFixed(4)}</td></tr><tr><td>Recovery</td><td>${rec.p10.toFixed(4)}</td><td>${rec.p50.toFixed(4)}</td><td>${rec.p90.toFixed(4)}</td><td>${rec.mean.toFixed(4)}</td></tr><tr><td>Final gap ≤ 0.005</td><td colspan="4">${(oos.probability_final_gap_at_most_0_005*100).toFixed(1)}% of paths</td></tr></table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

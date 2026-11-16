@@ -293,6 +293,10 @@ test suite. This page is the map.
      - ``brushline.risk-recovery.v1``
      - ``tools/build_rolling_recovery.py``
      - Future-year re-optimization after first-year deferral, annual risk paths, recovery gaps, and five-year cost
+   * - Out-of-sample recovery
+     - ``brushline.out-of-sample-recovery.v1``
+     - ``tools/build_out_of_sample_recovery.py``
+     - Resampled future factors, final risk gaps, recovery bands, cost bands, and budget outcomes
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

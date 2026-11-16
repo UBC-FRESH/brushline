@@ -137,6 +137,7 @@
 - [Risk-ranked scope deferral](reference/risk-ranked-scope.html): whole-action deferral by first-year risk reduction per hour, with risk loss and completion trade-offs.
 - [Multi-year risk trajectory](reference/risk-trajectory.html): fixed-future replay of first-year deferral risk through 2031.
 - [Rolling recovery](reference/rolling-recovery.html): future re-optimization after first-year deferral, recovery gaps, and cost.
+- [Out-of-sample recovery](reference/out-of-sample-recovery.html): resampled future factors, recovery bands, final gaps, and cost.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

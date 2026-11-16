@@ -389,6 +389,7 @@ def build_planning_brief(
     risk_ranked_scope: Mapping[str, Any] | None = None,
     risk_trajectory: Mapping[str, Any] | None = None,
     rolling_recovery: Mapping[str, Any] | None = None,
+    out_of_sample_recovery: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -421,6 +422,8 @@ def build_planning_brief(
         Multi-year risk trajectory for first-year deferral. The section is omitted when absent.
     rolling_recovery : mapping, optional
         Future re-optimization after first-year deferral. The section is omitted when absent.
+    out_of_sample_recovery : mapping, optional
+        Resampled-future recovery test. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -483,6 +486,12 @@ def build_planning_brief(
     trajectory_years = (risk_trajectory or {}).get("years") or []
     recovery_cases = (rolling_recovery or {}).get("cases") or []
     recovery_years = (rolling_recovery or {}).get("years") or []
+    oos_final = (out_of_sample_recovery or {}).get("final_loss_band") or {}
+    oos_recovery = (out_of_sample_recovery or {}).get("recovery_band") or {}
+    oos_reopt_cost = (out_of_sample_recovery or {}).get("reopt_cost_band") or {}
+    oos_no_cost = (out_of_sample_recovery or {}).get("no_reopt_cost_band") or {}
+    oos_full_cost = (out_of_sample_recovery or {}).get("full_cost_band") or {}
+    oos_probability = (out_of_sample_recovery or {}).get("probability_final_gap_at_most_0_005")
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1213,6 +1222,69 @@ def build_planning_brief(
             if rolling_recovery
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Out-of-sample recovery",
+                    paragraphs=[
+                        f"First-year deferral is held fixed, then future factors are resampled "
+                        f"for {out_of_sample_recovery.get('paths_total')} paths across "
+                        f"{out_of_sample_recovery.get('episodes')} episodes. Final risk gap "
+                        f"P10-P90: {_number(oos_final.get('p10'), 4)} to "
+                        f"{_number(oos_final.get('p90'), 4)}; median "
+                        f"{_number(oos_final.get('p50'), 4)}. Recovery P10-P90: "
+                        f"{_number(oos_recovery.get('p10'), 4)} to "
+                        f"{_number(oos_recovery.get('p90'), 4)}.",
+                        f"Final gap within 0.005 in {_percent(oos_probability)} of paths. "
+                        "The reoptimized path costs more than no reoptimization but less "
+                        "than the full policy on average. This is not a stochastic multi-year "
+                        "policy guarantee.",
+                    ],
+                    table=_table(
+                        ["Metric", "P10", "P50", "P90", "Mean"],
+                        [
+                            [
+                                "Final risk gap",
+                                _number(oos_final.get("p10"), 4),
+                                _number(oos_final.get("p50"), 4),
+                                _number(oos_final.get("p90"), 4),
+                                _number(oos_final.get("mean"), 4),
+                            ],
+                            [
+                                "Recovery",
+                                _number(oos_recovery.get("p10"), 4),
+                                _number(oos_recovery.get("p50"), 4),
+                                _number(oos_recovery.get("p90"), 4),
+                                _number(oos_recovery.get("mean"), 4),
+                            ],
+                            [
+                                "Reoptimized cost",
+                                _number(oos_reopt_cost.get("p10")),
+                                _number(oos_reopt_cost.get("p50")),
+                                _number(oos_reopt_cost.get("p90")),
+                                _number(oos_reopt_cost.get("mean")),
+                            ],
+                            [
+                                "No-reoptimization cost",
+                                _number(oos_no_cost.get("p10")),
+                                _number(oos_no_cost.get("p50")),
+                                _number(oos_no_cost.get("p90")),
+                                _number(oos_no_cost.get("mean")),
+                            ],
+                            [
+                                "Full policy cost",
+                                _number(oos_full_cost.get("p10")),
+                                _number(oos_full_cost.get("p50")),
+                                _number(oos_full_cost.get("p90")),
+                                _number(oos_full_cost.get("mean")),
+                            ],
+                        ],
+                    ),
+                )
+            ]
+            if out_of_sample_recovery
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1248,7 +1320,8 @@ def build_planning_brief(
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
                 "operational-stress-scan, operational-remedies, risk-ranked-scope, "
-                "risk-trajectory, rolling-recovery, and access JSON files.",
+                "risk-trajectory, rolling-recovery, out-of-sample-recovery, and access JSON "
+                "files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

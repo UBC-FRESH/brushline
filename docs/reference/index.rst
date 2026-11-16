@@ -70,6 +70,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    risk-ranked-scope
    risk-trajectory
    rolling-recovery
+   out-of-sample-recovery
    field-validation
    shift-scheduling
    field-comparison
