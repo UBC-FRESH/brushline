@@ -64,6 +64,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    scenario-optimization
    planning-brief
    rolling-policy
+   static-plan
    field-validation
    shift-scheduling
    field-comparison

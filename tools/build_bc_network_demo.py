@@ -48,6 +48,7 @@ from brushline.strategic.stateful import (
     StatefulSegment,
     build_stateful_plan,
 )
+from brushline.strategic.static_plan import StaticPlanCase, evaluate_static_plans
 from brushline.strategic.uncertainty import UncertaintyConfig, evaluate_uncertainty
 from brushline.tactical.access import AccessPlan, AccessWindow, RoadLink, build_access_plan
 from brushline.tactical.operations import OperationsConfig, OperationsPlan, build_operations_plan
@@ -1545,6 +1546,7 @@ def _summary(
     rolling_policy: dict[str, Any],
     policy_execution: dict[str, Any],
     policy_execution_scan: dict[str, Any],
+    static_plan: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1737,6 +1739,27 @@ def _summary(
             f"{policy_execution_scan['hours_band']['p10']:.0f}-"
             f"{policy_execution_scan['hours_band']['p90']:.0f}.",
             "",
+            "## Static budget-headroom plans",
+            "",
+            f"Existing frontier plans evaluated against the 60,000 CAD annual budget over "
+            f"{static_plan['episodes']} annual-factor episodes. The starred candidate meets the "
+            f"{static_plan['budget_risk_limit']:.0%} budget-risk limit; this is candidate selection, "
+            "not robust optimization.",
+            "",
+            "| Candidate | Nominal budget | 5-year cost P10-P90 | Mean risk | Budget violation |",
+            "|---|---:|---:|---:|---:|",
+        ]
+    )
+    for plan in static_plan["plans"]:
+        marker = " *" if plan["name"] == static_plan["recommended"] else ""
+        lines.append(
+            f"| {plan['name']}{marker} | {plan['nominal_budget']:.0f} | "
+            f"{plan['cost_band']['p10']:.0f}-{plan['cost_band']['p90']:.0f} | "
+            f"{plan['risk']:.4f} | {plan['budget_violation_probability']:.1%} |"
+        )
+    lines.extend(
+        [
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -1746,6 +1769,7 @@ def _summary(
             "- Scenario-optimized planning is a hindsight upper bound: it re-solves after seeing each sampled scenario and is not an executable forecast-update policy.",
             "- The rolling policy observes current conditions only and assumes they persist over its lookahead; it is a heuristic policy, not a stochastic dynamic program.",
             "- The year-one execution package selects the median-cost episode and uses prototype tactical, access, resource, and shift assumptions; it is not a commitment.",
+            "- Static budget-headroom plans are existing frontier candidates evaluated against a common budget; no robust optimization or probabilistic guarantee is claimed.",
             "- No asset-owner clearance standard, outage constraint, weather, or safety certification is claimed.",
         ]
     )
@@ -1950,6 +1974,23 @@ def main() -> None:
         towers,
         profiles,
     )
+    static_plan = evaluate_static_plans(
+        instance_id="bc-hydro-network-2026",
+        plans=[
+            StaticPlanCase(
+                name=scenario["name"],
+                nominal_budget=float(scenario["annual_budget"]),
+                plan=StatefulPlan.model_validate(scenario["plan"]),
+            )
+            for scenario in milp_scenarios
+        ],
+        periods=tactical_periods,
+        config=StatefulConfig(risk_weight=1.0),
+        episodes=20,
+        seed=7,
+        budget_risk_limit=0.05,
+        created_utc=CREATED,
+    )
     bid = _bid(tactical.actions, units, "bc-hydro-network-2026")
     network = {
         "schema_version": "brushline.network-demo.v1",
@@ -2063,6 +2104,7 @@ def main() -> None:
         ("rolling-policy.json", rolling_policy.model_dump(mode="json")),
         ("policy-execution.json", policy_execution),
         ("policy-execution-scan.json", policy_execution_scan),
+        ("static-robust.json", static_plan.model_dump(mode="json")),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -2082,6 +2124,7 @@ def main() -> None:
             rolling_policy.model_dump(mode="json"),
             policy_execution,
             policy_execution_scan,
+            static_plan.model_dump(mode="json"),
         ),
         encoding="utf-8",
     )

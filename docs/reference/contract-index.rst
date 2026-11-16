@@ -265,6 +265,10 @@ test suite. This page is the map.
      - ``brushline.policy-execution-scan.v1``
      - ``tools/build_policy_execution.py``
      - All-episode first-year handoff feasibility, access checks, cost/hours/risk bands, and failure reasons
+   * - Static plan evaluation
+     - ``brushline.static-plan.v1``
+     - ``evaluate_static_plans``
+     - Frontier candidate stress against a common actual budget, annual-factor cost/hours bands, budget/capacity violations, and budget-risk recommendation
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

@@ -188,6 +188,27 @@ def _artifacts() -> dict[str, Any]:
         "cost_band": {"p10": 59775, "p90": 59986},
         "hours_band": {"p10": 699, "p90": 1295},
     }
+    static_plan = {
+        "episodes": 20,
+        "budget_risk_limit": 0.05,
+        "recommended": "milp-budget-30000",
+        "plans": [
+            {
+                "name": "milp-budget-30000",
+                "nominal_budget": 30000,
+                "cost_band": {"p10": 132246, "p90": 166121},
+                "risk": 0.1009,
+                "budget_violation_probability": 0.0,
+            },
+            {
+                "name": "milp-budget-60000",
+                "nominal_budget": 60000,
+                "cost_band": {"p10": 265469, "p90": 333438},
+                "risk": 0.0294,
+                "budget_violation_probability": 0.95,
+            },
+        ],
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -208,6 +229,7 @@ def _artifacts() -> dict[str, Any]:
         "rolling_policy": rolling_policy,
         "policy_execution": policy_execution,
         "policy_execution_scan": policy_execution_scan,
+        "static_plan": static_plan,
     }
 
 
@@ -233,6 +255,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "Selected episode 18" in brief.markdown
     assert "## Policy execution scan" in brief.markdown
     assert "Fully feasible: 100.0%" in brief.markdown
+    assert "## Static budget-headroom plans" in brief.markdown
+    assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown
     assert "current-mix" in brief.markdown

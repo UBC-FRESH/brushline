@@ -72,6 +72,7 @@ whenever you add a module to the project.
    scenario-optimization
    planning-brief
    rolling-policy
+   static-plan
    shift-scheduling
    field
    field-comparison

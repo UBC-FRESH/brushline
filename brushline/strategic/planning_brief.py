@@ -382,6 +382,7 @@ def build_planning_brief(
     rolling_policy: Mapping[str, Any] | None = None,
     policy_execution: Mapping[str, Any] | None = None,
     policy_execution_scan: Mapping[str, Any] | None = None,
+    static_plan: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -400,6 +401,8 @@ def build_planning_brief(
         First-year policy execution package. The section is omitted when absent.
     policy_execution_scan : mapping, optional
         All-episode first-year execution scan. The section is omitted when absent.
+    static_plan : mapping, optional
+        Static frontier-plan stress evaluation. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -448,6 +451,7 @@ def build_planning_brief(
     execution_selection = (policy_execution or {}).get("selection") or {}
     scan_cost = (policy_execution_scan or {}).get("cost_band") or {}
     scan_hours = (policy_execution_scan or {}).get("hours_band") or {}
+    static_plans = (static_plan or {}).get("plans") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -881,6 +885,47 @@ def build_planning_brief(
             if policy_execution_scan
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Static budget-headroom plans",
+                    paragraphs=[
+                        f"Each existing frontier plan is evaluated against the same 60,000 CAD "
+                        f"annual budget and {static_plan.get('episodes')} annual-factor episodes. "
+                        "The recommendation is the lowest-risk candidate with budget-violation "
+                        "probability at or below "
+                        f"{_percent(static_plan.get('budget_risk_limit'))}. This is candidate "
+                        "selection from the existing frontier, not robust optimization.",
+                        f"Budget-risk candidate: {_text(static_plan.get('recommended'))}. "
+                        "The 45,000 CAD target has lower risk but breaches budget in about 10% of "
+                        "episodes; the 60,000 CAD target has lower risk still but breaches in most "
+                        "episodes.",
+                    ],
+                    table=_table(
+                        [
+                            "Candidate",
+                            "Nominal budget",
+                            "5-year cost P10-P90",
+                            "Mean risk",
+                            "Budget violation",
+                        ],
+                        [
+                            [
+                                plan.get("name"),
+                                _number(plan.get("nominal_budget")),
+                                f"{_number(plan.get('cost_band', {}).get('p10'))}-"
+                                f"{_number(plan.get('cost_band', {}).get('p90'))}",
+                                _number(plan.get("risk"), 4),
+                                _percent(plan.get("budget_violation_probability")),
+                            ]
+                            for plan in static_plans
+                        ],
+                    ),
+                )
+            ]
+            if static_plan
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -914,7 +959,7 @@ def build_planning_brief(
                 f"artifact set at {generated_utc or datetime.now(UTC)}.",
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
-                "policy-execution, policy-execution-scan, and access JSON files.",
+                "policy-execution, policy-execution-scan, static-robust, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

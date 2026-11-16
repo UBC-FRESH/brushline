@@ -177,6 +177,11 @@ function drawSchedule(){
   if(scan){
    $("#schedule").innerHTML+=`<p class="schedule-note">Policy execution scan · all ${scan.episodes} episodes · first year</p><table><tr><th>Check</th><th>Feasible share</th></tr><tr><td>Fully feasible</td><td>${(scan.execution_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>Access open</td><td>${(scan.access_open_rate*100).toFixed(1)}%</td></tr><tr><td>Resources</td><td>${(scan.resource_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>Shifts</td><td>${(scan.shift_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>First-year cost P10–P90</td><td>${scan.cost_band.p10.toFixed(0)}–${scan.cost_band.p90.toFixed(0)}</td></tr><tr><td>First-year crew-hours P10–P90</td><td>${scan.hours_band.p10.toFixed(0)}–${scan.hours_band.p90.toFixed(0)}</td></tr></table>`;
   }
+  const staticPlan=state.network["static-robust"];
+  if(staticPlan){
+   const rows=(staticPlan.plans||[]).map(plan=>`<tr><td>${esc(plan.name)}${plan.name===staticPlan.recommended?" *":""}</td><td>${plan.nominal_budget.toFixed(0)}</td><td>${plan.cost_band.p10.toFixed(0)}–${plan.cost_band.p90.toFixed(0)}</td><td>${plan.risk.toFixed(4)}</td><td>${(plan.budget_violation_probability*100).toFixed(1)}%</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Static budget-headroom plans · actual budget 60000/yr · 20 episodes · * meets 5% budget-risk limit</p><table><tr><th>Candidate</th><th>Nominal budget</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

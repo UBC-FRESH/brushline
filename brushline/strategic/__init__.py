@@ -122,6 +122,15 @@ from brushline.strategic.stateful import (
     StatefulYear,
     build_stateful_plan,
 )
+from brushline.strategic.static_plan import (
+    STATIC_PLAN_SCHEMA_VERSION,
+    StaticBand,
+    StaticPlanCase,
+    StaticPlanError,
+    StaticPlanEvaluation,
+    StaticPlanSummary,
+    evaluate_static_plans,
+)
 from brushline.strategic.uncertainty import (
     UNCERTAINTY_SCHEMA_VERSION,
     SensitivityCase,
@@ -157,6 +166,7 @@ __all__ = [
     "SCENARIO_OPTIMIZATION_SCHEMA_VERSION",
     "SCENARIO_SCHEMA_VERSION",
     "STATEFUL_SCHEMA_VERSION",
+    "STATIC_PLAN_SCHEMA_VERSION",
     "UNCERTAINTY_SCHEMA_VERSION",
     "VALIDATION_SCHEMA_VERSION",
     "AnnualFactors",
@@ -215,6 +225,11 @@ __all__ = [
     "StatefulPlan",
     "StatefulSegment",
     "StatefulYear",
+    "StaticBand",
+    "StaticPlanCase",
+    "StaticPlanError",
+    "StaticPlanEvaluation",
+    "StaticPlanSummary",
     "StrategicAction",
     "StrategicPortfolio",
     "StrategicReport",
@@ -241,6 +256,7 @@ __all__ = [
     "canonical_digest",
     "compare_bau",
     "decompose_stateful",
+    "evaluate_static_plans",
     "evaluate_uncertainty",
     "load_scenario",
     "load_scenario_archive",
