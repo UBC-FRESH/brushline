@@ -93,6 +93,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["out-of-sample-recovery"]["paths_total"] >= 1
         assert network_plan["deferral-frontier"]["cases"]
         assert network_plan["frontier-validation"]["cases"]
+        assert network_plan["robust-plan"]["test"]["plans"]
         brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
         assert brief.status_code == 200
         assert brief.headers["content-type"].startswith("text/html")
@@ -118,6 +119,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert "## Out-of-sample recovery" in brief_md.text
         assert "## Deferral-fraction frontier" in brief_md.text
         assert "## Frontier out-of-sample validation" in brief_md.text
+        assert "## Scenario-robust static plan" in brief_md.text
         assert (
             client.get("/api/studio/network/brief?instance_id=synthetic-corridor").status_code
             == 404

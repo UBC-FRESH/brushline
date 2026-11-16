@@ -305,6 +305,10 @@ test suite. This page is the map.
      - ``brushline.frontier-validation.v1``
      - ``tools/build_frontier_validation.py``
      - Out-of-sample risk gaps, recovery, budget, and cost for every deferral candidate
+   * - Robust plan
+     - ``brushline.robust-plan.v1``
+     - ``tools/build_robust_plan.py``
+     - Scenario-robust static MILP with training-path budget/capacity constraints and independent out-of-sample evaluation
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

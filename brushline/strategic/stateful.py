@@ -134,6 +134,7 @@ def _build_problem(
     methods: list[StatefulMethod],
     periods: list[StatefulPeriod],
     config: StatefulConfig,
+    robust_factors: list[list[tuple[int, float, float, float]]] | None = None,
 ) -> tuple[
     np.ndarray,
     np.ndarray,
@@ -250,6 +251,39 @@ def _build_problem(
                 0.0,
                 config.max_mean_risk,
             )
+    if robust_factors:
+        for factors in robust_factors:
+            factor_by_year = {
+                year: (cost, hours, capacity) for year, cost, hours, capacity in factors
+            }
+            for period_index, robust_period in enumerate(periods):
+                cost_factor, hours_factor, capacity_factor = factor_by_year.get(
+                    robust_period.year, (1.0, 1.0, 1.0)
+                )
+                add_row(
+                    [
+                        (
+                            x_i(segment, period_index, method),
+                            segments[segment].area_ha * methods[method].cost_per_ha * cost_factor,
+                        )
+                        for segment in range(n_segments)
+                        for method in range(n_methods)
+                    ],
+                    0.0,
+                    robust_period.budget,
+                )
+                add_row(
+                    [
+                        (
+                            x_i(segment, period_index, method),
+                            segments[segment].area_ha * methods[method].hours_per_ha * hours_factor,
+                        )
+                        for segment in range(n_segments)
+                        for method in range(n_methods)
+                    ],
+                    0.0,
+                    robust_period.capacity_hours * capacity_factor,
+                )
     matrix = coo_matrix((values, (rows, cols)), shape=(len(row_lower), n_variables)).tocsr()
     return (
         c,
@@ -331,6 +365,7 @@ def build_stateful_plan(
     methods: list[StatefulMethod],
     periods: list[StatefulPeriod],
     config: StatefulConfig | None = None,
+    robust_factors: list[list[tuple[int, float, float, float]]] | None = None,
     created_utc: datetime | None = None,
 ) -> StatefulPlan:
     """Solve the linearized stateful strategic MILP and replay the result.
@@ -347,6 +382,9 @@ def build_stateful_plan(
         Annual budgets and capacity.
     config : StatefulConfig, optional
         Objective weights and state growth.
+    robust_factors : list of list of tuple, optional
+        Scenario paths for budget/capacity robustness. Each tuple is
+        ``(year, cost_factor, hours_factor, capacity_factor)``.
     created_utc : datetime, optional
         Creation time.
 
@@ -368,7 +406,7 @@ def build_stateful_plan(
         raise StatefulError("period years must be unique")
     rules = config or StatefulConfig()
     c, integrality, bounds, matrix, row_lower, row_upper, x_index = _build_problem(
-        segments, methods, periods, rules
+        segments, methods, periods, rules, robust_factors
     )
     result = milp(
         c,

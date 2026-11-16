@@ -229,6 +229,11 @@ function drawSchedule(){
    const rows=(validation.cases||[]).map(item=>`<tr><td>${(item.target_fraction*100).toFixed(0)}%</td><td>${item.paths_total}</td><td>${item.final_loss_band.p50.toFixed(4)}</td><td>${item.final_loss_band.p90.toFixed(4)}</td><td>${item.recovery_band.p50.toFixed(4)}</td><td>${(item.probability_final_gap_at_most_0_005*100).toFixed(1)}%</td><td>${item.reopt_cost_band.p50.toFixed(0)}</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Frontier out-of-sample validation · 100 paths per target</p><table><tr><th>Target</th><th>Paths</th><th>Final gap P50</th><th>Final gap P90</th><th>Recovery P50</th><th>Within 0.005</th><th>Reopt cost P50</th></tr>${rows}</table>`;
   }
+  const robust=state.network["robust-plan"];
+  if(robust){
+   const rows=(robust.test?.plans||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${item.cost_band.p10.toFixed(0)}–${item.cost_band.p90.toFixed(0)}</td><td>${item.risk.toFixed(4)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td><td>${(item.capacity_violation_probability*100).toFixed(1)}%</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Scenario-robust static plan · ${robust.training_paths} training paths · 100 test paths · not a distributional guarantee</p><table><tr><th>Plan</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th><th>Capacity violation</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

@@ -55,6 +55,23 @@ def test_stateful_milp_optimal_replay_and_budget() -> None:
     assert plan.created_utc == CREATED
 
 
+def test_stateful_robust_factors_solve() -> None:
+    plan = build_stateful_plan(
+        instance_id="tiny",
+        segments=_segments(),
+        methods=_methods(),
+        periods=_periods(),
+        config=StatefulConfig(risk_weight=1.0),
+        robust_factors=[
+            [(2027, 1.2, 1.0, 1.0), (2028, 1.2, 1.0, 1.0)],
+            [(2027, 1.5, 1.0, 0.8), (2028, 1.5, 1.0, 0.8)],
+        ],
+        created_utc=CREATED,
+    )
+    assert plan.status == "optimal"
+    assert plan.replay_ok
+
+
 def test_stateful_zero_budget_leaves_growth() -> None:
     plan = build_stateful_plan(
         instance_id="tiny",
