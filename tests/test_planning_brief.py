@@ -259,18 +259,27 @@ def _artifacts() -> dict[str, Any]:
     operational_remedies = {
         "episodes": 20,
         "scenarios_per_episode": 50,
+        "crew_day_cost": 1200.0,
+        "machine_day_cost": 900.0,
+        "annual_budget": 60000.0,
         "cases": [
             {
                 "name": "baseline",
                 "scenario_completion_rate": 0.132,
                 "mean_completion_rate": 0.8563,
                 "unscheduled_hours_band": {"p50": 127.5},
+                "added_cost_band": {"p50": 0.0},
+                "total_cost_band": {"p50": 59875.0},
+                "budget_feasibility_rate": 1.0,
             },
             {
                 "name": "+1 shared crew + machine",
                 "scenario_completion_rate": 0.929,
                 "mean_completion_rate": 0.9982,
                 "unscheduled_hours_band": {"p50": 0.0},
+                "added_cost_band": {"p50": 80850.0},
+                "total_cost_band": {"p50": 140800.0},
+                "budget_feasibility_rate": 0.0,
             },
         ],
     }

@@ -1040,26 +1040,35 @@ def build_planning_brief(
                     paragraphs=[
                         f"Same {operational_remedies.get('episodes')} episodes and "
                         f"{operational_remedies.get('scenarios_per_episode')} calendars. "
-                        "Capacity and scope remedies are hypothetical scheduling tests; added "
-                        "capacity cost and contractor commitments are not modelled.",
+                        "Capacity and scope remedies are hypothetical scheduling tests. Added "
+                        f"capacity is costed at "
+                        f"{_number(operational_remedies.get('crew_day_cost'))} CAD per crew-day "
+                        f"and {_number(operational_remedies.get('machine_day_cost'))} CAD per "
+                        f"machine-day against a "
+                        f"{_number(operational_remedies.get('annual_budget'))} CAD first-year "
+                        "budget; these are prototype rates, not contractor quotes.",
                         "Adding a shared crew alone did not improve completion because mowing and "
                         "mechanical work also needs machine capacity. A shared crew plus machine "
-                        "was the strongest capacity remedy; a 10% proportional scope reduction was "
-                        "modest; a longer window helped but did not close the gap.",
+                        "was the strongest completion remedy but exceeded the budget; the 90-day "
+                        "window was the best budget-feasible completion case in this test.",
                     ],
                     table=_table(
                         [
                             "Remedy",
                             "Scenario full completion",
                             "Mean completion",
-                            "Unscheduled P50",
+                            "Added cost P50",
+                            "Total cost P50",
+                            "Budget feasible",
                         ],
                         [
                             [
                                 case.get("name"),
                                 _percent(case.get("scenario_completion_rate")),
                                 _percent(case.get("mean_completion_rate")),
-                                _number(case.get("unscheduled_hours_band", {}).get("p50")),
+                                _number(case.get("added_cost_band", {}).get("p50")),
+                                _number(case.get("total_cost_band", {}).get("p50")),
+                                _percent(case.get("budget_feasibility_rate")),
                             ]
                             for case in remedy_cases
                         ],

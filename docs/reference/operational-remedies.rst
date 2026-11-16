@@ -7,37 +7,48 @@ calendars per episode as the all-episode stress scan.
 
 ## Results
 
+Added capacity is costed at 1,200 CAD per crew-day and 900 CAD per machine-day against the
+60,000 CAD first-year budget. These are prototype rates, not contractor quotes.
+
 .. list-table::
    :header-rows: 1
 
    * - Remedy
      - Scenario full completion
-     - Mean completion
-     - Unscheduled P50
+     - Added cost P50
+     - Total cost P50
+     - Budget feasible
    * - Baseline
      - 13.2%
-     - 85.6%
-     - 127.5
+     - 0
+     - 59,875
+     - 100%
    * - +1 shared crew
      - 13.2%
-     - 85.6%
-     - 127.5
+     - 10,800
+     - 70,761
+     - 0%
    * - +1 shared crew + machine
      - 92.9%
-     - 99.8%
-     - 0.0
+     - 80,850
+     - 140,800
+     - 0%
    * - 10% scope reduction
      - 23.4%
-     - 90.2%
-     - 72.0
+     - 0
+     - 53,888
+     - 100%
    * - 90-day window
      - 41.5%
-     - 93.2%
-     - 34.0
+     - 0
+     - 59,875
+     - 100%
 
 A crew without a machine does not help because mowing and mechanical work require machine capacity.
-The shared crew plus machine is the strongest completion remedy. A 10% proportional scope reduction
-is modest; a 90-day window helps but does not close the gap.
+The shared crew plus machine is the strongest completion remedy, but its median total cost of about
+140,800 CAD is more than twice the 60,000 CAD first-year budget. Under the fixed budget, the 90-day
+window is the best budget-feasible completion case at 41.5%; the 10% scope reduction reaches 23.4%.
+Capacity is therefore a budget-expansion decision, not a free scheduling fix.
 
 ## Limits
 

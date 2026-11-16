@@ -1206,6 +1206,11 @@ def _operational_stress(
     extra_crews: list[ShiftCrew] | None = None,
     extra_machines: list[ShiftMachine] | None = None,
     scope_factor: float = 1.0,
+    annual_budget: float = 60000.0,
+    crew_day_cost: float = 0.0,
+    machine_day_cost: float = 0.0,
+    relief_crew_id: str | None = None,
+    relief_machine_id: str | None = None,
 ) -> dict[str, Any]:
     """Stress the first-year package with assumed weather and outage closures."""
     if not 0 < scope_factor <= 1:
@@ -1222,6 +1227,7 @@ def _operational_stress(
             if action.capacity_units * scope_factor > 0
         ]
     year = int(policy_execution["selection"]["year"])
+    policy_cost = float(policy_execution["policy"]["cost"]) * scope_factor
     total_hours = sum(action.capacity_units for action in actions)
     baseline = _shifts(
         actions,
@@ -1248,6 +1254,18 @@ def _operational_stress(
             extra_machines=extra_machines,
         )
         productive = plan.total_productive_hours
+        crew_days = (
+            len({item.day for item in plan.assignments if item.crew_id == relief_crew_id})
+            if relief_crew_id
+            else 0
+        )
+        machine_days = (
+            len({item.day for item in plan.assignments if item.machine_id == relief_machine_id})
+            if relief_machine_id
+            else 0
+        )
+        added_cost = crew_days * crew_day_cost + machine_days * machine_day_cost
+        total_cost = policy_cost + added_cost
         details.append(
             {
                 "scenario": index,
@@ -1259,12 +1277,32 @@ def _operational_stress(
                 "completion_rate": round(productive / total_hours, 4) if total_hours else 1.0,
                 "max_day": max((item.day for item in plan.assignments), default=0),
                 "violations": len(plan.violations),
+                "crew_days": crew_days,
+                "machine_days": machine_days,
+                "added_cost": round(added_cost, 2),
+                "total_cost": round(total_cost, 2),
+                "budget_exceeded": round(max(0.0, total_cost - annual_budget), 2),
+                "budget_feasible": total_cost <= annual_budget + 1e-9,
             }
         )
     unscheduled = [item["unscheduled_hours"] for item in details]
     completion = [item["completion_rate"] for item in details]
     blocked = [item["blocked_days"] for item in details]
     assignments = [item["assignments"] for item in details]
+    added_costs = [item["added_cost"] for item in details]
+    total_costs = [item["total_cost"] for item in details]
+    baseline_crew_days = (
+        len({item.day for item in baseline.assignments if item.crew_id == relief_crew_id})
+        if relief_crew_id
+        else 0
+    )
+    baseline_machine_days = (
+        len({item.day for item in baseline.assignments if item.machine_id == relief_machine_id})
+        if relief_machine_id
+        else 0
+    )
+    baseline_added = baseline_crew_days * crew_day_cost + baseline_machine_days * machine_day_cost
+    baseline_total = policy_cost + baseline_added
     return {
         "schema_version": "brushline.operational-stress.v1",
         "instance_id": "bc-hydro-network-2026",
@@ -1274,6 +1312,9 @@ def _operational_stress(
         "window_days": window_days,
         "outage_days": list(outage_days),
         "weather_probability": weather_probability,
+        "annual_budget": annual_budget,
+        "crew_day_cost": crew_day_cost,
+        "machine_day_cost": machine_day_cost,
         "baseline": {
             "feasible": baseline.feasible,
             "assignments": len(baseline.assignments),
@@ -1281,6 +1322,10 @@ def _operational_stress(
             "travel_hours": baseline.total_travel_hours,
             "unscheduled_hours": round(max(0.0, total_hours - baseline.total_productive_hours), 2),
             "max_day": max((item.day for item in baseline.assignments), default=0),
+            "added_cost": round(baseline_added, 2),
+            "total_cost": round(baseline_total, 2),
+            "budget_exceeded": round(max(0.0, baseline_total - annual_budget), 2),
+            "budget_feasible": baseline_total <= annual_budget + 1e-9,
         },
         "completion_probability": (
             sum(item["feasible"] for item in details) / len(details) if details else 0.0
@@ -1297,6 +1342,21 @@ def _operational_stress(
             "p50": round(float(np.percentile(assignments, 50)), 1),
             "p90": round(float(np.percentile(assignments, 90)), 1),
             "mean": round(float(np.mean(assignments)), 3),
+        },
+        "budget_feasibility_rate": (
+            sum(item["budget_feasible"] for item in details) / len(details) if details else 0.0
+        ),
+        "added_cost_band": {
+            "p10": round(float(np.percentile(added_costs, 10)), 2),
+            "p50": round(float(np.percentile(added_costs, 50)), 2),
+            "p90": round(float(np.percentile(added_costs, 90)), 2),
+            "mean": round(float(np.mean(added_costs)), 2),
+        },
+        "total_cost_band": {
+            "p10": round(float(np.percentile(total_costs, 10)), 2),
+            "p50": round(float(np.percentile(total_costs, 50)), 2),
+            "p90": round(float(np.percentile(total_costs, 90)), 2),
+            "mean": round(float(np.mean(total_costs)), 2),
         },
         "blocked_days_band": {
             "p10": round(float(np.percentile(blocked, 10)), 1),
@@ -1498,6 +1558,9 @@ def _operational_remedies(
     outage_days: tuple[int, ...] = (11, 12, 13, 14, 15),
     weather_probability: float = 0.20,
     seed: int = 7,
+    annual_budget: float = 60000.0,
+    crew_day_cost: float = 1200.0,
+    machine_day_cost: float = 900.0,
 ) -> dict[str, Any]:
     """Compare added shift capacity with a smaller first-year scope."""
     shared_crew = ShiftCrew(
@@ -1514,10 +1577,19 @@ def _operational_remedies(
     )
     case_specs = [
         ("baseline", {}, "75-day window, no added capacity"),
-        ("+1 shared crew", {"extra_crews": [shared_crew]}, "75-day window, one shared crew"),
+        (
+            "+1 shared crew",
+            {"extra_crews": [shared_crew], "relief_crew_id": shared_crew.crew_id},
+            "75-day window, one shared crew",
+        ),
         (
             "+1 shared crew + machine",
-            {"extra_crews": [shared_crew], "extra_machines": [shared_machine]},
+            {
+                "extra_crews": [shared_crew],
+                "extra_machines": [shared_machine],
+                "relief_crew_id": shared_crew.crew_id,
+                "relief_machine_id": shared_machine.machine_id,
+            },
             "75-day window, one shared crew and machine",
         ),
         (
@@ -1535,6 +1607,9 @@ def _operational_remedies(
             "assignments": [],
             "completion": [],
             "full_episodes": 0,
+            "budget_feasible": [],
+            "added_cost": [],
+            "total_cost": [],
         }
         for name, _kwargs, _description in case_specs
     }
@@ -1567,6 +1642,11 @@ def _operational_remedies(
                 extra_crews=kwargs.get("extra_crews"),
                 extra_machines=kwargs.get("extra_machines"),
                 scope_factor=kwargs.get("scope_factor", 1.0),
+                annual_budget=annual_budget,
+                crew_day_cost=crew_day_cost,
+                machine_day_cost=machine_day_cost,
+                relief_crew_id=kwargs.get("relief_crew_id"),
+                relief_machine_id=kwargs.get("relief_machine_id"),
             )
             details = stress["scenarios_detail"]
             values = stats[name]
@@ -1575,6 +1655,9 @@ def _operational_remedies(
             values["unscheduled"].extend(item["unscheduled_hours"] for item in details)
             values["assignments"].extend(item["assignments"] for item in details)
             values["completion"].extend(item["completion_rate"] for item in details)
+            values["budget_feasible"].extend(item["budget_feasible"] for item in details)
+            values["added_cost"].extend(item["added_cost"] for item in details)
+            values["total_cost"].extend(item["total_cost"] for item in details)
             values["full_episodes"] += stress["completion_probability"] == 1
             case_values[name] = stress["completion_probability"]
         episode_details.append({"episode_index": episode_index, "cases": case_values})
@@ -1603,6 +1686,23 @@ def _operational_remedies(
                     "p90": round(float(np.percentile(assignments, 90)), 1),
                 },
                 "episodes_with_full_completion": values["full_episodes"],
+                "budget_feasibility_rate": (
+                    sum(values["budget_feasible"]) / len(values["budget_feasible"])
+                    if values["budget_feasible"]
+                    else 0.0
+                ),
+                "added_cost_band": {
+                    "p10": round(float(np.percentile(values["added_cost"], 10)), 2),
+                    "p50": round(float(np.percentile(values["added_cost"], 50)), 2),
+                    "p90": round(float(np.percentile(values["added_cost"], 90)), 2),
+                    "mean": round(float(np.mean(values["added_cost"])), 2),
+                },
+                "total_cost_band": {
+                    "p10": round(float(np.percentile(values["total_cost"], 10)), 2),
+                    "p50": round(float(np.percentile(values["total_cost"], 50)), 2),
+                    "p90": round(float(np.percentile(values["total_cost"], 90)), 2),
+                    "mean": round(float(np.mean(values["total_cost"])), 2),
+                },
             }
         )
     return {
@@ -1610,6 +1710,9 @@ def _operational_remedies(
         "instance_id": "bc-hydro-network-2026",
         "episodes": len(episodes),
         "scenarios_per_episode": scenarios,
+        "annual_budget": annual_budget,
+        "crew_day_cost": crew_day_cost,
+        "machine_day_cost": machine_day_cost,
         "window_days": window_days,
         "outage_days": list(outage_days),
         "weather_probability": weather_probability,
@@ -2240,15 +2343,16 @@ def _summary(
             "",
             "## Weather/outage remedies",
             "",
-            "| Remedy | Scenario completion | Mean completion | Unscheduled P50 |",
-            "|---|---:|---:|---:|",
+            "| Remedy | Scenario completion | Added cost P50 | Total cost P50 | Budget feasible |",
+            "|---|---:|---:|---:|---:|",
         ]
     )
     for case in operational_remedies["cases"]:
         lines.append(
             f"| {case['name']} | {case['scenario_completion_rate']:.1%} | "
-            f"{case['mean_completion_rate']:.1%} | "
-            f"{case['unscheduled_hours_band']['p50']:.0f} |"
+            f"{case['added_cost_band']['p50']:.0f} | "
+            f"{case['total_cost_band']['p50']:.0f} | "
+            f"{case['budget_feasibility_rate']:.1%} |"
         )
     lines.extend(
         [
