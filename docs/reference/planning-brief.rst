@@ -5,7 +5,8 @@ The planning brief is a self-contained decision record for the network prototype
 selected frontier point, annual MILP schedule, tactical demand, shift summary, workforce scenarios,
 commercial check, execution uncertainty, hindsight-adaptive comparison, rolling-horizon policy,
 first-year policy execution and all-episode scan, static budget-headroom candidates, weather and
-outage stress, scaling evidence, caveats, and reproduction metadata into one document.
+outage stress and all-episode calendar scan, scaling evidence, caveats, and reproduction metadata
+into one document.
 
 The brief is generated on demand from the network artifact set. It is not a new model result and it
 does not hide the underlying assumptions:

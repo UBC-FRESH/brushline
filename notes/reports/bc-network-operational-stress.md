@@ -29,6 +29,30 @@ The baseline package schedules all 813.7 productive hours in 63 days. Under the 
 outage calendar, no sampled scenario schedules every work item; the median scenario leaves about 50
 hours unscheduled.
 
+## All-episode scan
+
+The first-year calendar stress was repeated for all 20 rolling episodes, with 50 scenarios each.
+
+- Baseline 75-day feasible: **10/20 (50%)**
+- Scenario-level full completion: **13.2%**
+- Episodes with full stress completion: **2/20**
+- Mean work completion: **85.6%**
+- Unscheduled hours P50: **127.5**
+- Unscheduled hours P90: **372.3**
+- Failure sources: fall window **10**, weather/outage **8**, crew capacity **0**, fully feasible **2**
+
+Window sensitivity:
+
+| Window | Scenario full completion | Mean unscheduled hours |
+|---:|---:|---:|
+| 75 days | 13.8% | 165.8 |
+| 90 days | 40.3% | 83.7 |
+| 105 days | 62.8% | 38.3 |
+
+The 75-day window is the primary constraint. However, extending the window to 105 days still does
+not reach full completion under the assumed weather calendar. A longer window, more crew/machine
+capacity, a smaller scope, or explicit weather reserve would all need evaluation.
+
 ## Interpretation
 
 The package is calendar-sensitive. This is a useful operational finding: a shorter fall window and

@@ -273,6 +273,10 @@ test suite. This page is the map.
      - ``brushline.operational-stress.v1``
      - ``tools/build_operational_stress.py``
      - Assumed weather/outage shift calendar, completion rate, blocked days, unscheduled hours, and failure reporting
+   * - Operational stress scan
+     - ``brushline.operational-stress-scan.v1``
+     - ``tools/build_operational_stress_scan.py``
+     - All-episode weather/outage calendar stress, baseline and scenario completion rates, failure sources, and window sensitivity
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

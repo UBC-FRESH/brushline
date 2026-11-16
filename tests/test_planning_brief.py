@@ -224,6 +224,38 @@ def _artifacts() -> dict[str, Any]:
         "unscheduled_hours_band": {"p50": 50.2, "p90": 97.7},
         "shift_assignments_band": {"p50": 107.0},
     }
+    operational_stress_scan = {
+        "episodes": 20,
+        "scenarios_per_episode": 50,
+        "window_days": 75,
+        "baseline_feasibility_rate": 0.5,
+        "scenario_completion_rate": 0.132,
+        "mean_completion_rate": 0.8563,
+        "unscheduled_hours_band": {"p50": 127.5, "p90": 372.31},
+        "failure_sources": {
+            "fall_window": 10,
+            "weather_outage_calendar": 8,
+            "crew_capacity": 0,
+            "none": 2,
+        },
+        "window_sensitivity": [
+            {
+                "window_days": 75,
+                "scenario_completion_rate": 0.1375,
+                "mean_unscheduled_hours": 165.77,
+            },
+            {
+                "window_days": 90,
+                "scenario_completion_rate": 0.4025,
+                "mean_unscheduled_hours": 83.69,
+            },
+            {
+                "window_days": 105,
+                "scenario_completion_rate": 0.6275,
+                "mean_unscheduled_hours": 38.27,
+            },
+        ],
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -246,6 +278,7 @@ def _artifacts() -> dict[str, Any]:
         "policy_execution_scan": policy_execution_scan,
         "static_plan": static_plan,
         "operational_stress": operational_stress,
+        "operational_stress_scan": operational_stress_scan,
     }
 
 
@@ -274,6 +307,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Static budget-headroom plans" in brief.markdown
     assert "## Weather and outage stress" in brief.markdown
     assert "stress fully feasible: 0.0%" in brief.markdown
+    assert "## All-episode weather and outage scan" in brief.markdown
+    assert "Failure sources: fall window 10" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown

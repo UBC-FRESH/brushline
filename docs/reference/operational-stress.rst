@@ -43,3 +43,36 @@ choices, not automatic conclusions.
 - The fixed outage block is assumed, not an asset-owner outage schedule.
 - Only the median policy episode and its first year are stressed.
 - No field calibration, safety certification, or clearance standard is claimed.
+
+## All-episode scan
+
+The calendar stress was repeated for all 20 rolling episodes, with 50 scenarios per episode.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Metric
+     - Value
+   * - Baseline 75-day feasible
+     - 50.0%
+   * - Scenario-level full completion
+     - 13.2%
+   * - Episodes with full stress completion
+     - 2 of 20
+   * - Mean work completion
+     - 85.6%
+   * - Unscheduled hours P50
+     - 127.5
+   * - Unscheduled hours P90
+     - 372.3
+
+Failure sources across the 20 episodes:
+
+- fall-window capacity: 10 episodes;
+- weather/outage calendar: 8 episodes;
+- crew capacity: 0 episodes;
+- fully feasible: 2 episodes.
+
+The 75-day window is the primary constraint. Increasing the window improved scenario-level full completion
+to 40.2% at 90 days and 62.8% at 105 days, with mean unscheduled work falling from 165.8 to 83.7 and
+38.3 hours. A longer window alone does not reach full completion under the assumed weather calendar.

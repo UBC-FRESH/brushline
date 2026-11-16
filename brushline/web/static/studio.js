@@ -186,6 +186,12 @@ function drawSchedule(){
   if(stress){
    $("#schedule").innerHTML+=`<p class="schedule-note">Weather and outage stress · ${stress.scenarios} scenarios · ${stress.window_days}-day fall window · ${stress.outage_days.length}-day outage · ${(stress.weather_probability*100).toFixed(0)}% weather loss/day</p><table><tr><th>Metric</th><th>Baseline</th><th>Stress</th></tr><tr><td>Fully feasible</td><td>${stress.baseline.feasible}</td><td>${(stress.completion_probability*100).toFixed(1)}%</td></tr><tr><td>Mean completion</td><td>100%</td><td>${(stress.mean_completion_rate*100).toFixed(1)}%</td></tr><tr><td>Shift assignments</td><td>${stress.baseline.assignments}</td><td>${stress.shift_assignments_band.p50.toFixed(0)}</td></tr><tr><td>Unscheduled hours P50 / P90</td><td>${stress.baseline.unscheduled_hours.toFixed(0)}</td><td>${stress.unscheduled_hours_band.p50.toFixed(0)} / ${stress.unscheduled_hours_band.p90.toFixed(0)}</td></tr></table>`;
   }
+  const stressScan=state.network["operational-stress-scan"];
+  if(stressScan){
+   const windowRows=(stressScan.window_sensitivity||[]).map(item=>`<tr><td>${item.window_days}</td><td>${(item.scenario_completion_rate*100).toFixed(1)}%</td><td>${item.mean_unscheduled_hours.toFixed(0)}</td></tr>`).join("");
+   const sources=stressScan.failure_sources||{};
+   $("#schedule").innerHTML+=`<p class="schedule-note">All-episode weather/outage scan · ${stressScan.episodes} episodes · ${stressScan.scenarios_per_episode} calendars each</p><table><tr><th>Metric</th><th>Value</th></tr><tr><td>Baseline 75-day feasible</td><td>${(stressScan.baseline_feasibility_rate*100).toFixed(1)}%</td></tr><tr><td>Scenario full completion</td><td>${(stressScan.scenario_completion_rate*100).toFixed(1)}%</td></tr><tr><td>Mean work completion</td><td>${(stressScan.mean_completion_rate*100).toFixed(1)}%</td></tr><tr><td>Unscheduled hours P50 / P90</td><td>${stressScan.unscheduled_hours_band.p50.toFixed(0)} / ${stressScan.unscheduled_hours_band.p90.toFixed(0)}</td></tr><tr><td>Failure sources</td><td>window ${sources.fall_window||0} · weather ${sources.weather_outage_calendar||0} · crew ${sources.crew_capacity||0} · none ${sources.none||0}</td></tr></table><table><tr><th>Window days</th><th>Scenario completion</th><th>Mean unscheduled h</th></tr>${windowRows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

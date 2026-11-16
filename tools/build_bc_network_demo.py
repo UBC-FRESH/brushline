@@ -1297,6 +1297,177 @@ def _operational_stress(
     }
 
 
+def _operational_stress_scan(
+    rolling_policy: dict[str, Any],
+    fixed_actions: list[dict[str, Any]],
+    segments: list[dict[str, Any]],
+    units: list[dict[str, Any]],
+    towers: list[dict[str, Any]],
+    profiles: list[ContractorProfile],
+    *,
+    scenarios: int = 50,
+    window_days: int = 75,
+    outage_days: tuple[int, ...] = (11, 12, 13, 14, 15),
+    weather_probability: float = 0.20,
+    seed: int = 7,
+) -> dict[str, Any]:
+    """Stress first-year shift calendars across every rolling episode."""
+    episodes = sorted(
+        rolling_policy["episodes_detail"],
+        key=lambda episode: int(episode["index"]),
+    )
+    episode_details = []
+    all_unscheduled = []
+    all_assignments = []
+    total_scenarios = 0
+    feasible_scenarios = 0
+    window_stats = {
+        window: {"scenarios": 0, "feasible": 0, "unscheduled": [], "assignments": []}
+        for window in (window_days, window_days + 15, window_days + 30)
+    }
+    failure_sources = {
+        "fall_window": 0,
+        "crew_capacity": 0,
+        "weather_outage_calendar": 0,
+        "none": 0,
+    }
+    for episode in episodes:
+        package = _policy_execution_for_episode(
+            episode,
+            fixed_actions,
+            segments,
+            units,
+            towers,
+            profiles,
+            "all rolling episodes, first year",
+        )
+        episode_index = int(episode["index"])
+        long_actions = [
+            TacticalAction.model_validate(item) for item in package["tactical"]["actions"]
+        ]
+        long_baseline = _shifts(
+            long_actions,
+            "bc-hydro-network-2026",
+            profiles,
+            max_days_per_year=260,
+        )
+        stress = _operational_stress(
+            package,
+            profiles,
+            scenarios=scenarios,
+            window_days=window_days,
+            outage_days=outage_days,
+            weather_probability=weather_probability,
+            seed=seed + episode_index * 100,
+        )
+        detail = stress["scenarios_detail"]
+        all_unscheduled.extend(item["unscheduled_hours"] for item in detail)
+        all_assignments.extend(item["assignments"] for item in detail)
+        total_scenarios += len(detail)
+        feasible_scenarios += sum(item["feasible"] for item in detail)
+        baseline = stress["baseline"]
+        if not baseline["feasible"]:
+            source = "fall_window" if long_baseline.feasible else "crew_capacity"
+        elif stress["completion_probability"] < 1:
+            source = "weather_outage_calendar"
+        else:
+            source = "none"
+        failure_sources[source] += 1
+        episode_details.append(
+            {
+                "episode_index": episode_index,
+                "rolling_cost": episode["rolling_cost"],
+                "policy_cost": package["policy"]["cost"],
+                "policy_hours": package["policy"]["hours"],
+                "baseline_feasible": baseline["feasible"],
+                "long_window_baseline_feasible": long_baseline.feasible,
+                "baseline_assignments": baseline["assignments"],
+                "baseline_max_day": baseline["max_day"],
+                "stress_completion_probability": stress["completion_probability"],
+                "mean_completion_rate": stress["mean_completion_rate"],
+                "unscheduled_p50": stress["unscheduled_hours_band"]["p50"],
+                "unscheduled_p90": stress["unscheduled_hours_band"]["p90"],
+                "blocked_days_mean": stress["blocked_days_band"]["mean"],
+                "assignments_p50": stress["shift_assignments_band"]["p50"],
+                "failure_source": source,
+            }
+        )
+        for window_index, window in enumerate((window_days, window_days + 15, window_days + 30)):
+            window_stress = _operational_stress(
+                package,
+                profiles,
+                scenarios=20,
+                window_days=window,
+                outage_days=outage_days,
+                weather_probability=weather_probability,
+                seed=seed + episode_index * 100 + 50 + window_index,
+            )
+            window_detail = window_stress["scenarios_detail"]
+            stats = window_stats[window]
+            stats["scenarios"] += len(window_detail)
+            stats["feasible"] += sum(item["feasible"] for item in window_detail)
+            stats["unscheduled"].extend(item["unscheduled_hours"] for item in window_detail)
+            stats["assignments"].extend(item["assignments"] for item in window_detail)
+    windows = []
+    for window, stats in window_stats.items():
+        windows.append(
+            {
+                "window_days": window,
+                "scenario_completion_rate": (
+                    stats["feasible"] / stats["scenarios"] if stats["scenarios"] else 0.0
+                ),
+                "mean_unscheduled_hours": round(float(np.mean(stats["unscheduled"])), 2),
+                "unscheduled_p90": round(float(np.percentile(stats["unscheduled"], 90)), 2),
+                "mean_assignments": round(float(np.mean(stats["assignments"])), 2),
+            }
+        )
+    return {
+        "schema_version": "brushline.operational-stress-scan.v1",
+        "instance_id": "bc-hydro-network-2026",
+        "episodes": len(episodes),
+        "scenarios_per_episode": scenarios,
+        "year": 2027,
+        "window_days": window_days,
+        "outage_days": list(outage_days),
+        "weather_probability": weather_probability,
+        "seed": seed,
+        "baseline_feasibility_rate": (
+            sum(item["baseline_feasible"] for item in episode_details) / len(episode_details)
+            if episode_details
+            else 0.0
+        ),
+        "scenario_completion_rate": feasible_scenarios / total_scenarios
+        if total_scenarios
+        else 0.0,
+        "episodes_with_full_completion": sum(
+            item["stress_completion_probability"] == 1 for item in episode_details
+        ),
+        "mean_completion_rate": round(
+            float(np.mean([item["mean_completion_rate"] for item in episode_details])), 4
+        ),
+        "unscheduled_hours_band": {
+            "p10": round(float(np.percentile(all_unscheduled, 10)), 2),
+            "p50": round(float(np.percentile(all_unscheduled, 50)), 2),
+            "p90": round(float(np.percentile(all_unscheduled, 90)), 2),
+            "mean": round(float(np.mean(all_unscheduled)), 2),
+        },
+        "shift_assignments_band": {
+            "p10": round(float(np.percentile(all_assignments, 10)), 1),
+            "p50": round(float(np.percentile(all_assignments, 50)), 1),
+            "p90": round(float(np.percentile(all_assignments, 90)), 1),
+            "mean": round(float(np.mean(all_assignments)), 2),
+        },
+        "failure_sources": failure_sources,
+        "window_sensitivity": windows,
+        "episodes_detail": episode_details,
+        "caveats": [
+            "Weather loss is an independent per-day assumption; it is not a forecast or field record.",
+            "The fixed outage block is an assumed operational constraint, not an asset-owner schedule.",
+            "Only first-year shift scheduling is stressed; access, later years, and safety are not certified.",
+        ],
+    }
+
+
 def _scene(
     network: dict[str, Any],
     segments: list[dict[str, Any]],
@@ -1661,6 +1832,7 @@ def _summary(
     policy_execution_scan: dict[str, Any],
     static_plan: dict[str, Any],
     operational_stress: dict[str, Any],
+    operational_stress_scan: dict[str, Any],
 ) -> str:
     """Write a compact human-readable report."""
     lines = [
@@ -1892,6 +2064,16 @@ def _summary(
             f"| Unscheduled hours P90 | {operational_stress['baseline']['unscheduled_hours']:.0f} | "
             f"{operational_stress['unscheduled_hours_band']['p90']:.0f} |",
             "",
+            f"All-episode scan: baseline 75-day feasibility "
+            f"{operational_stress_scan['baseline_feasibility_rate']:.1%}; scenario full "
+            f"completion {operational_stress_scan['scenario_completion_rate']:.1%}; mean work "
+            f"completion {operational_stress_scan['mean_completion_rate']:.1%}; unscheduled P50 "
+            f"{operational_stress_scan['unscheduled_hours_band']['p50']:.0f} h. Failure sources: "
+            f"window {operational_stress_scan['failure_sources']['fall_window']}, weather "
+            f"{operational_stress_scan['failure_sources']['weather_outage_calendar']}, crew "
+            f"{operational_stress_scan['failure_sources']['crew_capacity']}, none "
+            f"{operational_stress_scan['failure_sources']['none']}.",
+            "",
             "## Caveats",
             "",
             "- OSM geometry and BC VRI cover are real public inputs; stand values are a prototype state, not a survey.",
@@ -2108,6 +2290,14 @@ def main() -> None:
         profiles,
     )
     operational_stress = _operational_stress(policy_execution, profiles)
+    operational_stress_scan = _operational_stress_scan(
+        rolling_policy.model_dump(mode="json"),
+        milp_balanced["actions"],
+        segments,
+        units,
+        towers,
+        profiles,
+    )
     static_plan = evaluate_static_plans(
         instance_id="bc-hydro-network-2026",
         plans=[
@@ -2240,6 +2430,7 @@ def main() -> None:
         ("policy-execution-scan.json", policy_execution_scan),
         ("static-robust.json", static_plan.model_dump(mode="json")),
         ("operational-stress.json", operational_stress),
+        ("operational-stress-scan.json", operational_stress_scan),
         ("access.json", access_payload),
     ):
         (OUT / name).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -2261,6 +2452,7 @@ def main() -> None:
             policy_execution_scan,
             static_plan.model_dump(mode="json"),
             operational_stress,
+            operational_stress_scan,
         ),
         encoding="utf-8",
     )

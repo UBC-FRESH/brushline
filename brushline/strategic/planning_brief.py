@@ -384,6 +384,7 @@ def build_planning_brief(
     policy_execution_scan: Mapping[str, Any] | None = None,
     static_plan: Mapping[str, Any] | None = None,
     operational_stress: Mapping[str, Any] | None = None,
+    operational_stress_scan: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -406,6 +407,8 @@ def build_planning_brief(
         Static frontier-plan stress evaluation. The section is omitted when absent.
     operational_stress : mapping, optional
         Weather/outage shift stress. The section is omitted when absent.
+    operational_stress_scan : mapping, optional
+        All-episode weather/outage scan. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -458,6 +461,9 @@ def build_planning_brief(
     stress_baseline = (operational_stress or {}).get("baseline") or {}
     stress_unscheduled = (operational_stress or {}).get("unscheduled_hours_band") or {}
     stress_assignments = (operational_stress or {}).get("shift_assignments_band") or {}
+    stress_scan_sources = (operational_stress_scan or {}).get("failure_sources") or {}
+    stress_scan_unscheduled = (operational_stress_scan or {}).get("unscheduled_hours_band") or {}
+    stress_scan_window = (operational_stress_scan or {}).get("window_sensitivity") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -985,6 +991,44 @@ def build_planning_brief(
             if operational_stress
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="All-episode weather and outage scan",
+                    paragraphs=[
+                        f"All {operational_stress_scan.get('episodes')} rolling episodes were "
+                        f"stressed with {operational_stress_scan.get('scenarios_per_episode')} "
+                        f"calendars each at a {operational_stress_scan.get('window_days')}-day "
+                        f"window. Baseline feasible: "
+                        f"{_percent(operational_stress_scan.get('baseline_feasibility_rate'))}; "
+                        f"scenario-level full completion: "
+                        f"{_percent(operational_stress_scan.get('scenario_completion_rate'))}; "
+                        f"mean work completion: "
+                        f"{_percent(operational_stress_scan.get('mean_completion_rate'))}.",
+                        f"Failure sources: fall window "
+                        f"{stress_scan_sources.get('fall_window', 0)}, weather/outage "
+                        f"{stress_scan_sources.get('weather_outage_calendar', 0)}, crew capacity "
+                        f"{stress_scan_sources.get('crew_capacity', 0)}, fully feasible "
+                        f"{stress_scan_sources.get('none', 0)}. Median unscheduled work "
+                        f"{_number(stress_scan_unscheduled.get('p50'))} hours; P90 "
+                        f"{_number(stress_scan_unscheduled.get('p90'))} hours.",
+                    ],
+                    table=_table(
+                        ["Window days", "Scenario completion", "Mean unscheduled hours"],
+                        [
+                            [
+                                item.get("window_days"),
+                                _percent(item.get("scenario_completion_rate")),
+                                _number(item.get("mean_unscheduled_hours")),
+                            ]
+                            for item in stress_scan_window
+                        ],
+                    ),
+                )
+            ]
+            if operational_stress_scan
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1019,7 +1063,7 @@ def build_planning_brief(
                 "Source artifacts: network, strategic, tactical, resources, operations, shifts, "
                 "workforce, bid, uncertainty, scenario-optimization, rolling-policy, "
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
-                "and access JSON files.",
+                "operational-stress-scan, and access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",
