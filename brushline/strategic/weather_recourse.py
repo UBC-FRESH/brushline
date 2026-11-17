@@ -1,9 +1,10 @@
 """Weather- and outage-aware annual recourse for the rolling policy.
 
-The policy observes each year's cost, hours, capacity, and assumed weather/outage calendar before
-committing the year's actions. The calendar-aware case defers unschedulable actions until every
-retained action fits the observed crew calendar. This is an ex-post feasible-scope policy, not a
-weather forecast and not a stochastic dynamic program.
+The policy observes each year's cost, hours, and capacity before committing actions. The
+forecast-aware case plans against an independent synthetic calendar and executes under the actual
+calendar. The calendar-aware case observes the actual calendar and defers unschedulable actions
+until every retained action fits it. These are calendar policies, not forecast products or
+stochastic dynamic programs.
 """
 
 from __future__ import annotations
@@ -67,7 +68,7 @@ class WeatherCaseSummary(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    name: Literal["calendar-naive", "calendar-aware"]
+    name: Literal["calendar-naive", "forecast-aware", "calendar-aware"]
     budget_violation_probability: float = Field(ge=0, le=1)
     capacity_violation_probability: float = Field(ge=0, le=1)
     completion_band: RecourseBand
@@ -84,7 +85,7 @@ class WeatherCaseSummary(BaseModel):
 
 
 class WeatherRecourseResult(BaseModel):
-    """Calendar-naive versus calendar-aware rolling-recourse comparison."""
+    """Calendar-naive, forecast-aware, and observed-calendar-aware comparison."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -214,7 +215,7 @@ def _calendar_days(
 
 def _simulate_case(
     *,
-    name: Literal["calendar-naive", "calendar-aware"],
+    name: Literal["calendar-naive", "forecast-aware", "calendar-aware"],
     plan: StatefulPlan,
     segments: list[StatefulSegment],
     methods: list[StatefulMethod],
@@ -231,8 +232,13 @@ def _simulate_case(
 ) -> WeatherCaseSummary:
     factor_rng = random.Random(seed)
     calendar_rng = random.Random(seed + 10_000)
+    forecast_rng = random.Random(seed + 20_000)
     calendars = [
         [_calendar_days(rng=calendar_rng, calendar=calendar) for _ in periods]
+        for _ in range(episodes)
+    ]
+    forecast_calendars = [
+        [_calendar_days(rng=forecast_rng, calendar=calendar) for _ in periods]
         for _ in range(episodes)
     ]
     actions_by_year: dict[int, list[StatefulAction]] = {period.year: [] for period in periods}
@@ -342,7 +348,12 @@ def _simulate_case(
             annual_resource_deferred += n_deferred
             annual_deferred_hours += d_hours
             calendar_deferred: set[str] = set()
-            if name == "calendar-aware":
+            if name in {"forecast-aware", "calendar-aware"}:
+                planning_days = (
+                    forecast_calendars[episode][offset]
+                    if name == "forecast-aware"
+                    else calendars[episode][offset]
+                )
                 while True:
                     active = [
                         action for action in kept if action.segment_id not in calendar_deferred
@@ -350,7 +361,7 @@ def _simulate_case(
                     shift_plan, _ = _schedule(
                         actions=active,
                         year=year,
-                        blocked_days=calendars[episode][offset],
+                        blocked_days=planning_days,
                         crews=crews,
                         machines=machines,
                         calendar=calendar,
@@ -485,7 +496,7 @@ def evaluate_weather_recourse(
     calendar: WeatherCalendarConfig | None = None,
     created_utc: datetime | None = None,
 ) -> WeatherRecourseResult:
-    """Compare calendar-naive and calendar-aware annual recourse."""
+    """Compare calendar-naive, forecast-aware, and calendar-aware annual recourse."""
     if not plan.actions or not segments or not periods:
         raise WeatherRecourseError("plan, segments, and periods must be non-empty")
     if not crews or not machines:
@@ -496,6 +507,22 @@ def evaluate_weather_recourse(
     calendar_rules = calendar or WeatherCalendarConfig(seed=seed)
     naive = _simulate_case(
         name="calendar-naive",
+        plan=plan,
+        segments=segments,
+        methods=methods,
+        periods=periods,
+        config=rules,
+        episodes=episodes,
+        seed=seed,
+        solver=solver,
+        heuristic_iterations=heuristic_iterations,
+        lookahead_years=lookahead_years,
+        calendar=calendar_rules,
+        crews=crews,
+        machines=machines,
+    )
+    forecast = _simulate_case(
+        name="forecast-aware",
         plan=plan,
         segments=segments,
         methods=methods,
@@ -534,7 +561,7 @@ def evaluate_weather_recourse(
         solver=solver,
         lookahead_years=lookahead_years,
         calendar=calendar_rules,
-        cases=[naive, aware],
+        cases=[naive, forecast, aware],
         created_utc=created_utc or datetime.now(UTC),
     )
 

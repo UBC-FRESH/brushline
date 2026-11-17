@@ -71,12 +71,17 @@ def test_weather_recourse_cases() -> None:
         calendar=WeatherCalendarConfig(window_days=30, outage_days=[5], seed=7),
         created_utc=CREATED,
     )
-    assert [case.name for case in result.cases] == ["calendar-naive", "calendar-aware"]
+    assert [case.name for case in result.cases] == [
+        "calendar-naive",
+        "forecast-aware",
+        "calendar-aware",
+    ]
     assert result.years == [2027, 2028]
-    naive, aware = result.cases
+    naive, forecast, aware = result.cases
     assert naive.budget_violation_probability == 0
     assert aware.budget_violation_probability == 0
     assert aware.mean_unscheduled_hours == 0
+    assert forecast.mean_calendar_deferred_actions >= 0
     assert aware.mean_calendar_deferred_actions >= 0
     assert aware.mean_resource_deferred_actions >= 0
     assert aware.completion_band.p50 <= naive.completion_band.p50 + 1e-9

@@ -604,6 +604,16 @@ def _artifacts() -> dict[str, Any]:
                 "mean_calendar_deferred_actions": 0.0,
             },
             {
+                "name": "forecast-aware",
+                "budget_violation_probability": 0.0,
+                "completion_band": {"p50": 0.861816, "mean": 0.863388},
+                "retained_scope_band": {"p50": 0.882833, "mean": 0.875593},
+                "risk_band": {"mean": 0.05255},
+                "cost_band": {"p50": 264470.01},
+                "mean_unscheduled_hours": 64.7,
+                "mean_calendar_deferred_actions": 39.15,
+            },
+            {
                 "name": "calendar-aware",
                 "budget_violation_probability": 0.0,
                 "completion_band": {"p50": 0.875628, "mean": 0.873948},
@@ -631,6 +641,15 @@ def _artifacts() -> dict[str, Any]:
                     "risk_band": {"mean": 0.061682},
                     "cost_band": {"p50": 2942469.91},
                     "mean_unscheduled_hours": 7377.04,
+                },
+                {
+                    "name": "forecast-aware",
+                    "budget_violation_probability": 0.0,
+                    "completion_band": {"p50": 0.836174, "mean": 0.832031},
+                    "retained_scope_band": {"p50": 0.864139, "mean": 0.845013},
+                    "risk_band": {"mean": 0.071306},
+                    "cost_band": {"p50": 2539519.96},
+                    "mean_unscheduled_hours": 681.51,
                 },
                 {
                     "name": "calendar-aware",
@@ -741,8 +760,9 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## 590-segment rolling-recourse scale test" in brief.markdown
     assert "## Weather/outage-aware recourse" in brief.markdown
     assert "## 590-segment weather-recourse scale test" in brief.markdown
+    assert "forecast-aware" in brief.markdown
     assert "7,377" in brief.markdown
-    assert "Calendar-aware defers unscheduled actions" in brief.markdown
+    assert "Forecast-aware plans against an independent synthetic calendar" in brief.markdown
     assert "chance 100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown

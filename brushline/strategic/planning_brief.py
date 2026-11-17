@@ -1773,11 +1773,12 @@ def build_planning_brief(
                         "probability per day. Each year's calendar is observed before actions "
                         "are committed.",
                         "Calendar-naive keeps the resource-feasible plan and accepts partial "
-                        "execution. Calendar-aware defers unscheduled actions until every "
-                        "retained action fits the observed crew calendar. Awareness eliminates "
-                        "unscheduled work on the retained scope but costs scope and does not lower "
-                        "mean risk; this is an ex-post calendar tradeoff, not a forecast or a "
-                        "stochastic dynamic program.",
+                        "execution. Forecast-aware plans against an independent synthetic "
+                        "calendar and executes under the actual calendar. Calendar-aware "
+                        "observes the actual calendar and defers until every retained action "
+                        "fits it. Forecast error leaves some work unscheduled; observed-calendar "
+                        "awareness eliminates it but costs scope and does not lower mean risk. "
+                        "This is not a forecast product or a stochastic dynamic program.",
                     ],
                     table=_table(
                         [
@@ -1823,9 +1824,10 @@ def build_planning_brief(
                         f"Runtime: fixed exact "
                         f"{_number(weather_recourse_590.get('fixed_seconds'), 1)} s; weather "
                         f"simulation {_number(weather_recourse_590.get('rolling_seconds'), 1)} s. "
-                        "The zero-budget-violation and calendar-aware completion tradeoff "
-                        "persist at scale. This is a replicated stress instance, not a real "
-                        "network, and not an optimality claim.",
+                        "The zero-budget-violation result persists at scale. Forecast error "
+                        "leaves unscheduled work, while observed-calendar awareness eliminates "
+                        "it. This is a replicated stress instance, not a real network, and not an "
+                        "optimality claim.",
                     ],
                     table=_table(
                         [

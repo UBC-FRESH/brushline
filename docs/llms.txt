@@ -146,7 +146,7 @@
 - [100-path chance constraint](reference/chance-100-plan.html): retrained budget chance at 8% out-of-sample violation and higher residual risk.
 - [Two-stage recourse](reference/two-stage.html): first-year fixed plan with budget/capacity deferral after factor observation; multi-year annual recourse results included.
 - [Rolling recourse](reference/rolling-recourse.html): static, fixed-future recourse, rolling-only, and rolling-recourse policies on common factors, including a replicated 590-segment scale test.
-- [Weather/outage-aware recourse](reference/weather-recourse.html): calendar-naive versus calendar-aware annual recourse under an assumed 75-day fall window with outage days and independent weather loss. Includes a replicated 590-segment scale test.
+- [Weather/outage-aware recourse](reference/weather-recourse.html): calendar-naive, forecast-aware, and observed-calendar-aware annual recourse under an assumed 75-day fall window with outage days and independent weather loss, including a replicated 590-segment scale test.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 
