@@ -394,6 +394,7 @@ def build_planning_brief(
     frontier_validation: Mapping[str, Any] | None = None,
     robust_plan: Mapping[str, Any] | None = None,
     chance_plan: Mapping[str, Any] | None = None,
+    chance_capacity_plan: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -436,6 +437,8 @@ def build_planning_brief(
         Scenario-robust static plan evaluation. The section is omitted when absent.
     chance_plan : mapping, optional
         Sampled budget chance-constrained plan. The section is omitted when absent.
+    chance_capacity_plan : mapping, optional
+        Sampled budget-and-capacity chance plan. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -510,6 +513,8 @@ def build_planning_brief(
     robust_summary = (robust_plan or {}).get("plan") or {}
     chance_cases = (chance_plan or {}).get("test", {}).get("plans") or []
     chance_summary = (chance_plan or {}).get("plan") or {}
+    capacity_cases = (chance_capacity_plan or {}).get("test", {}).get("plans") or []
+    capacity_summary = (chance_capacity_plan or {}).get("plan") or {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1461,6 +1466,46 @@ def build_planning_brief(
             if chance_plan
             else []
         ),
+        *(
+            [
+                BriefSection(
+                    heading="Chance-constrained capacity",
+                    paragraphs=[
+                        f"A second chance plan allows "
+                        f"{chance_capacity_plan.get('max_capacity_violations')} capacity "
+                        f"violations per year in addition to "
+                        f"{chance_capacity_plan.get('max_budget_violations')} budget violations "
+                        "on the 20 training paths. It is tested on 100 independent paths.",
+                        f"Capacity chance does not improve the out-of-sample result: risk remains "
+                        f"{_number(capacity_summary.get('mean_risk'), 4)}, budget violation is "
+                        f"22% versus 21% for budget-only chance, and out-of-sample capacity "
+                        "violation is still 0%. The budget-only plan is better in this test.",
+                    ],
+                    table=_table(
+                        [
+                            "Plan",
+                            "5-year cost P10-P90",
+                            "Mean risk",
+                            "Budget violation",
+                            "Capacity violation",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                f"{_number(case.get('cost_band', {}).get('p10'))}-"
+                                f"{_number(case.get('cost_band', {}).get('p90'))}",
+                                _number(case.get("risk"), 4),
+                                _percent(case.get("budget_violation_probability")),
+                                _percent(case.get("capacity_violation_probability")),
+                            ]
+                            for case in capacity_cases
+                        ],
+                    ),
+                )
+            ]
+            if chance_capacity_plan
+            else []
+        ),
         BriefSection(
             heading="Scaling evidence",
             paragraphs=[
@@ -1497,7 +1542,8 @@ def build_planning_brief(
                 "policy-execution, policy-execution-scan, static-robust, operational-stress, "
                 "operational-stress-scan, operational-remedies, risk-ranked-scope, "
                 "risk-trajectory, rolling-recovery, out-of-sample-recovery, deferral-frontier, "
-                "frontier-validation, robust-plan, chance-plan, and access JSON files.",
+                "frontier-validation, robust-plan, chance-plan, chance-capacity-plan, and "
+                "access JSON files.",
             ],
             bullets=[
                 f"Repository commit: `{commit}`.",

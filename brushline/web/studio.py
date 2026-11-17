@@ -77,6 +77,7 @@ def _network_artifacts() -> dict[str, Any]:
             "frontier-validation",
             "robust-plan",
             "chance-plan",
+            "chance-capacity-plan",
             "access",
         )
     }
@@ -422,6 +423,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 frontier_validation=artifacts["frontier-validation"],
                 robust_plan=artifacts["robust-plan"],
                 chance_plan=artifacts["chance-plan"],
+                chance_capacity_plan=artifacts["chance-capacity-plan"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

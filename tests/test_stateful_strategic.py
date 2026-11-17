@@ -91,6 +91,25 @@ def test_stateful_chance_budget_constraint_solves() -> None:
     assert plan.replay_ok
 
 
+def test_stateful_chance_capacity_constraint_solves() -> None:
+    plan = build_stateful_plan(
+        instance_id="tiny",
+        segments=_segments(),
+        methods=_methods(),
+        periods=[StatefulPeriod(year=2027, budget=3000, capacity_hours=30)],
+        config=StatefulConfig(risk_weight=1.0),
+        chance_factors=[
+            [(2027, 1.0, 1.0, 1.0)],
+            [(2027, 1.2, 1.0, 0.7)],
+        ],
+        max_budget_violations=1,
+        max_capacity_violations=1,
+        created_utc=CREATED,
+    )
+    assert plan.status == "optimal"
+    assert plan.replay_ok
+
+
 def test_stateful_zero_budget_leaves_growth() -> None:
     plan = build_stateful_plan(
         instance_id="tiny",

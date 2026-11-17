@@ -137,6 +137,7 @@ def _build_problem(
     robust_factors: list[list[tuple[int, float, float, float]]] | None = None,
     chance_factors: list[list[tuple[int, float, float, float]]] | None = None,
     max_budget_violations: int | None = None,
+    max_capacity_violations: int | None = None,
 ) -> tuple[
     np.ndarray,
     np.ndarray,
@@ -153,7 +154,8 @@ def _build_problem(
     n_x = n_segments * n_periods * n_methods
     n_r = n_segments * n_periods
     n_c = len(chance_factors or []) * n_periods
-    n_variables = n_x + n_r + n_c
+    n_w = len(chance_factors or []) * n_periods if max_capacity_violations is not None else 0
+    n_variables = n_x + n_r + n_c + n_w
     x_index: list[tuple[int, int, int]] = [
         (segment, period, method)
         for segment in range(n_segments)
@@ -169,6 +171,9 @@ def _build_problem(
 
     def c_i(path: int, period: int) -> int:
         return n_x + n_r + path * n_periods + period
+
+    def w_i(path: int, period: int) -> int:
+        return n_x + n_r + n_c + path * n_periods + period
 
     c = np.zeros(n_variables)
     total_length = sum(segment.length_m for segment in segments)
@@ -297,6 +302,10 @@ def _build_problem(
             raise ValueError("max_budget_violations is required with chance_factors")
         if not 0 <= max_budget_violations <= len(chance_factors):
             raise ValueError("max_budget_violations is out of range")
+        if max_capacity_violations is not None and not (
+            0 <= max_capacity_violations <= len(chance_factors)
+        ):
+            raise ValueError("max_capacity_violations is out of range")
         max_cost_factor = max(
             (cost for path in chance_factors for _year, cost, _hours, _capacity in path),
             default=1.0,
@@ -305,6 +314,14 @@ def _build_problem(
             segment.area_ha * max(method.cost_per_ha for method in methods) for segment in segments
         )
         big_m = max(1.0, max_cost_factor * max_action_cost)
+        max_hours_factor = max(
+            (hours for path in chance_factors for _year, _cost, hours, _capacity in path),
+            default=1.0,
+        )
+        max_action_hours = sum(
+            segment.area_ha * max(method.hours_per_ha for method in methods) for segment in segments
+        )
+        big_hours = max(1.0, max_hours_factor * max_action_hours)
         for path_index, factors in enumerate(chance_factors):
             factor_by_year = {
                 year: (cost, hours, capacity) for year, cost, hours, capacity in factors
@@ -323,15 +340,18 @@ def _build_problem(
                 ]
                 entries.append((c_i(path_index, period_index), -big_m))
                 add_row(entries, 0.0, robust_period.budget)
+                capacity_entries = [
+                    (
+                        x_i(segment, period_index, method),
+                        segments[segment].area_ha * methods[method].hours_per_ha * hours_factor,
+                    )
+                    for segment in range(n_segments)
+                    for method in range(n_methods)
+                ]
+                if max_capacity_violations is not None:
+                    capacity_entries.append((w_i(path_index, period_index), -big_hours))
                 add_row(
-                    [
-                        (
-                            x_i(segment, period_index, method),
-                            segments[segment].area_ha * methods[method].hours_per_ha * hours_factor,
-                        )
-                        for segment in range(n_segments)
-                        for method in range(n_methods)
-                    ],
+                    capacity_entries,
                     0.0,
                     robust_period.capacity_hours * capacity_factor,
                 )
@@ -341,6 +361,15 @@ def _build_problem(
                 0.0,
                 float(max_budget_violations),
             )
+            if max_capacity_violations is not None:
+                add_row(
+                    [
+                        (w_i(path_index, period_index), 1.0)
+                        for path_index in range(len(chance_factors))
+                    ],
+                    0.0,
+                    float(max_capacity_violations),
+                )
     matrix = coo_matrix((values, (rows, cols)), shape=(len(row_lower), n_variables)).tocsr()
     return (
         c,
@@ -425,6 +454,7 @@ def build_stateful_plan(
     robust_factors: list[list[tuple[int, float, float, float]]] | None = None,
     chance_factors: list[list[tuple[int, float, float, float]]] | None = None,
     max_budget_violations: int | None = None,
+    max_capacity_violations: int | None = None,
     created_utc: datetime | None = None,
 ) -> StatefulPlan:
     """Solve the linearized stateful strategic MILP and replay the result.
@@ -449,6 +479,8 @@ def build_stateful_plan(
         ``(year, cost_factor, hours_factor, capacity_factor)``.
     max_budget_violations : int, optional
         Maximum number of chance paths allowed to exceed budget in each period.
+    max_capacity_violations : int, optional
+        Maximum number of chance paths allowed to exceed capacity in each period.
     created_utc : datetime, optional
         Creation time.
 
@@ -477,6 +509,7 @@ def build_stateful_plan(
         robust_factors,
         chance_factors,
         max_budget_violations,
+        max_capacity_violations,
     )
     result = milp(
         c,
