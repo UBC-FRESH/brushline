@@ -401,6 +401,7 @@ def build_planning_brief(
     rolling_recourse: Mapping[str, Any] | None = None,
     rolling_recourse_590: Mapping[str, Any] | None = None,
     weather_recourse: Mapping[str, Any] | None = None,
+    weather_recourse_590: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -457,6 +458,8 @@ def build_planning_brief(
         590-segment replicated rolling-recourse scale test. The section is omitted when absent.
     weather_recourse : mapping, optional
         Calendar-naive versus calendar-aware annual recourse. The section is omitted when absent.
+    weather_recourse_590 : mapping, optional
+        590-segment weather-recourse scale test. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -541,6 +544,7 @@ def build_planning_brief(
     rolling_recourse_cases = (rolling_recourse or {}).get("cases") or []
     scale_cases = (rolling_recourse_590 or {}).get("result", {}).get("cases") or []
     weather_cases = (weather_recourse or {}).get("cases") or []
+    weather_scale_cases = (weather_recourse_590 or {}).get("result", {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1803,6 +1807,52 @@ def build_planning_brief(
                 )
             ]
             if weather_recourse
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="590-segment weather-recourse scale test",
+                    paragraphs=[
+                        f"Replicated 590-segment stress test, "
+                        f"{weather_recourse_590.get('episodes')} annual episodes, with "
+                        f"{weather_recourse_590.get('crews')} crews and "
+                        f"{weather_recourse_590.get('machines')} machines scaled with the "
+                        "network. The fixed plan is exact; annual re-solves use the Fresh "
+                        "Solutions heuristic.",
+                        f"Runtime: fixed exact "
+                        f"{_number(weather_recourse_590.get('fixed_seconds'), 1)} s; weather "
+                        f"simulation {_number(weather_recourse_590.get('rolling_seconds'), 1)} s. "
+                        "The zero-budget-violation and calendar-aware completion tradeoff "
+                        "persist at scale. This is a replicated stress instance, not a real "
+                        "network, and not an optimality claim.",
+                    ],
+                    table=_table(
+                        [
+                            "Case",
+                            "Budget violation",
+                            "Completed scope P50",
+                            "Retained scope P50",
+                            "Mean risk",
+                            "Cost P50",
+                            "Unscheduled h",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                _percent(case.get("budget_violation_probability")),
+                                _percent(case.get("completion_band", {}).get("p50")),
+                                _percent(case.get("retained_scope_band", {}).get("p50")),
+                                _number(case.get("risk_band", {}).get("mean"), 4),
+                                _number(case.get("cost_band", {}).get("p50")),
+                                _number(case.get("mean_unscheduled_hours"), 1),
+                            ]
+                            for case in weather_scale_cases
+                        ],
+                    ),
+                )
+            ]
+            if weather_recourse_590
             else []
         ),
         BriefSection(

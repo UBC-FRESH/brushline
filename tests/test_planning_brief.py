@@ -609,11 +609,40 @@ def _artifacts() -> dict[str, Any]:
                 "completion_band": {"p50": 0.875628, "mean": 0.873948},
                 "retained_scope_band": {"p50": 0.875628, "mean": 0.873948},
                 "risk_band": {"mean": 0.050152},
-                "cost_band": {"p50": 297087.51},
+                "cost_band": {"p50": 264046.69},
                 "mean_unscheduled_hours": 0.0,
                 "mean_calendar_deferred_actions": 39.9,
             },
         ],
+    }
+    weather_recourse_590 = {
+        "episodes": 20,
+        "crews": 30,
+        "machines": 30,
+        "fixed_seconds": 48.6,
+        "rolling_seconds": 147.0,
+        "result": {
+            "cases": [
+                {
+                    "name": "calendar-naive",
+                    "budget_violation_probability": 0.0,
+                    "completion_band": {"p50": 0.859676, "mean": 0.86431},
+                    "retained_scope_band": {"p50": 0.995835, "mean": 0.988754},
+                    "risk_band": {"mean": 0.061682},
+                    "cost_band": {"p50": 2942469.91},
+                    "mean_unscheduled_hours": 7377.04,
+                },
+                {
+                    "name": "calendar-aware",
+                    "budget_violation_probability": 0.0,
+                    "completion_band": {"p50": 0.844778, "mean": 0.848702},
+                    "retained_scope_band": {"p50": 0.844778, "mean": 0.848702},
+                    "risk_band": {"mean": 0.066701},
+                    "cost_band": {"p50": 2536613.78},
+                    "mean_unscheduled_hours": 0.0,
+                },
+            ]
+        },
     }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
@@ -654,6 +683,7 @@ def _artifacts() -> dict[str, Any]:
         "rolling_recourse": rolling_recourse,
         "rolling_recourse_590": rolling_recourse_590,
         "weather_recourse": weather_recourse,
+        "weather_recourse_590": weather_recourse_590,
     }
 
 
@@ -710,6 +740,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Rolling policy with recourse" in brief.markdown
     assert "## 590-segment rolling-recourse scale test" in brief.markdown
     assert "## Weather/outage-aware recourse" in brief.markdown
+    assert "## 590-segment weather-recourse scale test" in brief.markdown
+    assert "7,377" in brief.markdown
     assert "Calendar-aware defers unscheduled actions" in brief.markdown
     assert "chance 100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown

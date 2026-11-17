@@ -330,7 +330,7 @@ def _simulate_case(
                 solve_cost_factor = 1.0
                 solve_hours_factor = 1.0
             planned_hours = sum(action.hours for action in actions)
-            kept, _resource_deferred, kept_cost, kept_hours, n_deferred, d_hours = _fit_resources(
+            kept, _resource_deferred, _kept_cost, _kept_hours, n_deferred, d_hours = _fit_resources(
                 actions=actions,
                 cost_factor=solve_cost_factor,
                 hours_factor=solve_hours_factor,
@@ -424,11 +424,17 @@ def _simulate_case(
                 / total_length
             )
             annual_risk_loss += risk_loss
-            total_cost += kept_cost
-            total_hours += kept_hours
-            annual_budget_violation = annual_budget_violation or kept_cost > period.budget
+            active_cost = sum(
+                action.cost * (cost_factor if offset == 0 else 1.0) for action in active
+            )
+            active_hours = sum(
+                action.hours * (hours_factor if offset == 0 else 1.0) for action in active
+            )
+            total_cost += active_cost
+            total_hours += active_hours
+            annual_budget_violation = annual_budget_violation or active_cost > period.budget
             annual_capacity_violation = (
-                annual_capacity_violation or kept_hours > period.capacity_hours * capacity_factor
+                annual_capacity_violation or active_hours > period.capacity_hours * capacity_factor
             )
         costs.append(total_cost)
         hours.append(total_hours)

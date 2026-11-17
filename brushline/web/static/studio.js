@@ -274,6 +274,11 @@ function drawSchedule(){
    const rows=(weatherRecourse.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td><td>${(item.completion_band.p50*100).toFixed(1)}%</td><td>${(item.retained_scope_band.p50*100).toFixed(1)}%</td><td>${item.risk_band.mean.toFixed(4)}</td><td>${item.cost_band.p50.toFixed(0)}</td><td>${item.mean_unscheduled_hours.toFixed(0)}</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Weather/outage-aware recourse · ${weatherRecourse.episodes} episodes · ${calendar.window_days}-day window · ${(calendar.outage_days||[]).length} outage days · ${(calendar.weather_probability*100).toFixed(0)}% loss/day · observed calendar</p><table><tr><th>Case</th><th>Budget violation</th><th>Completed scope P50</th><th>Retained scope P50</th><th>Mean risk</th><th>Cost P50</th><th>Unscheduled h</th></tr>${rows}</table>`;
   }
+  const weatherScale=state.network["weather-recourse-590"];
+  if(weatherScale){
+   const rows=((weatherScale.result||{}).cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td><td>${(item.completion_band.p50*100).toFixed(1)}%</td><td>${(item.retained_scope_band.p50*100).toFixed(1)}%</td><td>${item.risk_band.mean.toFixed(4)}</td><td>${item.cost_band.p50.toFixed(0)}</td><td>${item.mean_unscheduled_hours.toFixed(0)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">590-segment weather/outage-aware recourse · replicated stress instance · ${weatherScale.episodes} episodes · ${weatherScale.crews} crews · fixed exact ${weatherScale.fixed_seconds.toFixed(1)}s · weather ${weatherScale.rolling_seconds.toFixed(1)}s</p><table><tr><th>Case</th><th>Budget violation</th><th>Completed scope P50</th><th>Retained scope P50</th><th>Mean risk</th><th>Cost P50</th><th>Unscheduled h</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";
