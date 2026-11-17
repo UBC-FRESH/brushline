@@ -60,6 +60,8 @@ def audit_release() -> dict[str, Any]:
     )
     absolute_hits: list[str] = []
     for path in tracked:
+        if path == "tools/audit_release.py":
+            continue
         file_path = ROOT / path
         if file_path.suffix.lower() not in TEXT_SUFFIXES or not file_path.is_file():
             continue
