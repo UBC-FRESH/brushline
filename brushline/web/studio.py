@@ -90,6 +90,7 @@ def _network_artifacts() -> dict[str, Any]:
             "two-stage-multi",
             "rolling-recourse",
             "rolling-recourse-590",
+            "weather-recourse",
             "access",
         )
     }
@@ -442,6 +443,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 two_stage_multi=artifacts["two-stage-multi"],
                 rolling_recourse=artifacts["rolling-recourse"],
                 rolling_recourse_590=artifacts["rolling-recourse-590"],
+                weather_recourse=artifacts["weather-recourse"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

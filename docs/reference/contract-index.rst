@@ -333,6 +333,10 @@ test suite. This page is the map.
      - ``brushline.rolling-recourse.v1``
      - ``evaluate_rolling_recourse``
      - Static, fixed-future recourse, rolling-only, and rolling-recourse comparison on common annual factors
+   * - Weather recourse
+     - ``brushline.weather-recourse.v1``
+     - ``evaluate_weather_recourse``
+     - Calendar-naive versus calendar-aware annual recourse under assumed weather/outage calendars
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

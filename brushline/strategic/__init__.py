@@ -171,6 +171,14 @@ from brushline.strategic.validation import (
     validate_strategic_plan,
     write_validation,
 )
+from brushline.strategic.weather_recourse import (
+    WEATHER_RECOURSE_SCHEMA_VERSION,
+    WeatherCalendarConfig,
+    WeatherCaseSummary,
+    WeatherRecourseError,
+    WeatherRecourseResult,
+    evaluate_weather_recourse,
+)
 
 __all__ = [
     "BAU_SCHEMA_VERSION",
@@ -190,6 +198,7 @@ __all__ = [
     "TWO_STAGE_SCHEMA_VERSION",
     "UNCERTAINTY_SCHEMA_VERSION",
     "VALIDATION_SCHEMA_VERSION",
+    "WEATHER_RECOURSE_SCHEMA_VERSION",
     "AnnualFactors",
     "BauComparison",
     "BauConfig",
@@ -276,6 +285,10 @@ __all__ = [
     "UncertaintyResult",
     "UncertaintySample",
     "ValidationCheck",
+    "WeatherCalendarConfig",
+    "WeatherCaseSummary",
+    "WeatherRecourseError",
+    "WeatherRecourseResult",
     "YearRow",
     "build_bau_plan",
     "build_monitoring_policy",
@@ -293,6 +306,7 @@ __all__ = [
     "evaluate_two_stage",
     "evaluate_two_stage_multi",
     "evaluate_uncertainty",
+    "evaluate_weather_recourse",
     "load_scenario",
     "load_scenario_archive",
     "load_strategic_report",

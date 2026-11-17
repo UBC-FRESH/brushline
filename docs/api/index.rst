@@ -75,6 +75,7 @@ whenever you add a module to the project.
    static-plan
    two-stage
    rolling-recourse
+   weather-recourse
    shift-scheduling
    field
    field-comparison

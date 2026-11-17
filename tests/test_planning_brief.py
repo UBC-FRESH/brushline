@@ -585,6 +585,36 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    weather_recourse = {
+        "episodes": 20,
+        "calendar": {
+            "window_days": 75,
+            "outage_days": [11, 12, 13, 14, 15],
+            "weather_probability": 0.2,
+        },
+        "cases": [
+            {
+                "name": "calendar-naive",
+                "budget_violation_probability": 0.0,
+                "completion_band": {"p50": 0.884159, "mean": 0.887657},
+                "retained_scope_band": {"p50": 0.994397, "mean": 0.987779},
+                "risk_band": {"mean": 0.048038},
+                "cost_band": {"p50": 297595.14},
+                "mean_unscheduled_hours": 605.93,
+                "mean_calendar_deferred_actions": 0.0,
+            },
+            {
+                "name": "calendar-aware",
+                "budget_violation_probability": 0.0,
+                "completion_band": {"p50": 0.875628, "mean": 0.873948},
+                "retained_scope_band": {"p50": 0.875628, "mean": 0.873948},
+                "risk_band": {"mean": 0.050152},
+                "cost_band": {"p50": 297087.51},
+                "mean_unscheduled_hours": 0.0,
+                "mean_calendar_deferred_actions": 39.9,
+            },
+        ],
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -623,6 +653,7 @@ def _artifacts() -> dict[str, Any]:
         "two_stage_multi": two_stage_multi,
         "rolling_recourse": rolling_recourse,
         "rolling_recourse_590": rolling_recourse_590,
+        "weather_recourse": weather_recourse,
     }
 
 
@@ -678,6 +709,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Multi-year operational recourse" in brief.markdown
     assert "## Rolling policy with recourse" in brief.markdown
     assert "## 590-segment rolling-recourse scale test" in brief.markdown
+    assert "## Weather/outage-aware recourse" in brief.markdown
+    assert "Calendar-aware defers unscheduled actions" in brief.markdown
     assert "chance 100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown

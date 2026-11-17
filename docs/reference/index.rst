@@ -79,6 +79,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    chance-100-plan
    two-stage
    rolling-recourse
+   weather-recourse
    field-validation
    shift-scheduling
    field-comparison

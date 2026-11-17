@@ -400,6 +400,7 @@ def build_planning_brief(
     two_stage_multi: Mapping[str, Any] | None = None,
     rolling_recourse: Mapping[str, Any] | None = None,
     rolling_recourse_590: Mapping[str, Any] | None = None,
+    weather_recourse: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -454,6 +455,8 @@ def build_planning_brief(
         Rolling policy with annual recourse. The section is omitted when absent.
     rolling_recourse_590 : mapping, optional
         590-segment replicated rolling-recourse scale test. The section is omitted when absent.
+    weather_recourse : mapping, optional
+        Calendar-naive versus calendar-aware annual recourse. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -537,6 +540,7 @@ def build_planning_brief(
     multi_stage = two_stage_multi or {}
     rolling_recourse_cases = (rolling_recourse or {}).get("cases") or []
     scale_cases = (rolling_recourse_590 or {}).get("result", {}).get("cases") or []
+    weather_cases = (weather_recourse or {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1752,6 +1756,53 @@ def build_planning_brief(
                 )
             ]
             if rolling_recourse_590
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="Weather/outage-aware recourse",
+                    paragraphs=[
+                        f"Twenty annual episodes use a "
+                        f"{weather_recourse.get('calendar', {}).get('window_days')}-day fall "
+                        "window, five assumed outage days, and independent 20% weather-loss "
+                        "probability per day. Each year's calendar is observed before actions "
+                        "are committed.",
+                        "Calendar-naive keeps the resource-feasible plan and accepts partial "
+                        "execution. Calendar-aware defers unscheduled actions until every "
+                        "retained action fits the observed crew calendar. Awareness eliminates "
+                        "unscheduled work on the retained scope but costs scope and does not lower "
+                        "mean risk; this is an ex-post calendar tradeoff, not a forecast or a "
+                        "stochastic dynamic program.",
+                    ],
+                    table=_table(
+                        [
+                            "Case",
+                            "Budget violation",
+                            "Completed scope P50",
+                            "Retained scope P50",
+                            "Mean risk",
+                            "Cost P50",
+                            "Unscheduled h",
+                            "Calendar deferrals",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                _percent(case.get("budget_violation_probability")),
+                                _percent(case.get("completion_band", {}).get("p50")),
+                                _percent(case.get("retained_scope_band", {}).get("p50")),
+                                _number(case.get("risk_band", {}).get("mean"), 4),
+                                _number(case.get("cost_band", {}).get("p50")),
+                                _number(case.get("mean_unscheduled_hours"), 1),
+                                _number(case.get("mean_calendar_deferred_actions"), 1),
+                            ]
+                            for case in weather_cases
+                        ],
+                    ),
+                )
+            ]
+            if weather_recourse
             else []
         ),
         BriefSection(
