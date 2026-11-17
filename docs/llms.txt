@@ -145,7 +145,7 @@
 - [Chance-constrained capacity](reference/chance-capacity-plan.html): sampled budget/capacity relaxation and its negative result.
 - [100-path chance constraint](reference/chance-100-plan.html): retrained budget chance at 8% out-of-sample violation and higher residual risk.
 - [Two-stage recourse](reference/two-stage.html): first-year fixed plan with budget/capacity deferral after factor observation; multi-year annual recourse results included.
-- [Rolling recourse](reference/rolling-recourse.html): static, fixed-future recourse, rolling-only, and rolling-recourse policies on common factors.
+- [Rolling recourse](reference/rolling-recourse.html): static, fixed-future recourse, rolling-only, and rolling-recourse policies on common factors, including a replicated 590-segment scale test.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

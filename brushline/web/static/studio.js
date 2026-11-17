@@ -262,6 +262,12 @@ function drawSchedule(){
    const rows=(rollingRecourse.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td><td>${(item.completion_band.p50*100).toFixed(1)}%</td><td>${(item.completion_band.mean*100).toFixed(1)}%</td><td>${item.risk_band.mean.toFixed(4)}</td><td>${item.cost_band.p50.toFixed(0)}</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Rolling policy with recourse · ${rollingRecourse.episodes} common-factor episodes · first-year fixed then rolling re-solves</p><table><tr><th>Policy</th><th>Budget violation</th><th>Completion P50</th><th>Mean completion</th><th>Mean risk</th><th>Cost P50</th></tr>${rows}</table>`;
   }
+  const scaleRecourse=state.network["rolling-recourse-590"];
+  if(scaleRecourse){
+   const cases=(scaleRecourse.result||{}).cases||[];
+   const rows=cases.map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td><td>${(item.completion_band.p50*100).toFixed(1)}%</td><td>${item.risk_band.mean.toFixed(4)}</td><td>${item.cost_band.p50.toFixed(0)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">590-segment rolling recourse · replicated stress instance · ${scaleRecourse.episodes} episodes · fixed exact ${scaleRecourse.fixed_seconds.toFixed(1)}s · rolling heuristic ${scaleRecourse.rolling_seconds.toFixed(1)}s</p><table><tr><th>Policy</th><th>Budget violation</th><th>Completion P50</th><th>Mean risk</th><th>Cost P50</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

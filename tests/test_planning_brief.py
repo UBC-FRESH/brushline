@@ -561,6 +561,30 @@ def _artifacts() -> dict[str, Any]:
             },
         ],
     }
+    rolling_recourse_590 = {
+        "episodes": 20,
+        "lookahead_years": 2,
+        "fixed_seconds": 47.1,
+        "rolling_seconds": 87.2,
+        "result": {
+            "cases": [
+                {
+                    "name": "static-fixed",
+                    "budget_violation_probability": 0.95,
+                    "completion_band": {"p50": 1.0},
+                    "risk_band": {"mean": 0.02912},
+                    "cost_band": {"p50": 3008496},
+                },
+                {
+                    "name": "rolling-recourse",
+                    "budget_violation_probability": 0.0,
+                    "completion_band": {"p50": 0.995835},
+                    "risk_band": {"mean": 0.033979},
+                    "cost_band": {"p50": 2942470},
+                },
+            ]
+        },
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -598,6 +622,7 @@ def _artifacts() -> dict[str, Any]:
         "two_stage_policy": two_stage_policy,
         "two_stage_multi": two_stage_multi,
         "rolling_recourse": rolling_recourse,
+        "rolling_recourse_590": rolling_recourse_590,
     }
 
 
@@ -652,6 +677,7 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Two-stage operational recourse" in brief.markdown
     assert "## Multi-year operational recourse" in brief.markdown
     assert "## Rolling policy with recourse" in brief.markdown
+    assert "## 590-segment rolling-recourse scale test" in brief.markdown
     assert "chance 100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown

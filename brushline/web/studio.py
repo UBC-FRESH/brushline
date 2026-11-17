@@ -31,6 +31,7 @@ REAL_SCENES: dict[str, tuple[str, str, str]] = {
 RESOURCE_ROOT = Path(__file__).resolve().parents[1] / "resources"
 MKRK_SCENE_PATH = Path(__file__).resolve().parents[2] / "runtime/private/mkrf-powerline/scene.json"
 BC_NETWORK_DIR = Path(__file__).resolve().parents[2] / "runtime/private/bc-network/model"
+BC_SCALING_DIR = BC_NETWORK_DIR.parent / "scaling"
 BC_NETWORK_SCENE_PATH = BC_NETWORK_DIR / "scene.json"
 
 
@@ -49,8 +50,14 @@ def _current_commit() -> str:
 
 def _network_artifacts() -> dict[str, Any]:
     """Load the network artifact set used by the studio and brief."""
+
+    def path_for(key: str) -> Path:
+        if key == "rolling-recourse-590":
+            return BC_SCALING_DIR / "rolling-recourse-590.json"
+        return BC_NETWORK_DIR / f"{key}.json"
+
     return {
-        key: json.loads((BC_NETWORK_DIR / f"{key}.json").read_text(encoding="utf-8"))
+        key: json.loads(path_for(key).read_text(encoding="utf-8"))
         for key in (
             "network",
             "strategic",
@@ -82,6 +89,7 @@ def _network_artifacts() -> dict[str, Any]:
             "two-stage-policy",
             "two-stage-multi",
             "rolling-recourse",
+            "rolling-recourse-590",
             "access",
         )
     }
@@ -433,6 +441,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 two_stage_policy=artifacts["two-stage-policy"],
                 two_stage_multi=artifacts["two-stage-multi"],
                 rolling_recourse=artifacts["rolling-recourse"],
+                rolling_recourse_590=artifacts["rolling-recourse-590"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

@@ -66,6 +66,7 @@ class RollingRecourseResult(BaseModel):
     episodes: int = Field(ge=1)
     seed: int
     years: list[int]
+    solver: Literal["exact", "heuristic"]
     lookahead_years: int = Field(ge=1)
     cases: list[RollingCaseSummary]
     created_utc: datetime
@@ -97,6 +98,8 @@ def _simulate_rolling_case(
     config: StatefulConfig,
     episodes: int,
     seed: int,
+    solver: Literal["exact", "heuristic"],
+    heuristic_iterations: int,
     lookahead_years: int,
     defer: bool,
 ) -> RollingCaseSummary:
@@ -164,13 +167,26 @@ def _simulate_rolling_case(
                     )
                     for item in periods[offset : offset + lookahead_years]
                 ]
-                solved = build_stateful_plan(
-                    instance_id=f"{case_name}-{_episode}-{period.year}",
-                    segments=current_segments,
-                    methods=scenario_methods,
-                    periods=scenario_periods,
-                    config=config,
-                )
+                if solver == "heuristic":
+                    from brushline.strategic.heuristic import build_stateful_heuristic
+
+                    solved = build_stateful_heuristic(
+                        instance_id=f"{case_name}-{_episode}-{period.year}",
+                        segments=current_segments,
+                        methods=scenario_methods,
+                        periods=scenario_periods,
+                        config=config,
+                        iterations=heuristic_iterations,
+                        seed=seed + _episode * 10 + offset,
+                    )
+                else:
+                    solved = build_stateful_plan(
+                        instance_id=f"{case_name}-{_episode}-{period.year}",
+                        segments=current_segments,
+                        methods=scenario_methods,
+                        periods=scenario_periods,
+                        config=config,
+                    )
                 actions = [action for action in solved.actions if action.year == period.year]
                 planned_hours = sum(action.hours for action in actions)
             if defer:
@@ -286,6 +302,8 @@ def evaluate_rolling_recourse(
     config: StatefulConfig | None = None,
     episodes: int = 20,
     seed: int = 7,
+    solver: Literal["exact", "heuristic"] = "exact",
+    heuristic_iterations: int = 100,
     lookahead_years: int = 2,
     created_utc: datetime | None = None,
 ) -> RollingRecourseResult:
@@ -313,6 +331,8 @@ def evaluate_rolling_recourse(
         config=rules,
         episodes=episodes,
         seed=seed,
+        solver=solver,
+        heuristic_iterations=heuristic_iterations,
         lookahead_years=lookahead_years,
         defer=False,
     )
@@ -325,6 +345,8 @@ def evaluate_rolling_recourse(
         config=rules,
         episodes=episodes,
         seed=seed,
+        solver=solver,
+        heuristic_iterations=heuristic_iterations,
         lookahead_years=lookahead_years,
         defer=True,
     )
@@ -357,6 +379,7 @@ def evaluate_rolling_recourse(
         episodes=episodes,
         seed=seed,
         years=[period.year for period in periods],
+        solver=solver,
         lookahead_years=lookahead_years,
         cases=[static_case, fixed_case, rolling_only, rolling_recourse],
         created_utc=created_utc or datetime.now(UTC),

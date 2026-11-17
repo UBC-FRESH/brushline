@@ -32,6 +32,23 @@ risk. The risk metric combines the fixed first-year deferral with re-optimized f
 a like-for-like multi-year risk improvement. The policy remains a heuristic, not a stochastic dynamic
 program.
 
+
+## 590-segment scale test
+
+A replicated 590-segment instance uses an exact fixed plan and Fresh Solutions annual rolling
+re-solves.
+
+| Policy | Budget violation | Completion P50 | Mean risk | Cost P50 |
+|---|---:|---:|---:|---:|
+| Static fixed | 95.0% | 100.0% | 0.0291 | 3,008,496 |
+| Fixed-future recourse | 0.0% | 93.9% | 0.0329 | 2,811,913 |
+| Rolling-only | 55.0% | 100.0% | 0.0290 | 2,969,701 |
+| Rolling recourse | 0.0% | 99.6% | 0.0340 | 2,942,470 |
+
+Fixed exact plan: 47.1 s. Twenty rolling episodes: 87.2 s with heuristic annual re-solves. The
+scale result preserves zero budget violation and near-complete scope. The instance is replicated,
+not a real 590-segment network, and the heuristic is not globally optimal.
+
 ## Limits
 
 - Fixed first year.

@@ -56,6 +56,43 @@ It costs more future treatment than fixed-future recourse and does not reduce me
 The risk metric mixes the fixed first-year risk loss with re-optimized future years; it is not a
 like-for-like multi-year risk improvement.
 
+## 590-segment scale test
+
+A replicated 590-segment stress instance uses the same policy. The fixed plan is exact; annual
+rolling re-solves use the Fresh Solutions heuristic.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Policy
+     - Budget violation
+     - Completion P50
+     - Mean risk
+     - Cost P50
+   * - Static fixed
+     - 95.0%
+     - 100.0%
+     - 0.0291
+     - 3,008,496
+   * - Fixed-future recourse
+     - 0.0%
+     - 93.9%
+     - 0.0329
+     - 2,811,913
+   * - Rolling-only
+     - 55.0%
+     - 100.0%
+     - 0.0290
+     - 2,969,701
+   * - Rolling recourse
+     - 0.0%
+     - 99.6%
+     - 0.0340
+     - 2,942,470
+
+Runtime: fixed exact 47.1 s; rolling heuristic 87.2 s for 20 episodes. The instance is replicated,
+not a real 590-segment network, and the heuristic makes no global-optimality claim.
+
 ## Limits
 
 - Fixed first year.
