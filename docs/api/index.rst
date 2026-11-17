@@ -77,6 +77,7 @@ whenever you add a module to the project.
    rolling-recourse
    weather-recourse
    forecast-skill
+   window-remedy
    shift-scheduling
    field
    field-comparison

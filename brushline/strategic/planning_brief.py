@@ -403,6 +403,7 @@ def build_planning_brief(
     weather_recourse: Mapping[str, Any] | None = None,
     weather_recourse_590: Mapping[str, Any] | None = None,
     forecast_skill: Mapping[str, Any] | None = None,
+    window_remedy: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -463,6 +464,9 @@ def build_planning_brief(
         590-segment weather-recourse scale test. The section is omitted when absent.
     forecast_skill : mapping, optional
         Forecast-skill sensitivity for calendar-aware execution. The section is omitted when absent.
+    window_remedy : mapping, optional
+        Fall-window capacity remedy for calendar-aware execution. The section is omitted when
+        absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -549,6 +553,7 @@ def build_planning_brief(
     weather_cases = (weather_recourse or {}).get("cases") or []
     weather_scale_cases = (weather_recourse_590 or {}).get("result", {}).get("cases") or []
     forecast_skill_cases = (forecast_skill or {}).get("result", {}).get("cases") or []
+    window_cases = (window_remedy or {}).get("result", {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1908,6 +1913,59 @@ def build_planning_brief(
                 )
             ]
             if forecast_skill
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="Fall-window capacity remedy",
+                    paragraphs=[
+                        "Observed-calendar awareness was re-run with 75-, 90-, and 105-day fall "
+                        "windows while holding the crew and machine mix fixed. A longer window "
+                        "creates more schedulable days; it is an operational what-if, not a field "
+                        "schedule.",
+                        "Extending the window recovers scope and lowers risk: completion P50 rises "
+                        "from 87.6% to 98.1%, mean risk falls from 0.0502 to 0.0333, and calendar "
+                        "deferrals fall from 39.9 to 4.6 actions. Action cost rises because more "
+                        "work is retained; added seasonal overhead and weather exposure are not "
+                        "modelled.",
+                    ],
+                    table=_table(
+                        [
+                            "Window days",
+                            "Completed scope P50",
+                            "Retained scope P50",
+                            "Mean risk",
+                            "Cost P50",
+                            "Unscheduled h",
+                            "Calendar deferrals",
+                        ],
+                        [
+                            [
+                                case.get("window_days"),
+                                _percent(
+                                    case.get("summary", {}).get("completion_band", {}).get("p50")
+                                ),
+                                _percent(
+                                    case.get("summary", {})
+                                    .get("retained_scope_band", {})
+                                    .get("p50")
+                                ),
+                                _number(
+                                    case.get("summary", {}).get("risk_band", {}).get("mean"), 4
+                                ),
+                                _number(case.get("summary", {}).get("cost_band", {}).get("p50")),
+                                _number(case.get("summary", {}).get("mean_unscheduled_hours"), 1),
+                                _number(
+                                    case.get("summary", {}).get("mean_calendar_deferred_actions"), 1
+                                ),
+                            ]
+                            for case in window_cases
+                        ],
+                    ),
+                )
+            ]
+            if window_remedy
             else []
         ),
         BriefSection(

@@ -9,6 +9,12 @@ from brushline.strategic.bau import (
     build_bau_plan,
     compare_bau,
 )
+from brushline.strategic.capacity_remedy import (
+    WINDOW_REMEDY_SCHEMA_VERSION,
+    WindowRemedyCase,
+    WindowRemedyResult,
+    evaluate_window_remedy,
+)
 from brushline.strategic.decomposition import (
     DECOMPOSITION_SCHEMA_VERSION,
     ClusterResult,
@@ -206,6 +212,7 @@ __all__ = [
     "UNCERTAINTY_SCHEMA_VERSION",
     "VALIDATION_SCHEMA_VERSION",
     "WEATHER_RECOURSE_SCHEMA_VERSION",
+    "WINDOW_REMEDY_SCHEMA_VERSION",
     "AnnualFactors",
     "BauComparison",
     "BauConfig",
@@ -298,6 +305,8 @@ __all__ = [
     "WeatherCaseSummary",
     "WeatherRecourseError",
     "WeatherRecourseResult",
+    "WindowRemedyCase",
+    "WindowRemedyResult",
     "YearRow",
     "build_bau_plan",
     "build_monitoring_policy",
@@ -317,6 +326,7 @@ __all__ = [
     "evaluate_two_stage_multi",
     "evaluate_uncertainty",
     "evaluate_weather_recourse",
+    "evaluate_window_remedy",
     "load_scenario",
     "load_scenario_archive",
     "load_strategic_report",

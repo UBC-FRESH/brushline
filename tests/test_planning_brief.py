@@ -701,6 +701,47 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    window_remedy = {
+        "episodes": 20,
+        "seconds": 227.12,
+        "result": {
+            "cases": [
+                {
+                    "window_days": 75,
+                    "summary": {
+                        "completion_band": {"p50": 0.875628},
+                        "retained_scope_band": {"p50": 0.875628},
+                        "risk_band": {"mean": 0.050152},
+                        "cost_band": {"p50": 264046.69},
+                        "mean_unscheduled_hours": 0.0,
+                        "mean_calendar_deferred_actions": 39.9,
+                    },
+                },
+                {
+                    "window_days": 90,
+                    "summary": {
+                        "completion_band": {"p50": 0.959085},
+                        "retained_scope_band": {"p50": 0.959085},
+                        "risk_band": {"mean": 0.036482},
+                        "cost_band": {"p50": 285489.81},
+                        "mean_unscheduled_hours": 0.0,
+                        "mean_calendar_deferred_actions": 15.0,
+                    },
+                },
+                {
+                    "window_days": 105,
+                    "summary": {
+                        "completion_band": {"p50": 0.981441},
+                        "retained_scope_band": {"p50": 0.981441},
+                        "risk_band": {"mean": 0.033334},
+                        "cost_band": {"p50": 294011.91},
+                        "mean_unscheduled_hours": 0.0,
+                        "mean_calendar_deferred_actions": 4.6,
+                    },
+                },
+            ]
+        },
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -742,6 +783,7 @@ def _artifacts() -> dict[str, Any]:
         "weather_recourse": weather_recourse,
         "weather_recourse_590": weather_recourse_590,
         "forecast_skill": forecast_skill,
+        "window_remedy": window_remedy,
     }
 
 
@@ -801,6 +843,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## 590-segment weather-recourse scale test" in brief.markdown
     assert "forecast-aware" in brief.markdown
     assert "## Forecast-skill sensitivity" in brief.markdown
+    assert "## Fall-window capacity remedy" in brief.markdown
+    assert "98.1%" in brief.markdown
     assert "41.9" in brief.markdown
     assert "7,377" in brief.markdown
     assert "Forecast-aware plans against an independent synthetic calendar" in brief.markdown

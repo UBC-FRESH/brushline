@@ -341,6 +341,10 @@ test suite. This page is the map.
      - ``brushline.forecast-skill.v1``
      - ``evaluate_forecast_skill``
      - Forecast-aware recourse across a coarse forecast-skill sweep
+   * - Window remedy
+     - ``brushline.window-remedy.v1``
+     - ``evaluate_window_remedy``
+     - Observed-calendar awareness across 75-, 90-, and 105-day fall windows
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

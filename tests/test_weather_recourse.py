@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from brushline.strategic.capacity_remedy import evaluate_window_remedy
 from brushline.strategic.forecast_skill import evaluate_forecast_skill
 from brushline.strategic.stateful import (
     StatefulConfig,
@@ -112,3 +113,27 @@ def test_forecast_skill_sweep() -> None:
     assert [case.forecast_skill for case in result.cases] == [0.0, 1.0]
     assert result.cases[1].summary.mean_unscheduled_hours == 0
     assert result.cases[1].summary.retained_scope_band.p50 <= 1.0
+
+
+def test_window_remedy() -> None:
+    plan, segments, methods, periods = _problem()
+    crews = [ShiftCrew(crew_id="crew-a", methods=["mowing", "manual"], shift_hours=8)]
+    machines = [ShiftMachine(machine_id="machine-a", methods=["mowing"], shift_hours=8)]
+    result = evaluate_window_remedy(
+        instance_id="window-remedy",
+        plan=plan,
+        segments=segments,
+        methods=methods,
+        periods=periods,
+        crews=crews,
+        machines=machines,
+        windows=[30, 45],
+        config=StatefulConfig(risk_weight=1.0, max_seconds=30),
+        episodes=1,
+        seed=7,
+        calendar=WeatherCalendarConfig(window_days=30, outage_days=[5], seed=7),
+        created_utc=CREATED,
+    )
+    assert [case.window_days for case in result.cases] == [30, 45]
+    assert result.cases[0].summary.mean_unscheduled_hours == 0
+    assert result.cases[1].summary.mean_unscheduled_hours == 0
