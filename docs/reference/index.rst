@@ -77,6 +77,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    chance-plan
    chance-capacity-plan
    chance-100-plan
+   two-stage
    field-validation
    shift-scheduling
    field-comparison

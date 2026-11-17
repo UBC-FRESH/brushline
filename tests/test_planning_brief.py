@@ -502,6 +502,19 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    two_stage_policy = {
+        "static_budget_violation_probability": 0.44,
+        "recourse_budget_violation_probability": 0.0,
+        "static_capacity_violation_probability": 0.0,
+        "recourse_capacity_violation_probability": 0.0,
+        "static_cost_band": {"p50": 57939.06},
+        "recourse_cost_band": {"p50": 57939.06},
+        "static_completion_band": {"p50": 1.0},
+        "recourse_completion_band": {"p50": 1.0, "mean": 0.9398},
+        "static_risk_band": {"p50": 0.1147},
+        "recourse_risk_band": {"p50": 0.1147},
+        "mean_risk_loss": 0.01209,
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -536,6 +549,7 @@ def _artifacts() -> dict[str, Any]:
         "chance_plan": chance_plan,
         "chance_capacity_plan": chance_capacity_plan,
         "chance_100_plan": chance_100_plan,
+        "two_stage_policy": two_stage_policy,
     }
 
 
@@ -587,6 +601,7 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Chance-constrained capacity" in brief.markdown
     assert "chance capacity" in brief.markdown
     assert "## 100-path chance constraint" in brief.markdown
+    assert "## Two-stage operational recourse" in brief.markdown
     assert "chance 100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown

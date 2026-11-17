@@ -249,6 +249,10 @@ function drawSchedule(){
    const rows=(chance100.test?.plans||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${item.cost_band.p10.toFixed(0)}–${item.cost_band.p90.toFixed(0)}</td><td>${item.risk.toFixed(4)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">100-path budget chance · ≤${chance100.max_budget_violations} of ${chance100.training_paths} paths/year · capacity hard · sampled, not distributional</p><table><tr><th>Plan</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th></tr>${rows}</table>`;
   }
+  const twoStage=state.network["two-stage-policy"];
+  if(twoStage){
+   $("#schedule").innerHTML+=`<p class="schedule-note">Two-stage operational recourse · first-year nominal plan · defer lowest risk reduction per hour until budget/capacity fit · 100 scenarios</p><table><tr><th>Metric</th><th>Static</th><th>Recourse</th></tr><tr><td>Budget violation</td><td>${(twoStage.static_budget_violation_probability*100).toFixed(1)}%</td><td>${(twoStage.recourse_budget_violation_probability*100).toFixed(1)}%</td></tr><tr><td>Capacity violation</td><td>${(twoStage.static_capacity_violation_probability*100).toFixed(1)}%</td><td>${(twoStage.recourse_capacity_violation_probability*100).toFixed(1)}%</td></tr><tr><td>Completion P50</td><td>${(twoStage.static_completion_band.p50*100).toFixed(1)}%</td><td>${(twoStage.recourse_completion_band.p50*100).toFixed(1)}%</td></tr><tr><td>Mean completion</td><td>100.0%</td><td>${(twoStage.recourse_completion_band.mean*100).toFixed(1)}%</td></tr><tr><td>Mean risk loss</td><td>0.0000</td><td>${twoStage.mean_risk_loss.toFixed(4)}</td></tr></table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

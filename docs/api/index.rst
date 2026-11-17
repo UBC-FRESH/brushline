@@ -73,6 +73,7 @@ whenever you add a module to the project.
    planning-brief
    rolling-policy
    static-plan
+   two-stage
    shift-scheduling
    field
    field-comparison
