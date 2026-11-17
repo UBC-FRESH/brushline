@@ -528,6 +528,39 @@ def _artifacts() -> dict[str, Any]:
         "static_risk_band": {"mean": 0.02942},
         "recourse_risk_band": {"mean": 0.033047},
     }
+    rolling_recourse = {
+        "episodes": 20,
+        "cases": [
+            {
+                "name": "static-fixed",
+                "budget_violation_probability": 0.95,
+                "completion_band": {"p50": 1.0, "mean": 1.0},
+                "risk_band": {"mean": 0.02942},
+                "cost_band": {"p50": 300710.9},
+            },
+            {
+                "name": "fixed-future-recourse",
+                "budget_violation_probability": 0.0,
+                "completion_band": {"p50": 0.930667, "mean": 0.933224},
+                "risk_band": {"mean": 0.033501},
+                "cost_band": {"p50": 279595.09},
+            },
+            {
+                "name": "rolling-only",
+                "budget_violation_probability": 0.55,
+                "completion_band": {"p50": 1.0, "mean": 1.0},
+                "risk_band": {"mean": 0.029325},
+                "cost_band": {"p50": 300236.09},
+            },
+            {
+                "name": "rolling-recourse",
+                "budget_violation_probability": 0.0,
+                "completion_band": {"p50": 0.994397, "mean": 0.987779},
+                "risk_band": {"mean": 0.034867},
+                "cost_band": {"p50": 297451.2},
+            },
+        ],
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -564,6 +597,7 @@ def _artifacts() -> dict[str, Any]:
         "chance_100_plan": chance_100_plan,
         "two_stage_policy": two_stage_policy,
         "two_stage_multi": two_stage_multi,
+        "rolling_recourse": rolling_recourse,
     }
 
 
@@ -617,6 +651,7 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## 100-path chance constraint" in brief.markdown
     assert "## Two-stage operational recourse" in brief.markdown
     assert "## Multi-year operational recourse" in brief.markdown
+    assert "## Rolling policy with recourse" in brief.markdown
     assert "chance 100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown

@@ -329,6 +329,10 @@ test suite. This page is the map.
      - ``brushline.two-stage-multi.v1``
      - ``evaluate_two_stage_multi``
      - Annual recourse across a fixed five-year plan, budget/capacity feasibility, completion, risk trajectories, and deferred workload
+   * - Rolling recourse
+     - ``brushline.rolling-recourse.v1``
+     - ``evaluate_rolling_recourse``
+     - Static, fixed-future recourse, rolling-only, and rolling-recourse comparison on common annual factors
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

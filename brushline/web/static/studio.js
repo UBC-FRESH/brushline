@@ -257,6 +257,11 @@ function drawSchedule(){
   if(multiStage){
    $("#schedule").innerHTML+=`<p class="schedule-note">Multi-year operational recourse · fixed five-year plan · annual deferral after factors · 100 scenarios</p><table><tr><th>Metric</th><th>Static</th><th>Recourse</th></tr><tr><td>Budget violation, any year</td><td>${(multiStage.static_budget_violation_probability*100).toFixed(1)}%</td><td>${(multiStage.recourse_budget_violation_probability*100).toFixed(1)}%</td></tr><tr><td>Capacity violation, any year</td><td>${(multiStage.static_capacity_violation_probability*100).toFixed(1)}%</td><td>${(multiStage.recourse_capacity_violation_probability*100).toFixed(1)}%</td></tr><tr><td>Completion P50</td><td>${(multiStage.static_completion_band.p50*100).toFixed(1)}%</td><td>${(multiStage.recourse_completion_band.p50*100).toFixed(1)}%</td></tr><tr><td>Mean completion</td><td>100.0%</td><td>${(multiStage.recourse_completion_band.mean*100).toFixed(1)}%</td></tr><tr><td>Mean risk</td><td>${multiStage.static_risk_band.mean.toFixed(4)}</td><td>${multiStage.recourse_risk_band.mean.toFixed(4)}</td></tr></table>`;
   }
+  const rollingRecourse=state.network["rolling-recourse"];
+  if(rollingRecourse){
+   const rows=(rollingRecourse.cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td><td>${(item.completion_band.p50*100).toFixed(1)}%</td><td>${(item.completion_band.mean*100).toFixed(1)}%</td><td>${item.risk_band.mean.toFixed(4)}</td><td>${item.cost_band.p50.toFixed(0)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Rolling policy with recourse · ${rollingRecourse.episodes} common-factor episodes · first-year fixed then rolling re-solves</p><table><tr><th>Policy</th><th>Budget violation</th><th>Completion P50</th><th>Mean completion</th><th>Mean risk</th><th>Cost P50</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

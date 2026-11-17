@@ -85,6 +85,13 @@ from brushline.strategic.rolling_policy import (
     RollingYear,
     simulate_rolling_policy,
 )
+from brushline.strategic.rolling_recourse import (
+    ROLLING_RECOURSE_SCHEMA_VERSION,
+    RollingCaseSummary,
+    RollingRecourseError,
+    RollingRecourseResult,
+    evaluate_rolling_recourse,
+)
 from brushline.strategic.scenario import (
     SCENARIO_ARCHIVE_SCHEMA_VERSION,
     SCENARIO_SCHEMA_VERSION,
@@ -174,6 +181,7 @@ __all__ = [
     "PORTFOLIO_SCHEMA_VERSION",
     "REPORT_SCHEMA_VERSION",
     "ROLLING_POLICY_SCHEMA_VERSION",
+    "ROLLING_RECOURSE_SCHEMA_VERSION",
     "SCENARIO_ARCHIVE_SCHEMA_VERSION",
     "SCENARIO_OPTIMIZATION_SCHEMA_VERSION",
     "SCENARIO_SCHEMA_VERSION",
@@ -223,9 +231,12 @@ __all__ = [
     "ReportError",
     "RollingAction",
     "RollingBand",
+    "RollingCaseSummary",
     "RollingEpisode",
     "RollingPolicyError",
     "RollingPolicyResult",
+    "RollingRecourseError",
+    "RollingRecourseResult",
     "RollingYear",
     "ScenarioArchive",
     "ScenarioBand",
@@ -277,6 +288,7 @@ __all__ = [
     "canonical_digest",
     "compare_bau",
     "decompose_stateful",
+    "evaluate_rolling_recourse",
     "evaluate_static_plans",
     "evaluate_two_stage",
     "evaluate_two_stage_multi",

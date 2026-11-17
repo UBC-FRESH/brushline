@@ -398,6 +398,7 @@ def build_planning_brief(
     chance_100_plan: Mapping[str, Any] | None = None,
     two_stage_policy: Mapping[str, Any] | None = None,
     two_stage_multi: Mapping[str, Any] | None = None,
+    rolling_recourse: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -448,6 +449,8 @@ def build_planning_brief(
         First-year two-stage operational recourse. The section is omitted when absent.
     two_stage_multi : mapping, optional
         Multi-year annual operational recourse. The section is omitted when absent.
+    rolling_recourse : mapping, optional
+        Rolling policy with annual recourse. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -529,6 +532,7 @@ def build_planning_brief(
     chance100_first = chance100_cases[0] if chance100_cases else {}
     two_stage = two_stage_policy or {}
     multi_stage = two_stage_multi or {}
+    rolling_recourse_cases = (rolling_recourse or {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1667,6 +1671,47 @@ def build_planning_brief(
                 )
             ]
             if two_stage_multi
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="Rolling policy with recourse",
+                    paragraphs=[
+                        f"{rolling_recourse.get('episodes')} episodes compare four policies "
+                        "under the same annual factors: static fixed, fixed-future recourse, "
+                        "rolling-only, and rolling recourse. The first year starts from the "
+                        "nominal plan; later years are re-solved with the rolling persistence "
+                        "forecast.",
+                        "Rolling recourse restores almost all first-year scope while keeping "
+                        "budget and capacity feasible. It costs more future treatment than "
+                        "fixed-future recourse and does not lower the mean risk in this run. The "
+                        "result is a policy comparison, not a stochastic dynamic program.",
+                    ],
+                    table=_table(
+                        [
+                            "Policy",
+                            "Budget violation",
+                            "Completion P50",
+                            "Mean completion",
+                            "Mean risk",
+                            "Cost P50",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                _percent(case.get("budget_violation_probability")),
+                                _percent(case.get("completion_band", {}).get("p50")),
+                                _percent(case.get("completion_band", {}).get("mean")),
+                                _number(case.get("risk_band", {}).get("mean"), 4),
+                                _number(case.get("cost_band", {}).get("p50")),
+                            ]
+                            for case in rolling_recourse_cases
+                        ],
+                    ),
+                )
+            ]
+            if rolling_recourse
             else []
         ),
         BriefSection(

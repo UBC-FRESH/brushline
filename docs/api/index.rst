@@ -74,6 +74,7 @@ whenever you add a module to the project.
    rolling-policy
    static-plan
    two-stage
+   rolling-recourse
    shift-scheduling
    field
    field-comparison
