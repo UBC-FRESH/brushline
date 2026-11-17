@@ -395,6 +395,7 @@ def build_planning_brief(
     robust_plan: Mapping[str, Any] | None = None,
     chance_plan: Mapping[str, Any] | None = None,
     chance_capacity_plan: Mapping[str, Any] | None = None,
+    chance_100_plan: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -439,6 +440,8 @@ def build_planning_brief(
         Sampled budget chance-constrained plan. The section is omitted when absent.
     chance_capacity_plan : mapping, optional
         Sampled budget-and-capacity chance plan. The section is omitted when absent.
+    chance_100_plan : mapping, optional
+        100-path sampled budget chance plan. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -515,6 +518,9 @@ def build_planning_brief(
     chance_summary = (chance_plan or {}).get("plan") or {}
     capacity_cases = (chance_capacity_plan or {}).get("test", {}).get("plans") or []
     capacity_summary = (chance_capacity_plan or {}).get("plan") or {}
+    chance100_cases = (chance_100_plan or {}).get("test", {}).get("plans") or []
+    chance100_summary = (chance_100_plan or {}).get("plan") or {}
+    chance100_first = chance100_cases[0] if chance100_cases else {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1504,6 +1510,40 @@ def build_planning_brief(
                 )
             ]
             if chance_capacity_plan
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="100-path chance constraint",
+                    paragraphs=[
+                        f"The budget chance constraint was retrained on "
+                        f"{chance_100_plan.get('training_paths')} sampled paths, allowing "
+                        f"{chance_100_plan.get('max_budget_violations')} budget violations per "
+                        "year with capacity hard. It is tested on 100 independent paths.",
+                        f"Out-of-sample budget violation falls to "
+                        f"{_percent(chance100_first.get('budget_violation_probability'))} at mean "
+                        f"risk {_number(chance100_summary.get('mean_risk'), 4)} and cost "
+                        f"{_number(chance100_summary.get('total_cost'))} CAD. This is closer "
+                        "to budget robustness, but gives up risk reduction and still misses a 5% "
+                        "target.",
+                    ],
+                    table=_table(
+                        ["Plan", "5-year cost P10-P90", "Mean risk", "Budget violation"],
+                        [
+                            [
+                                case.get("name"),
+                                f"{_number(case.get('cost_band', {}).get('p10'))}-"
+                                f"{_number(case.get('cost_band', {}).get('p90'))}",
+                                _number(case.get("risk"), 4),
+                                _percent(case.get("budget_violation_probability")),
+                            ]
+                            for case in chance100_cases
+                        ],
+                    ),
+                )
+            ]
+            if chance_100_plan
             else []
         ),
         BriefSection(

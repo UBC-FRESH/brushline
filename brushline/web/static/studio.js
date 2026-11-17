@@ -244,6 +244,11 @@ function drawSchedule(){
    const rows=(chanceCapacity.test?.plans||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${item.cost_band.p10.toFixed(0)}–${item.cost_band.p90.toFixed(0)}</td><td>${item.risk.toFixed(4)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td><td>${(item.capacity_violation_probability*100).toFixed(1)}%</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Chance capacity · ≤${chanceCapacity.max_budget_violations} budget and ≤${chanceCapacity.max_capacity_violations} capacity violations/year on ${chanceCapacity.training_paths} paths · sampled</p><table><tr><th>Plan</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th><th>Capacity violation</th></tr>${rows}</table>`;
   }
+  const chance100=state.network["chance-100-plan"];
+  if(chance100){
+   const rows=(chance100.test?.plans||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${item.cost_band.p10.toFixed(0)}–${item.cost_band.p90.toFixed(0)}</td><td>${item.risk.toFixed(4)}</td><td>${(item.budget_violation_probability*100).toFixed(1)}%</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">100-path budget chance · ≤${chance100.max_budget_violations} of ${chance100.training_paths} paths/year · capacity hard · sampled, not distributional</p><table><tr><th>Plan</th><th>5-year cost P10–P90</th><th>Mean risk</th><th>Budget violation</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

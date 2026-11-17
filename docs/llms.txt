@@ -143,6 +143,7 @@
 - [Scenario-robust static plan](reference/robust-plan.html): training-path budget/capacity robustness, out-of-sample risk and budget performance.
 - [Sampled budget chance constraint](reference/chance-plan.html): chance budget relaxation with hard capacity and out-of-sample results.
 - [Chance-constrained capacity](reference/chance-capacity-plan.html): sampled budget/capacity relaxation and its negative result.
+- [100-path chance constraint](reference/chance-100-plan.html): retrained budget chance at 8% out-of-sample violation and higher residual risk.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

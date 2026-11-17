@@ -76,6 +76,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    robust-plan
    chance-plan
    chance-capacity-plan
+   chance-100-plan
    field-validation
    shift-scheduling
    field-comparison

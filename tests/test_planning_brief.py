@@ -479,6 +479,29 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    chance_100_plan = {
+        "training_paths": 100,
+        "max_budget_violations": 10,
+        "plan": {"mean_risk": 0.0671, "total_cost": 197659},
+        "test": {
+            "plans": [
+                {
+                    "name": "chance 100 paths",
+                    "cost_band": {"p10": 176580, "p90": 220447},
+                    "risk": 0.0671,
+                    "budget_violation_probability": 0.08,
+                    "capacity_violation_probability": 0.0,
+                },
+                {
+                    "name": "chance 20 paths",
+                    "cost_band": {"p10": 198743, "p90": 247028},
+                    "risk": 0.0516,
+                    "budget_violation_probability": 0.21,
+                    "capacity_violation_probability": 0.0,
+                },
+            ]
+        },
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -512,6 +535,7 @@ def _artifacts() -> dict[str, Any]:
         "robust_plan": robust_plan,
         "chance_plan": chance_plan,
         "chance_capacity_plan": chance_capacity_plan,
+        "chance_100_plan": chance_100_plan,
     }
 
 
@@ -562,6 +586,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "chance-constrained" in brief.markdown
     assert "## Chance-constrained capacity" in brief.markdown
     assert "chance capacity" in brief.markdown
+    assert "## 100-path chance constraint" in brief.markdown
+    assert "chance 100 paths" in brief.markdown
     assert "milp-budget-30000" in brief.markdown
     assert "299,859" in brief.markdown
     assert "249,742-371,650" in brief.markdown

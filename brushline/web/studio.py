@@ -78,6 +78,7 @@ def _network_artifacts() -> dict[str, Any]:
             "robust-plan",
             "chance-plan",
             "chance-capacity-plan",
+            "chance-100-plan",
             "access",
         )
     }
@@ -424,6 +425,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 robust_plan=artifacts["robust-plan"],
                 chance_plan=artifacts["chance-plan"],
                 chance_capacity_plan=artifacts["chance-capacity-plan"],
+                chance_100_plan=artifacts["chance-100-plan"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

@@ -317,6 +317,10 @@ test suite. This page is the map.
      - ``brushline.chance-capacity-plan.v1``
      - ``tools/build_chance_capacity_plan.py``
      - Sampled budget and capacity chance constraints with independent out-of-sample evaluation
+   * - Chance 100-path plan
+     - ``brushline.chance-100-plan.v1``
+     - ``tools/build_chance_100_plan.py``
+     - 100-path sampled budget chance constraint with hard capacity and independent test paths
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``
