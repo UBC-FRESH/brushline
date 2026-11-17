@@ -150,6 +150,7 @@
 - [Forecast-skill sensitivity](reference/forecast-skill.html): coarse 0-100% forecast-skill sweep showing unscheduled work falls monotonically while completion and risk do not.
 - [Fall-window capacity remedy](reference/window-remedy.html): 75-, 90-, and 105-day windows recover calendar-aware scope while holding the crew mix fixed. Includes a replicated 590-segment scale test.
 - [Added-crew versus window remedy](reference/capacity-remedy.html): costed comparison of one relief crew and machine against longer fall windows. Includes a replicated 590-segment scale test and rate threshold.
+- [Release boundary audit](reference/release-boundary.html): read-only checks that private network artifacts are untracked and the public demo remains synthetic.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

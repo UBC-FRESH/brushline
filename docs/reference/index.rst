@@ -83,6 +83,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    forecast-skill
    window-remedy
    capacity-remedy
+   release-boundary
    field-validation
    shift-scheduling
    field-comparison
