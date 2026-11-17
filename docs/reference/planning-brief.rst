@@ -37,7 +37,9 @@ commit when available.
    GET /api/studio/network/brief?instance_id=bc-hydro-network&format=html
    GET /api/studio/network/brief?instance_id=bc-hydro-network&format=markdown
 
-The response uses ``Content-Disposition: attachment`` with a filename derived from the instance id.
+HTML is served with ``Content-Disposition: inline`` so the studio link opens a readable page in a
+new tab. Add ``download=1`` to force an attachment. Markdown remains an attachment. Filenames are
+derived from the instance id.
 
 ## Scope
 

@@ -100,8 +100,12 @@ def test_studio_endpoints_and_pov_variants() -> None:
         brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
         assert brief.status_code == 200
         assert brief.headers["content-type"].startswith("text/html")
-        assert "attachment; filename=" in brief.headers["content-disposition"]
+        assert brief.headers["content-disposition"].startswith("inline; filename=")
         assert "BC Hydro public-data network planning brief" in brief.text
+        brief_download = client.get(
+            "/api/studio/network/brief?instance_id=bc-hydro-network&download=1"
+        )
+        assert brief_download.headers["content-disposition"].startswith("attachment; filename=")
         assert "<script" not in brief.text
         brief_md = client.get(
             "/api/studio/network/brief?instance_id=bc-hydro-network&format=markdown"

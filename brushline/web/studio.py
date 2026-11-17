@@ -392,6 +392,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
     def network_brief(
         instance_id: str = Query(default="bc-hydro-network"),
         output_format: Literal["html", "markdown"] = Query(default="html", alias="format"),
+        download: bool = Query(default=False),
     ) -> Response:
         if instance_id != "bc-hydro-network":
             raise HTTPException(status_code=404, detail="not a network instance")
@@ -439,11 +440,12 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
             if output_format == "markdown"
             else "text/html; charset=utf-8"
         )
+        disposition = "attachment" if download or output_format == "markdown" else "inline"
         return Response(
             content=content,
             media_type=media_type,
             headers={
-                "Content-Disposition": f'attachment; filename="{filename}"',
+                "Content-Disposition": f'{disposition}; filename="{filename}"',
                 "Cache-Control": "no-store",
             },
         )

@@ -26,8 +26,9 @@ the model outputs into a document that a reviewer can read without navigating th
 
 `GET /api/studio/network/brief?instance_id=bc-hydro-network&format=html` returns a self-contained
 HTML document with embedded CSS and no external assets or scripts. The `format=markdown` variant
-returns the same content as Markdown. Both responses use an attachment filename derived from the
-instance id.
+returns the same content as Markdown. HTML opens inline in a new tab by default; add
+``download=1`` to force an attachment. Markdown remains an attachment. Filenames are derived from
+the instance id.
 
 The brief is generated from `runtime/private/bc-network/model/` artifacts at request time. It
 includes the checked-out commit when available. Network-derived content remains private until
