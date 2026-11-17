@@ -404,6 +404,7 @@ def build_planning_brief(
     weather_recourse_590: Mapping[str, Any] | None = None,
     forecast_skill: Mapping[str, Any] | None = None,
     window_remedy: Mapping[str, Any] | None = None,
+    window_remedy_590: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -467,6 +468,8 @@ def build_planning_brief(
     window_remedy : mapping, optional
         Fall-window capacity remedy for calendar-aware execution. The section is omitted when
         absent.
+    window_remedy_590 : mapping, optional
+        590-segment fall-window remedy. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -554,6 +557,7 @@ def build_planning_brief(
     weather_scale_cases = (weather_recourse_590 or {}).get("result", {}).get("cases") or []
     forecast_skill_cases = (forecast_skill or {}).get("result", {}).get("cases") or []
     window_cases = (window_remedy or {}).get("result", {}).get("cases") or []
+    window_scale_cases = (window_remedy_590 or {}).get("result", {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1966,6 +1970,58 @@ def build_planning_brief(
                 )
             ]
             if window_remedy
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="590-segment fall-window capacity remedy",
+                    paragraphs=[
+                        f"Replicated 590-segment stress test with "
+                        f"{window_remedy_590.get('crews')} crews and "
+                        f"{window_remedy_590.get('machines')} machines. The fixed plan is exact; "
+                        "annual re-solves use Fresh Solutions, and observed-calendar awareness is "
+                        "re-run at 75, 90, and 105 days.",
+                        f"Runtime: fixed exact "
+                        f"{_number(window_remedy_590.get('fixed_seconds'), 1)} s; window sweep "
+                        f"{_number(window_remedy_590.get('seconds'), 1)} s. The 105-day window "
+                        "recovers almost all calendar-aware scope at scale. Action cost rises "
+                        "because more work is retained; added seasonal overhead is not modelled.",
+                    ],
+                    table=_table(
+                        [
+                            "Window days",
+                            "Completed scope P50",
+                            "Retained scope P50",
+                            "Mean risk",
+                            "Cost P50",
+                            "Calendar deferrals",
+                        ],
+                        [
+                            [
+                                case.get("window_days"),
+                                _percent(
+                                    case.get("summary", {}).get("completion_band", {}).get("p50")
+                                ),
+                                _percent(
+                                    case.get("summary", {})
+                                    .get("retained_scope_band", {})
+                                    .get("p50")
+                                ),
+                                _number(
+                                    case.get("summary", {}).get("risk_band", {}).get("mean"), 4
+                                ),
+                                _number(case.get("summary", {}).get("cost_band", {}).get("p50")),
+                                _number(
+                                    case.get("summary", {}).get("mean_calendar_deferred_actions"), 1
+                                ),
+                            ]
+                            for case in window_scale_cases
+                        ],
+                    ),
+                )
+            ]
+            if window_remedy_590
             else []
         ),
         BriefSection(

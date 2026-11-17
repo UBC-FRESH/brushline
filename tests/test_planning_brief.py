@@ -742,6 +742,47 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    window_remedy_590 = {
+        "episodes": 20,
+        "crews": 30,
+        "machines": 30,
+        "fixed_seconds": 47.4,
+        "seconds": 244.85,
+        "result": {
+            "cases": [
+                {
+                    "window_days": 75,
+                    "summary": {
+                        "completion_band": {"p50": 0.844778},
+                        "retained_scope_band": {"p50": 0.844778},
+                        "risk_band": {"mean": 0.066701},
+                        "cost_band": {"p50": 2536613.78},
+                        "mean_calendar_deferred_actions": 484.25,
+                    },
+                },
+                {
+                    "window_days": 90,
+                    "summary": {
+                        "completion_band": {"p50": 0.958933},
+                        "retained_scope_band": {"p50": 0.958933},
+                        "risk_band": {"mean": 0.036818},
+                        "cost_band": {"p50": 2844468.97},
+                        "mean_calendar_deferred_actions": 182.0,
+                    },
+                },
+                {
+                    "window_days": 105,
+                    "summary": {
+                        "completion_band": {"p50": 0.980811},
+                        "retained_scope_band": {"p50": 0.980811},
+                        "risk_band": {"mean": 0.032781},
+                        "cost_band": {"p50": 2931648.74},
+                        "mean_calendar_deferred_actions": 58.75,
+                    },
+                },
+            ]
+        },
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -784,6 +825,7 @@ def _artifacts() -> dict[str, Any]:
         "weather_recourse_590": weather_recourse_590,
         "forecast_skill": forecast_skill,
         "window_remedy": window_remedy,
+        "window_remedy_590": window_remedy_590,
     }
 
 
@@ -844,6 +886,7 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "forecast-aware" in brief.markdown
     assert "## Forecast-skill sensitivity" in brief.markdown
     assert "## Fall-window capacity remedy" in brief.markdown
+    assert "## 590-segment fall-window capacity remedy" in brief.markdown
     assert "98.1%" in brief.markdown
     assert "41.9" in brief.markdown
     assert "7,377" in brief.markdown

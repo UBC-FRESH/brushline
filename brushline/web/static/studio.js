@@ -289,6 +289,11 @@ function drawSchedule(){
    const rows=((windowRemedy.result||{}).cases||[]).map(item=>`<tr><td>${item.window_days}</td><td>${(item.summary.completion_band.p50*100).toFixed(1)}%</td><td>${(item.summary.retained_scope_band.p50*100).toFixed(1)}%</td><td>${item.summary.risk_band.mean.toFixed(4)}</td><td>${item.summary.cost_band.p50.toFixed(0)}</td><td>${item.summary.mean_unscheduled_hours.toFixed(0)}</td><td>${item.summary.mean_calendar_deferred_actions.toFixed(1)}</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">Fall-window capacity remedy · observed-calendar awareness · ${windowRemedy.episodes} episodes · fixed crew mix · ${windowRemedy.seconds.toFixed(1)}s</p><table><tr><th>Window days</th><th>Completed scope P50</th><th>Retained scope P50</th><th>Mean risk</th><th>Cost P50</th><th>Unscheduled h</th><th>Calendar deferrals</th></tr>${rows}</table>`;
   }
+  const windowRemedyScale=state.network["weather-window-remedy-590"];
+  if(windowRemedyScale){
+   const rows=((windowRemedyScale.result||{}).cases||[]).map(item=>`<tr><td>${item.window_days}</td><td>${(item.summary.completion_band.p50*100).toFixed(1)}%</td><td>${(item.summary.retained_scope_band.p50*100).toFixed(1)}%</td><td>${item.summary.risk_band.mean.toFixed(4)}</td><td>${item.summary.cost_band.p50.toFixed(0)}</td><td>${item.summary.mean_calendar_deferred_actions.toFixed(1)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">590-segment fall-window remedy · observed-calendar awareness · ${windowRemedyScale.episodes} episodes · ${windowRemedyScale.crews} crews · fixed exact ${windowRemedyScale.fixed_seconds.toFixed(1)}s · sweep ${windowRemedyScale.seconds.toFixed(1)}s</p><table><tr><th>Window days</th><th>Completed scope P50</th><th>Retained scope P50</th><th>Mean risk</th><th>Cost P50</th><th>Calendar deferrals</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

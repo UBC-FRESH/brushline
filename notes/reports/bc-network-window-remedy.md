@@ -24,6 +24,21 @@ unschedulable actions, without adding crews or machines?
 Extending the window recovers scope and lowers risk. Action cost rises because more work is
 retained; added seasonal overhead, supervision, and weather exposure are not modelled.
 
+## 590-segment scale test
+
+A replicated 590-segment instance uses 30 crews and 30 machines. The fixed plan is exact; annual
+re-solves use Fresh Solutions.
+
+| Window days | Completed scope P50 | Retained scope P50 | Mean risk | Cost P50 | Calendar deferrals |
+|---:|---:|---:|---:|---:|---:|
+| 75 | 84.5% | 84.5% | 0.0667 | 2,536,614 | 484.3 |
+| 90 | 95.9% | 95.9% | 0.0368 | 2,844,469 | 182.0 |
+| 105 | 98.1% | 98.1% | 0.0328 | 2,931,649 | 58.8 |
+
+Fixed exact plan: 47.4 s. Window sweep: 244.9 s. The remedy recovers almost all calendar-aware
+scope at scale. Action cost rises because more work is retained; added seasonal overhead is not
+modelled.
+
 ## Interpretation
 
 The 75-day window is the binding operational constraint for calendar-aware execution, not budget or
