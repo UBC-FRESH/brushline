@@ -6,7 +6,8 @@ violations per year while keeping capacity hard. It is tested on 100 independent
 
 This remains a sampled chance constraint, not a distributional guarantee.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -33,13 +34,15 @@ The 100-path plan costs 197,659 CAD nominally and has 155 actions.
 Out-of-sample budget violation falls from 21% to **8%**, but risk rises from 0.0516 to 0.0671. The
 plan is more conservative and still does not meet a 5% budget-risk target.
 
-## Interpretation
+Interpretation
+--------------
 
 More training paths move the chance plan closer to budget robustness, at the cost of substantially less
 risk reduction. The sampled constraint remains sensitive to the training set and does not provide a
 distributional guarantee.
 
-## Limits
+Limits
+------
 
 - Sampled budget chance; capacity hard.
 - 100 training paths; 100 independent test paths.

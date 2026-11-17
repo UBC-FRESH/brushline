@@ -9,7 +9,8 @@ This is candidate selection from the existing frontier, not robust optimization.
 nominal budget is the budget used to build its treatment schedule; the actual budget is the common
 60,000 CAD/year constraint against which all candidates are tested.
 
-## Network result
+Network result
+--------------
 
 - 8,737 ha, 59 segments, 2027-2031.
 - 20 annual-factor episodes, seed 7.
@@ -60,7 +61,8 @@ target has lower risk but breaches the actual budget in about 10% of episodes. T
 plan has lower risk still but breaches in 95% of episodes because it commits a schedule that uses
 essentially the whole nominal budget.
 
-## Decision trade
+Decision trade
+--------------
 
 The static candidates leave budget headroom by building to a lower nominal budget:
 
@@ -71,7 +73,8 @@ The static candidates leave budget headroom by building to a lower nominal budge
 Rolling gives much lower risk than the static candidates at a higher treatment cost. The static
 30,000 target is the low-cost option, not the risk-minimizing option.
 
-## Limits
+Limits
+------
 
 - Candidate evaluation, not robust optimization or a probabilistic guarantee.
 - The actual budget is fixed at 60,000 CAD/year for this comparison.

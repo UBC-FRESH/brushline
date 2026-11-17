@@ -8,7 +8,8 @@ The robust MILP adds one annual budget and one annual capacity row per training 
 while sharing the same segment-period-method choices. The plan is then tested on 100 independent
 factor paths.
 
-## Results
+Results
+-------
 
 Training: 20 paths.
 
@@ -38,7 +39,8 @@ It does **not** meet a 5% out-of-sample budget-risk target. The constraints cove
 paths; a distributional or chance-constrained guarantee would require more scenarios or a different
 formulation.
 
-## Limits
+Limits
+------
 
 - Shared static decisions; no scenario-specific recourse.
 - Budget/capacity uncertainty only; treatment risk and access are not scenario-robust.

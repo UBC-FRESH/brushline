@@ -8,7 +8,8 @@ episodes and 50 calendars per episode as the all-episode stress scan.
 Added capacity is costed at 1,200 CAD per crew-day and 900 CAD per machine-day against the 60,000 CAD
 first-year budget. These are prototype rates, not contractor quotes.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -81,7 +82,8 @@ A crew alone or machine alone does not improve completion because mowing and mec
 both. The crew-plus-machine case is the strongest full-scope completion remedy, but its median total
 first-year cost is about 140,800 CAD against the 60,000 CAD budget.
 
-## Limits
+Limits
+------
 
 - Capacity and scope remedies are hypothetical scheduling tests, not contractor commitments.
 - Crew-day and machine-day rates are prototype assumptions, not contractor quotes.

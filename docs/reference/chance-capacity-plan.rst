@@ -5,7 +5,8 @@ This extends the sampled budget chance constraint to capacity: at most two of 20
 exceed budget and at most two may exceed capacity in each year. Both constraints are sampled; this is
 not a distributional guarantee.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -37,7 +38,8 @@ Chance capacity does not improve the out-of-sample result. Budget violation is 2
 budget-only chance, risk is unchanged, and out-of-sample capacity violation is already 0% in the test
 set. The budget-only plan is better in this test.
 
-## Interpretation
+Interpretation
+--------------
 
 The sampled capacity relaxation does not help because the test paths do not show capacity violations
 and the budget constraint remains tighter. The experiment is a negative result for this parameter set.
@@ -45,7 +47,8 @@ and the budget constraint remains tighter. The experiment is a negative result f
 A better next step would be an operational recourse model or a distributional chance constraint with
 more training paths.
 
-## Limits
+Limits
+------
 
 - Sampled constraints, not distributional.
 - 20 training paths; 100 test paths.

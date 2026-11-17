@@ -7,7 +7,8 @@ hour until the annual budget and crew-hour capacity are satisfied.
 
 This is an operational recourse evaluation for one year, not a multi-year stochastic dynamic program.
 
-## Results
+Results
+-------
 
 - First-stage plan: nominal balanced, 46 first-year actions.
 - 100 factor scenarios, seed 23.
@@ -45,7 +46,8 @@ The mean deferred workload is 2.75 actions and 60.2 crew-hours. The second stage
 and capacity feasibility for the first year while retaining most of the planned work and risk
 reduction.
 
-## Limits
+Limits
+------
 
 - First-year only.
 - First-stage plan is fixed; no strategic re-optimization.
@@ -53,7 +55,8 @@ reduction.
 - Deferral ranking is first-year risk reduction per hour only.
 - No field calibration, safety, or asset-owner approval.
 
-## Multi-year annual recourse
+Multi-year annual recourse
+--------------------------
 
 The same deferral rule is applied independently to every year of the five-year nominal plan. The
 first-stage plan remains fixed; there is no future strategic re-optimization.

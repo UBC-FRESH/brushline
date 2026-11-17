@@ -8,7 +8,8 @@ The first-year risk-ranked deferral is fixed; later years are re-solved with the
 the persistence forecast, and a two-year lookahead. This is not a stochastic multi-year policy
 guarantee.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -51,7 +52,8 @@ Mean recovery: **0.0295**. Final recovery: **0.0413**.
 The rolling policy spends the next year closing most of the deferral gap. By 2029 the risk path is
 close to the full plan, and the final-year gap is effectively zero.
 
-## Cost
+Cost
+----
 
 Mean five-year treatment cost over the 20 episodes:
 
@@ -62,7 +64,8 @@ Mean five-year treatment cost over the 20 episodes:
 The re-optimized path retains most of the first-year cost saving while recovering the risk gap under
 the fixed-factor assumptions.
 
-## Limits
+Limits
+------
 
 - First-year deferral is fixed; later plans cannot reverse it.
 - Annual factors are fixed from the rolling episode; no new uncertainty is sampled.

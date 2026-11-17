@@ -1,61 +1,67 @@
 # Brushline
 
-Brushline is decision support for vegetation management along linear infrastructure corridors in
-forested landscapes: powerlines, pipelines, roads, railways, and the rights-of-way that keep them
-accessible and safe.
+Brushline is a pre-alpha decision-support prototype for vegetation management along linear
+infrastructure corridors in forested landscapes: powerlines, pipelines, roads, railways, and the
+rights-of-way that keep them accessible and safe.
 
-The system couples a shrub and young-tree growth model, treatment transitions, strategic, tactical, and
-operational planning, adaptive remote monitoring, and a multi-objective metaheuristic search. One
-versioned plan artifact serves both the asset owner who hires the work and the contractor who bids on
-it, so a budget, a schedule, and a bid can be inspected against the same evidence.
+It couples a low-vegetation state-transition model, treatment transitions, strategic/tactical/
+operational planning, scenario and recourse experiments, adaptive monitoring, and an artifact-first
+planning studio. One versioned plan artifact is intended to serve both the asset owner and the
+contractor, so budget, schedule, and bid can be inspected against the same evidence.
+
+**Status:** working research prototype, not a field-calibrated operational system. The BC network
+workflow uses private artifacts; the public demo is synthetic. See [Status](#status) and
+[Documentation](#documentation).
 
 ## The problem
 
 A utility or pipeline operator may manage thousands of kilometres of corridor through productive
-forest. Vegetation that is left too long reduces clearance, blocks access, raises fire risk, and
-threatens reliability. Treat it too often and the budget is wasted. The usual answer is a fixed cycle
-and a spreadsheet, with each contractor bidding from a different set of assumptions.
+forest. Vegetation left too long reduces clearance, blocks access, raises fire risk, and threatens
+reliability. Treat it too often and the budget is wasted. The usual answer is a fixed cycle and a
+spreadsheet, with each contractor bidding from a different set of assumptions.
 
 Two things make the problem hard:
 
-- Open growth and yield models for shrubs and young trees are scarce. Brushline must carry its own
-  calibrated state-transition model, and must state its uncertainty.
+- Open growth-and-yield models for shrubs and young trees are scarce. Brushline carries its own
+  state-transition model and states its uncertainty and applicability domain.
 - The joint choice of where and when to treat, and where and when to monitor, is an NP-hard
   combinatorial problem with budget, capacity, access, spatial, temporal, and service constraints.
-  Brushline therefore commits to a metaheuristic search framework and a Pareto archive of trade-offs,
-  not to a claim of optimality.
+  Brushline uses metaheuristics and a Pareto archive for large instances; it does not claim global
+  optimality.
 
-## What the system will do
+## What the prototype includes
 
-- **Build a corridor model.** Segments are the decision unit; spans and treatment units are runtime
-  aggregates. Each segment carries site, vegetation, treatment, access, and observation history.
-- **Grow and treat vegetation.** A state is a distribution over interpretable classes, with
-  continuous summaries. Treatments are transitions with method-specific efficacy, selectivity, and
-  regrowth.
-- **Plan at three scales.** Strategic plans set budget, service levels, risk appetite, and monitoring
-  policy over 10 to 30 years. Tactical plans set multi-year treatment programs, contractor capacity,
-  and access. Operational plans set work-ready treatment units, methods, and schedules.
-- **Decide when to monitor.** Flight frequency, route, sensor, and sampling intensity are decision
-  variables priced by their expected value of information, and observations recalibrate the growth
-  model.
-- **Search the trade-offs.** A `fresh-solutions` problem adapter supplies exact evaluation, moves, and
-  undo; the engine supplies local search, population search, checkpoints, seeds, telemetry, and exact
-  replay. A Pareto archive keeps the cost, risk, service, and uncertainty trade-offs.
-- **Compare owner and contractor views.** A plan carries a line-item cost build-up, assumptions,
-  quantities, rates, and provenance. A bid is an annotated plan, not a separate spreadsheet.
-- **Explore it in a planning studio.** One optional FastAPI service and one static browser shell read
-  the run artifacts. MapLibre carries the 2D corridor map, Three.js carries the 3D operations scene,
-  and checked skins cover owner-strategic, tactical, operations, contractor, monitoring, and reviewer
-  roles. The studio animates deployment and explores the Pareto front without owning model state.
+- **Corridor and network model.** Segments are decision units; spans and treatment units aggregate
+  them at runtime. Segments carry site, vegetation, treatment, access, and observation context.
+- **Vegetation state and treatments.** A state is a distribution over interpretable classes with
+  continuous summaries. Treatments are transitions with method-specific efficacy, selectivity,
+  resprouting, regrowth delay, and cost.
+- **Three planning scales.** Strategic segment-year-method plans, tactical programs and contractor
+  demand, and operational work orders and shift schedules.
+- **Uncertainty and policy experiments.** Static frontier plans, scenario-robust plans, sampled
+  chance constraints, two-stage deferral, rolling re-optimization, weather/outage-aware execution,
+  forecast-skill sensitivity, and capacity remedies.
+- **Studio and planning brief.** An artifact-only FastAPI service and static shell expose the plan,
+  map, timeline, scenes, skins, Pareto archive, and a self-contained planning brief.
+- **Artifact contracts.** Versioned dataset, plan, run, tactical, operations, and policy artifacts
+  with validators and named errors.
 
 ## Status
 
-Phase 0 (bootstrap and scope) and Phase 1 (contracts and prototype) are complete and merged. Phase 2
-(FEMIC-extended instance builder) is active: the repository is pinning the FEMIC provider surface and
-building the map-to-instance workflow on top of it. It does not yet have a usable vegetation model or
-planner. `ROADMAP.md` is the plan of record, and the GitHub issues carry the live status.
+The repository contains a working prototype across the model, planning stack, studio, and policy
+experiments. It is **not**:
 
-Brushline is a working name. It is easy to rename before the first public release.
+- field calibrated;
+- safety-certified;
+- asset-owner approved;
+- a public release of BC Hydro, MKRF, or other private network data.
+
+The private network artifacts live under `runtime/private/` and are ignored. The public demo is the
+synthetic corridor under `examples/synthetic-corridor`. Release remains gated on data-sharing,
+release approval, field validation, and asset-owner review. Run `python tools/audit_release.py` for
+the repository boundary check.
+
+`ROADMAP.md` remains the plan of record and `CHANGE_LOG.md` records changes.
 
 ## Quick start
 
@@ -63,19 +69,47 @@ Brushline is a working name. It is easy to rename before the first public releas
 python -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements-dev.txt
-python -m pip install -e .
-brushline --help
+python -m pip install -e ".[geo,opt,web]"
+
+brushline status
+brushline fixture --out tmp/corridor
+brushline prototype --fixture tmp/corridor --out tmp/prototype --years 5
+
+brushline demo build --out build/demo
+python -m http.server 8000 --directory build/demo
+```
+
+The synthetic fixture is the public quickstart. The BC network builder is a separate private
+workflow:
+
+```bash
+python tools/build_bc_network_demo.py
+python -m uvicorn brushline.web.studio:app --host 0.0.0.0 --port 8801
+```
+
+Do not run the private builder on a clean public checkout and do not publish its output.
+
+## Documentation
+
+- [Documentation home](https://ubc-fresh.github.io/brushline/) and local `docs/index.rst`
+- **Getting started:** install, synthetic quickstart, first study
+- **Concepts:** model, planning stack, uncertainty/recourse, artifacts and privacy
+- **How-to:** private network workflow, planning brief, studio, release audit
+- **Guides:** limitations, private/public boundary, troubleshooting
+- **Reference:** contracts, methods, and policy experiment records
+- **API:** public package reference, grouped by domain
+
+The docs distinguish contracts from experiment records. A benchmark result is not a field
+validation, and a sampled scenario is not a distributional guarantee.
+
+## Verification
+
+```bash
 python scripts/dashboard.py
 ```
 
-The dashboard runs lint, format, strict types, tests with a coverage gate, the workflow validator, the
-docs build, and the docstring audit. Every commit leaves it green.
-
-## How this project works
-
-This project follows the UBC-FRESH dev workflow. Work is planned as phases, tasks, and subtasks in
-`ROADMAP.md`, mirrored in GitHub issues, and recorded in `CHANGE_LOG.md`. The agent operating contract
-is in `AGENTS.md`. Read `AGENTS.md`, then `ROADMAP.md`, before you change anything.
+The dashboard runs lint, format, strict types, tests with a coverage gate, the workflow validator,
+the docs build, and the docstring audit. It is the normal local and CI check.
 
 ## Repository map
 
@@ -84,26 +118,27 @@ is in `AGENTS.md`. Read `AGENTS.md`, then `ROADMAP.md`, before you change anythi
 | `AGENTS.md` | Operating contract for coding agents |
 | `ROADMAP.md` | Plan of record and issue tracker map |
 | `CHANGE_LOG.md` | Dated narrative of changes |
-| `brushline/` | The Python package and command line |
-| `docs/` | Documentation site, including the design index |
+| `brushline/` | Python package, CLI, models, planners, and studio |
+| `docs/` | Documentation site: getting started, concepts, how-to, guides, reference, API |
+| `examples/synthetic-corridor/` | Public synthetic demo |
+| `runtime/private/` | Ignored private network artifacts; never commit |
 | `notes/design/` | Scope, architecture, optimization, and UI design records |
 | `notes/adr/` | Architecture decisions |
-| `notes/reports/` | Phase close-out reports |
-| `scripts/check_workflow.py` | Workflow validator |
-| `tests/` | pytest suite, including the planning-surface self-check |
+| `notes/reports/` | Phase and experiment reports |
+| `tools/` | Network builder, policy experiments, scale benchmarks, release audit |
+| `tests/` | pytest suite |
 
 ## Relationship to the other FRESH tools
 
 Brushline is a sibling of WS4, FHOPS, the FRESH urban-forest lab, and Fresh Solutions. It borrows
 patterns, not internals:
 
-- **WS4** supplies the pattern for a compiled, inspectable dataset, spatial decisions inside the model,
-  artifact-based runs, and the web shell.
-- **FHOPS** supplies the pattern for tactical and operational planning, machine and crew productivity,
-  and 3D operations visualization.
+- **WS4** supplies the pattern for a compiled, inspectable dataset, spatial decisions inside the
+  model, artifact-based runs, and the web shell.
+- **FHOPS** supplies the pattern for tactical and operational planning, machine and crew
+  productivity, and 3D operations visualization.
 - **Fresh Solutions** supplies the metaheuristic engine and the exact replay contract.
-- **The FRESH urban-forest lab** supplies the pattern for a 2D/3D browser studio with vendored,
-  offline-capable map and scene libraries.
+- **The FRESH urban-forest lab** supplies the pattern for the 2D/3D browser studio.
 
 The adapters are versioned and optional. Brushline stays installable without the other tools.
 

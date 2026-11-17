@@ -8,7 +8,8 @@ independently for each future path.
 Future years are re-solved with the rolling persistence forecast and a two-year lookahead. This is a
 stochastic recovery test, not a stochastic dynamic program.
 
-## Method
+Method
+------
 
 - 20 rolling episodes.
 - First-year risk-ranked deferral: 20% target, 21.3% actual mean deferral.
@@ -16,7 +17,8 @@ stochastic recovery test, not a stochastic dynamic program.
 - 2028-2031 re-solved for each path.
 - Future factors sampled from the same lognormal assumptions as the rolling policy.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -54,7 +56,8 @@ Cost bands:
 The reoptimized path spends more than no reoptimization to recover risk, but less than the full policy
 on average.
 
-## Limits
+Limits
+------
 
 - First-year deferral is fixed.
 - Future factors are independent draws; no serial correlation or calibrated forecast process.

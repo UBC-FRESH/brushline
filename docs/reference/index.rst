@@ -1,18 +1,44 @@
-Reference contracts
-===================
+Reference
+=========
 
-The reference pages define the artefacts and interfaces that the rest of the project reads. A contract
-is not a suggestion: the code validates it, and a malformed artefact fails with a named error.
+This section is the technical record: contracts, method descriptions, artifact schemas, and policy
+experiment results. It is not a tutorial. If you are new, read :doc:`../getting-started/index` and
+:doc:`../concepts/index` first.
+
+The pages fall into three kinds:
+
+- **contracts** that the code validates, with schema versions and named errors;
+- **method pages** that explain a model or algorithm;
+- **experiment records** that report a specific prototype run and its limits.
+
+A benchmark number is not a contract. An experiment record is not a field validation. The contract
+index states which pages are authoritative for interfaces: :doc:`contract-index`.
+
+Contracts and artifacts
+-----------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    contract-index
-   femic-boundary
+   artifacts
+   compiled-dataset
+   corridor-contract
+   state-contract
+   synthetic-fixture
+   prototype
    instance-template
-   freshforge-provider
+
+Inputs, data, and integrations
+------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
    data-catalogue
    fetch-plan
+   femic-boundary
+   freshforge-provider
    agent-capabilities
    model-builder
    lidar-bundle
@@ -21,6 +47,13 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    state-initialization
    lidar-coverage
    lidar-benchmark
+
+Vegetation and evidence
+-----------------------
+
+.. toctree::
+   :maxdepth: 1
+
    state-space
    growth-model
    treatment-transitions
@@ -28,6 +61,13 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    hazard-indicators
    vegetation-validation
    low-vegetation-model-card
+
+Optimization and strategic planning
+-----------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
    optimization-formulation
    optimization-evaluator
    optimization-operators
@@ -47,6 +87,13 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    strategic-reports
    strategic-scenario
    strategic-validation
+
+Tactical, operations, and monitoring
+------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
    tactical-program
    tactical-resources
    tactical-access
@@ -54,12 +101,24 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    tactical-fhops
    tactical-timeline
    tactical-validation
+   shift-scheduling
+   operations
    observation-model
    mission
    monitoring-value
    recalibration
    replan
    monitoring-validation
+
+Uncertainty, policy, and decision records
+-----------------------------------------
+
+These pages report prototype policy experiments. Read the method and limits on each page before
+using a number. The conceptual distinctions are in :doc:`../concepts/uncertainty-and-recourse`.
+
+.. toctree::
+   :maxdepth: 1
+
    uncertainty
    scenario-optimization
    planning-brief
@@ -83,19 +142,18 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    forecast-skill
    window-remedy
    capacity-remedy
-   release-boundary
-   field-validation
-   shift-scheduling
-   field-comparison
-   plan-exchange
+
+Studio, exchange, field, and release
+------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
    studio
    demo-portal
+   plan-exchange
    verification
+   field-validation
+   field-comparison
    release
-   operations
-   compiled-dataset
-   corridor-contract
-   state-contract
-   artifacts
-   synthetic-fixture
-   prototype
+   release-boundary

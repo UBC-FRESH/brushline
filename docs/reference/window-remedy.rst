@@ -5,7 +5,8 @@ Observed-calendar awareness defers whole actions when the 75-day fall calendar c
 This remedy extends the work window to 90 and 105 days while holding the crew and machine mix
 fixed. It is an operational what-if, not a field schedule or a costed seasonal plan.
 
-## Results
+Results
+-------
 
 20 episodes, seed 7.
 
@@ -44,7 +45,8 @@ fixed. It is an operational what-if, not a field schedule or a costed seasonal p
 The longer window recovers scope and lowers mean risk. Action cost rises because more work is
 retained; added seasonal overhead, supervision, and weather exposure are not modelled.
 
-## 590-segment scale test
+590-segment scale test
+----------------------
 
 A replicated 590-segment instance scales the workforce to 30 crews and 30 machines. The fixed plan
 is exact; annual re-solves use Fresh Solutions.
@@ -81,7 +83,8 @@ Runtime: fixed exact 47.4 s; window sweep 244.9 s for 20 episodes. The remedy re
 calendar-aware scope at scale. Action cost rises because more work is retained; added seasonal
 overhead, supervision, and weather exposure are not modelled.
 
-## Limits
+Limits
+------
 
 - Window extension is not a field calendar.
 - Crew and machine mix is held fixed.

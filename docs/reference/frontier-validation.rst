@@ -8,7 +8,8 @@ Five future paths per episode, 100 paths per target. Future years are re-solved 
 persistence forecast and a two-year lookahead. Completion remains from the fixed-factor calendar scan;
 this validation covers risk recovery and cost.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -70,7 +71,8 @@ All tested fractions recover most or all of the fixed-future risk gap under resa
 25% point has the highest recovery and lowest median reoptimized cost, but also the largest
 fixed-future risk loss. The table does not select a risk appetite.
 
-## Limits
+Limits
+------
 
 - First-year deferral is fixed.
 - Future factors are independent draws; no serial correlation or calibrated forecast model.

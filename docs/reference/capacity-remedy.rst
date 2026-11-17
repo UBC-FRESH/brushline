@@ -12,7 +12,8 @@ Added-resource cost uses:
 - 10% overhead;
 - 2,500 CAD seasonal overhead per relief crew-year.
 
-## Results
+Results
+-------
 
 20 episodes, seed 7, 59 segments.
 
@@ -65,7 +66,8 @@ versus **294,000 CAD** for the 105-day window. Under these assumptions, extendin
 substantially cheaper than adding a crew and machine. Seasonal overhead for the window itself is
 not modelled.
 
-## 590-segment scale test
+590-segment scale test
+----------------------
 
 A replicated 590-segment instance uses 30 base crews, 10 relief mowing crews, and 10 relief
 machines. The fixed plan is exact; annual re-solves use Fresh Solutions.
@@ -120,7 +122,8 @@ The extra-crew action cost already equals the 105-day window total, so **any pos
 makes the crew option more expensive. At 59 segments, the break-even resource rate is only 0.058% of
 the assumed day rates. The window remedy dominates under these assumptions.
 
-## Limits
+Limits
+------
 
 - 59 segments only; not a 590-segment cost comparison.
 - Extra crew and machine are available for all five years.

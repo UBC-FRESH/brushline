@@ -13,7 +13,8 @@ The first year is fixed. Later years are re-solved with the rolling persistence 
 two-year lookahead. In the recourse cases, the current year's actions are deferred by lowest
 first-year risk reduction per hour when budget or capacity is exceeded.
 
-## Results
+Results
+-------
 
 20 episodes, seed 7.
 
@@ -56,7 +57,8 @@ It costs more future treatment than fixed-future recourse and does not reduce me
 The risk metric mixes the fixed first-year risk loss with re-optimized future years; it is not a
 like-for-like multi-year risk improvement.
 
-## 590-segment scale test
+590-segment scale test
+----------------------
 
 A replicated 590-segment stress instance uses the same policy. The fixed plan is exact; annual
 rolling re-solves use the Fresh Solutions heuristic.
@@ -93,7 +95,8 @@ rolling re-solves use the Fresh Solutions heuristic.
 Runtime: fixed exact 47.1 s; rolling heuristic 87.2 s for 20 episodes. The instance is replicated,
 not a real 590-segment network, and the heuristic makes no global-optimality claim.
 
-## Limits
+Limits
+------
 
 - Fixed first year.
 - No weather, outage, recurrence, safety, or asset-owner priority model.

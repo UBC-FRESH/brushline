@@ -8,7 +8,8 @@ are held fixed.
 It is a fixed-future replay, not a re-optimized adaptive policy. Future actions are not changed after
 the first-year deferral, so the trajectory is a sensitivity, not a recommendation.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -52,7 +53,8 @@ The first-year risk loss persists across the horizon under fixed future actions.
 loses less first-year risk reduction than proportional deferral, but both leave a persistent gap in
 2031.
 
-## Limits
+Limits
+------
 
 - Future actions are held fixed; no re-optimization after deferral.
 - Risk ranking is first-year only and uses replay reductions.

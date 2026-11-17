@@ -7,7 +7,8 @@ it is an independent synthetic draw. Skill 0 is independent, skill 1 is perfect.
 
 This is a diagnostic for forecast error, not a meteorological forecast product.
 
-## Results
+Results
+-------
 
 20 episodes, seed 7, 75-day fall window.
 
@@ -44,7 +45,8 @@ improve monotonically: mid-skill planning retains more scope and happens to comp
 while the perfect-forecast case is conservative because it defers whole actions until the observed
 calendar fits.
 
-## Limits
+Limits
+------
 
 - The skill model is a perfect/independent mixture, not a calibrated forecast.
 - One annual forecast realization per episode; no within-year updates.

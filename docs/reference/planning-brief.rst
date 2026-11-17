@@ -21,7 +21,8 @@ does not hide the underlying assumptions:
 - the scenario-optimized comparison is a hindsight upper bound, not an executable policy;
 - no field calibration, outage constraint, safety certification, or clearance standard is claimed.
 
-## Formats
+Formats
+-------
 
 The studio exposes a **Planning brief** download. The endpoint returns either:
 
@@ -32,7 +33,8 @@ The studio exposes a **Planning brief** download. The endpoint returns either:
 Both formats are generated from the current model artifacts and include the active repository
 commit when available.
 
-## Endpoint
+Endpoint
+--------
 
 .. code-block:: text
 
@@ -43,7 +45,8 @@ HTML is served with ``Content-Disposition: inline`` so the studio link opens a r
 new tab. Add ``download=1`` to force an attachment. Markdown remains an attachment. Filenames are
 derived from the instance id.
 
-## Scope
+Scope
+-----
 
 The brief is a lab-review artifact. It is not a public release of network-derived data. Public demo
 content remains synthetic until data-sharing and release approval.

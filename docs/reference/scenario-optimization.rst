@@ -10,7 +10,8 @@ scenario-specific plan sees the sampled factors before choosing treatments. It m
 being able to re-plan; it does not model forecast updates, contractual switching, or a policy that can
 be executed without knowing the future.
 
-## Scenarios
+Scenarios
+---------
 
 Each scenario draws lognormal multipliers with mean one:
 
@@ -22,7 +23,8 @@ The network prototype uses 30 scenarios and seed 7. The fixed plan is the balanc
 MILP plan. The adaptive plan uses the same annual budget and method set, with costs and hours scaled
 and capacity scaled by the scenario factors.
 
-## Fixed-plan evaluation
+Fixed-plan evaluation
+---------------------
 
 The fixed plan's actions are held constant. Cost and hours are scaled; its risk is unchanged because
 risk depends on the treatment schedule, not on the cost or hours draws. Annual budget and capacity
@@ -39,7 +41,8 @@ The adaptive plan's objective uses the same risk/cost/hours weights and is feasi
 Regret is the fixed objective minus the adaptive objective. The penalty is a declared scoring choice,
 not a monetary fine.
 
-## Result
+Result
+------
 
 For the 8,737 ha, 59-segment prototype:
 
@@ -52,7 +55,8 @@ For the 8,737 ha, 59-segment prototype:
 The adaptive plan buys budget and cost stability by giving up a small amount of nominal risk reduction.
 That is the decision-relevant trade, not a claim that adaptation is free.
 
-## Scope
+Scope
+-----
 
 The experiment re-solves the exact MILP for the declared linear risk state. It does not establish
 global optimality for a nonlinear vegetation model, a full stochastic dynamic program, or a 10,000-

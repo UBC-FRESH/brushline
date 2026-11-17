@@ -5,7 +5,8 @@ The operational stress test applies an assumed weather and outage calendar to th
 policy's first-year shift package. It is a feasibility screen, not a forecast, outage schedule, or
 safety certification.
 
-## Assumptions
+Assumptions
+-----------
 
 - 75-day fall work window.
 - Fixed 5-day outage block.
@@ -13,7 +14,8 @@ safety certification.
 - 50 scenarios, seed 7.
 - The baseline uses the same 75-day window with no blocked days.
 
-## Network result
+Network result
+--------------
 
 Baseline: feasible, 116 shift assignments, 813.7 productive hours, 8.5 travel hours, 63 days used.
 
@@ -30,21 +32,24 @@ The assumed calendar removes enough field days that no sampled scenario schedule
 The package completes most hours but leaves a median 50 hours unscheduled. This is a capacity and
 calendar finding, not evidence that the policy is field-infeasible.
 
-## Interpretation
+Interpretation
+--------------
 
 The first-year policy package was feasible with no weather or outage closures. Under the assumed
 calendar, it is not fully schedulable. The likely remedies are a longer window, additional crews or
 machines, a smaller first-year scope, or a policy that reserves weather slack. Those are design
 choices, not automatic conclusions.
 
-## Limits
+Limits
+------
 
 - Weather loss is an independent per-day assumption, not a forecast or field record.
 - The fixed outage block is assumed, not an asset-owner outage schedule.
 - Only the median policy episode and its first year are stressed.
 - No field calibration, safety certification, or clearance standard is claimed.
 
-## All-episode scan
+All-episode scan
+----------------
 
 The calendar stress was repeated for all 20 rolling episodes, with 50 scenarios per episode.
 

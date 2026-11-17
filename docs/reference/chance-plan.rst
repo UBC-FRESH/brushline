@@ -7,7 +7,8 @@ training paths.
 
 This is not a distributional chance-constrained guarantee. It is a sampled constraint test.
 
-## Results
+Results
+-------
 
 Training: 20 paths; maximum budget violations 2 per year.
 
@@ -35,13 +36,15 @@ The chance plan costs 220,976 CAD nominally, has 170 actions, and is capacity-fe
 training paths. Its out-of-sample budget violation is 21%, only two points below the scenario-robust
 plan.
 
-## Why the gain is small
+Why the gain is small
+---------------------
 
 Capacity remains hard across all 20 training paths. That constraint binds first, so relaxing budget
 chance alone barely changes the selected treatment schedule. A meaningful next step would be to
 chance-constrain capacity or add recourse.
 
-## Limits
+Limits
+------
 
 - Sampled chance constraint, not a distributional guarantee.
 - Budget chance only; capacity is hard.

@@ -8,7 +8,8 @@ hours are deferred.
 This is first-year risk ranking, not a multi-year risk model. The actual deferred fraction can
 overshoot because whole actions are selected.
 
-## Network result
+Network result
+--------------
 
 - 20 rolling episodes, 50 calendars per episode.
 - Target 20% of first-year action hours.
@@ -41,14 +42,16 @@ For context, a proportional 20% reduction has an estimated mean first-year risk 
 reduction, but its whole-action selection also has lower scheduling completion than the proportional
 20% + 105-day case.
 
-## Interpretation
+Interpretation
+--------------
 
 The risk-ranked 105-day case completes less of the assumed calendar than the proportional case, but
 it protects more first-year risk reduction per deferred hour. Neither result is a multi-year risk
 recommendation. A real deferral decision would need year-specific risk accounting, recurring
 treatment effects, and asset-owner priorities.
 
-## Limits
+Limits
+------
 
 - Ranking uses first-year risk reduction per action hour only.
 - Whole segment actions are deferred; actual deferred fraction can overshoot the target.

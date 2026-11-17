@@ -2,6 +2,19 @@
 
 > Agent-facing index for Brushline. Read the linked pages before you change the project.
 
+## Reading order
+
+- [Getting started](getting-started/index.html): install, synthetic quickstart, and first study.
+- [Concepts](concepts/index.html): model, planning stack, uncertainty/recourse, and artifacts/privacy.
+- [How-to guides](howto/index.html): private network build, planning brief, studio, and release audit.
+- [Guides](guides/index.html): limitations, private/public boundary, and troubleshooting.
+- [Reference](reference/index.html): contracts, methods, and policy experiment records.
+- [API](api/index.html): public Python package grouped by domain.
+
+The reference section mixes validated contracts with experiment records. A benchmark result is not a
+field validation; a sampled scenario is not a distributional guarantee. The private network artifacts
+are not public and must remain under `runtime/private/` until approval.
+
 ## Start here
 
 - [Home](index.html): the documentation home for the project.

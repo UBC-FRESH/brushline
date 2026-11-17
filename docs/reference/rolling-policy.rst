@@ -10,7 +10,8 @@ The policy is a **persistence-forecast heuristic**, not a stochastic dynamic pro
 globally optimal policy. Annual factors are independent across years; the policy never observes the
 future. A two-year lookahead is used in the network demonstration.
 
-## Comparison
+Comparison
+----------
 
 The fixed nominal plan is evaluated under the same annual factors. Its treatment schedule does not
 adapt, so its cost and hours move with the factors but its risk stays at the nominal plan's value.
@@ -47,13 +48,15 @@ mean regret 0.0735. The objective includes a normalized budget/capacity penalty.
 high budget-violation rate reflects independent annual cost draws; it is not directly comparable to
 the persistent-factor scenario set used in the hindsight experiment.
 
-## Interpretation
+Interpretation
+--------------
 
 The rolling policy trades a small amount of nominal risk reduction for a much narrower cost range and
 annual budget feasibility. It adapts the current-year actions to observed conditions rather than
 committing the nominal five-year schedule.
 
-## First-year execution
+First-year execution
+--------------------
 
 The median-cost policy episode (episode 18) was converted into a first-year tactical, access,
 resource, work-order, and shift package. This is an execution test, not a new optimization.
@@ -92,7 +95,8 @@ resource-, operations-, and shift-feasible under the prototype assumptions. Firs
 from 59,775 to 59,986 CAD, crew-hours from 699 to 1,295, and annual risk from 0.070 to 0.147. Failed
 episodes: 0. This is an operability result for the assumptions, not a field guarantee.
 
-## Scale test
+Scale test
+----------
 
 The same policy was run on a replicated 590-segment stress instance with tenfold annual budget and
 capacity. The fixed plan was solved exactly; the rolling policy used the Fresh Solutions heuristic for
@@ -130,7 +134,8 @@ each annual re-solve.
 The 590-segment case is a replicated stress instance, not a real network. The rolling annual plans
 are feasible heuristic incumbents, not optimal plans.
 
-## Limits
+Limits
+------
 
 - Persistence forecast: current factors are assumed to persist over the two-year lookahead.
 - Annual factors are independent; no serial correlation or calibrated forecast process is claimed.

@@ -8,7 +8,8 @@ and five-year cost.
 Completion uses the assumed 75/105-day weather/outage calendars. Recovery uses fixed future factors;
 it is a screening frontier, not out-of-sample validation for every point.
 
-## Results
+Results
+-------
 
 .. list-table::
    :header-rows: 1
@@ -69,7 +70,8 @@ Higher deferral improves calendar completion and lowers five-year reoptimized co
 fixed-future residual risk. Under fixed-factor recovery, the final risk gap is essentially closed at
 every tested fraction.
 
-## Limits
+Limits
+------
 
 - Fixed-factor recovery is a screening result; only the 20% point has out-of-sample future validation.
 - Risk ranking is first-year only and whole actions are deferred; actual fractions overshoot.

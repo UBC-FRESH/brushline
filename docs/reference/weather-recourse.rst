@@ -17,7 +17,8 @@ The forecast is a synthetic draw from the same assumed distribution, not a forec
 observed-calendar case uses within-year calendar information before deferral. These are calendar
 policies, not stochastic dynamic programs.
 
-## Results
+Results
+-------
 
 20 episodes, seed 7.
 
@@ -62,7 +63,8 @@ Observed-calendar awareness eliminates unscheduled retained work but costs about
 points of mean scope versus forecast awareness and raises mean risk. Neither aware case lowers risk;
 both convert partial work into deferred scope.
 
-## 590-segment scale test
+590-segment scale test
+----------------------
 
 A replicated 590-segment instance scales the workforce to 30 crews and 30 machines. The fixed plan
 is exact; annual re-solves use Fresh Solutions.
@@ -103,7 +105,8 @@ Runtime: fixed exact 48.6 s; 20 weather episodes 220.8 s. Forecast error leaves 
 unscheduled at scale, while observed-calendar awareness eliminates unscheduled retained work. The
 instance is replicated, not a real network, and the heuristic makes no global-optimality claim.
 
-## Limits
+Limits
+------
 
 - Forecast awareness uses a synthetic calendar draw, not a weather forecast.
 - Observed-calendar awareness uses within-year information before deferral.
