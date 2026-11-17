@@ -80,6 +80,7 @@ def _network_artifacts() -> dict[str, Any]:
             "chance-capacity-plan",
             "chance-100-plan",
             "two-stage-policy",
+            "two-stage-multi",
             "access",
         )
     }
@@ -429,6 +430,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 chance_capacity_plan=artifacts["chance-capacity-plan"],
                 chance_100_plan=artifacts["chance-100-plan"],
                 two_stage_policy=artifacts["two-stage-policy"],
+                two_stage_multi=artifacts["two-stage-multi"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

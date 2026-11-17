@@ -52,3 +52,19 @@ reduction.
 - No weather, outage, future re-planning, or multi-year risk model.
 - Deferral ranking is first-year risk reduction per hour only.
 - No field calibration, safety, or asset-owner approval.
+
+## Multi-year annual recourse
+
+The same deferral rule is applied independently to every year of the five-year nominal plan. The
+first-stage plan remains fixed; there is no future strategic re-optimization.
+
+- 100 annual-factor scenarios, seed 23.
+- Static any-year budget violation: **93.0%**.
+- Recourse any-year budget violation: **0.0%**.
+- Static mean risk: **0.0294**; recourse mean risk: **0.0330**.
+- Mean completion: **93.9%**; completion P50 **95.1%**.
+- Mean deferred workload: **13.0 actions**, **306.0 hours**.
+
+The annual recourse rule keeps the five-year plan budget- and capacity-feasible while retaining most
+of the planned work. The risk increase is small but not eliminated. This remains a one-stage fixed
+plan with annual operational recourse, not a stochastic dynamic program.

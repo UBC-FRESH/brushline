@@ -325,6 +325,10 @@ test suite. This page is the map.
      - ``brushline.two-stage.v1``
      - ``evaluate_two_stage``
      - Fixed first-stage plan, observed annual factors, risk-ranked action deferral, budget/capacity feasibility, completion, and risk loss
+   * - Multi-year two-stage recourse
+     - ``brushline.two-stage-multi.v1``
+     - ``evaluate_two_stage_multi``
+     - Annual recourse across a fixed five-year plan, budget/capacity feasibility, completion, risk trajectories, and deferred workload
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

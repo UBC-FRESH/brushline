@@ -397,6 +397,7 @@ def build_planning_brief(
     chance_capacity_plan: Mapping[str, Any] | None = None,
     chance_100_plan: Mapping[str, Any] | None = None,
     two_stage_policy: Mapping[str, Any] | None = None,
+    two_stage_multi: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -445,6 +446,8 @@ def build_planning_brief(
         100-path sampled budget chance plan. The section is omitted when absent.
     two_stage_policy : mapping, optional
         First-year two-stage operational recourse. The section is omitted when absent.
+    two_stage_multi : mapping, optional
+        Multi-year annual operational recourse. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -525,6 +528,7 @@ def build_planning_brief(
     chance100_summary = (chance_100_plan or {}).get("plan") or {}
     chance100_first = chance100_cases[0] if chance100_cases else {}
     two_stage = two_stage_policy or {}
+    multi_stage = two_stage_multi or {}
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1603,6 +1607,66 @@ def build_planning_brief(
                 )
             ]
             if two_stage_policy
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="Multi-year operational recourse",
+                    paragraphs=[
+                        f"The fixed five-year nominal plan was executed year by year with "
+                        f"{multi_stage.get('episodes')} annual-factor scenarios. Each year "
+                        "defers lowest-risk-benefit actions only when the observed budget or "
+                        "capacity is exceeded; future strategic re-optimization is not included.",
+                        f"Static any-year budget violation: "
+                        f"{_percent(multi_stage.get('static_budget_violation_probability'))}; "
+                        f"recourse: "
+                        f"{_percent(multi_stage.get('recourse_budget_violation_probability'))}. "
+                        f"Mean completion: "
+                        f"{_percent(multi_stage.get('recourse_completion_band', {}).get('mean'))}; "
+                        f"mean risk: "
+                        f"{_number(multi_stage.get('recourse_risk_band', {}).get('mean'), 4)} "
+                        f"versus "
+                        f"{_number(multi_stage.get('static_risk_band', {}).get('mean'), 4)} "
+                        "static.",
+                    ],
+                    table=_table(
+                        ["Metric", "Static", "Multi-year recourse"],
+                        [
+                            [
+                                "Budget violation, any year",
+                                _percent(multi_stage.get("static_budget_violation_probability")),
+                                _percent(multi_stage.get("recourse_budget_violation_probability")),
+                            ],
+                            [
+                                "Capacity violation, any year",
+                                _percent(multi_stage.get("static_capacity_violation_probability")),
+                                _percent(
+                                    multi_stage.get("recourse_capacity_violation_probability")
+                                ),
+                            ],
+                            [
+                                "5-year cost P50",
+                                _number(multi_stage.get("static_cost_band", {}).get("p50")),
+                                _number(multi_stage.get("recourse_cost_band", {}).get("p50")),
+                            ],
+                            [
+                                "Completion P50",
+                                _percent(multi_stage.get("static_completion_band", {}).get("p50")),
+                                _percent(
+                                    multi_stage.get("recourse_completion_band", {}).get("p50")
+                                ),
+                            ],
+                            [
+                                "Mean risk",
+                                _number(multi_stage.get("static_risk_band", {}).get("mean"), 4),
+                                _number(multi_stage.get("recourse_risk_band", {}).get("mean"), 4),
+                            ],
+                        ],
+                    ),
+                )
+            ]
+            if two_stage_multi
             else []
         ),
         BriefSection(

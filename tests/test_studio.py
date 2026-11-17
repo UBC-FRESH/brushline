@@ -98,6 +98,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["chance-capacity-plan"]["test"]["plans"]
         assert network_plan["chance-100-plan"]["test"]["plans"]
         assert network_plan["two-stage-policy"]["recourse_budget_violation_probability"] == 0
+        assert network_plan["two-stage-multi"]["recourse_budget_violation_probability"] == 0
         brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
         assert brief.status_code == 200
         assert brief.headers["content-type"].startswith("text/html")
@@ -132,6 +133,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert "## Chance-constrained capacity" in brief_md.text
         assert "## 100-path chance constraint" in brief_md.text
         assert "## Two-stage operational recourse" in brief_md.text
+        assert "## Multi-year operational recourse" in brief_md.text
         assert (
             client.get("/api/studio/network/brief?instance_id=synthetic-corridor").status_code
             == 404

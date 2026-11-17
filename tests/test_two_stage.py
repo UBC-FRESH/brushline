@@ -13,7 +13,11 @@ from brushline.strategic.stateful import (
     StatefulSegment,
     build_stateful_plan,
 )
-from brushline.strategic.two_stage import TwoStageError, evaluate_two_stage
+from brushline.strategic.two_stage import (
+    TwoStageError,
+    evaluate_two_stage,
+    evaluate_two_stage_multi,
+)
 
 CREATED = datetime(2026, 11, 17, tzinfo=UTC)
 
@@ -86,6 +90,27 @@ def test_two_stage_recourse_bands_and_determinism() -> None:
     assert first.recourse_capacity_violation_probability == 0
     assert first.mean_deferred_actions >= 0
     assert first.mean_risk_loss >= 0
+
+
+def test_two_stage_multi_year_recourse() -> None:
+    plan, segments = _plan()
+    result = evaluate_two_stage_multi(
+        instance_id="two-stage-multi",
+        plan=plan,
+        segments=segments,
+        periods=[
+            StatefulPeriod(year=2027, budget=20000, capacity_hours=100),
+            StatefulPeriod(year=2028, budget=20000, capacity_hours=100),
+        ],
+        episodes=5,
+        seed=7,
+        created_utc=CREATED,
+    )
+    assert result.episodes == 5
+    assert result.years == [2027, 2028]
+    assert result.recourse_budget_violation_probability == 0
+    assert result.recourse_capacity_violation_probability == 0
+    assert result.recourse_cost_band.p10 <= result.recourse_cost_band.p90
 
 
 def test_two_stage_validation() -> None:
