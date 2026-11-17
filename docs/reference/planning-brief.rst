@@ -8,8 +8,8 @@ first-year policy execution and all-episode scan, static budget-headroom candida
 outage stress and all-episode calendar scan, capacity/scope remedies, risk-ranked scope deferral,
 multi-year risk trajectory, rolling recovery, out-of-sample recovery, deferral-fraction frontier,
 frontier validation, scenario-robust static plan, sampled budget chance constraint, chance capacity, 100-path chance, first-year and multi-year
-two-stage operational recourse, rolling recourse, weather/outage-aware recourse, scaling evidence,
-caveats, and reproduction metadata into one document.
+two-stage operational recourse, rolling recourse, weather/outage-aware recourse, forecast-skill
+sensitivity, scaling evidence, caveats, and reproduction metadata into one document.
 
 The brief is generated on demand from the network artifact set. It is not a new model result and it
 does not hide the underlying assumptions:

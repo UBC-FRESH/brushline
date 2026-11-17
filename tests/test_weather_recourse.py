@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from brushline.strategic.forecast_skill import evaluate_forecast_skill
 from brushline.strategic.stateful import (
     StatefulConfig,
     StatefulMethod,
@@ -87,3 +88,27 @@ def test_weather_recourse_cases() -> None:
     assert aware.completion_band.p50 <= naive.completion_band.p50 + 1e-9
     assert aware.retained_scope_band.p50 <= 1.0
     assert result.calendar.window_days == 30
+
+
+def test_forecast_skill_sweep() -> None:
+    plan, segments, methods, periods = _problem()
+    crews = [ShiftCrew(crew_id="crew-a", methods=["mowing", "manual"], shift_hours=8)]
+    machines = [ShiftMachine(machine_id="machine-a", methods=["mowing"], shift_hours=8)]
+    result = evaluate_forecast_skill(
+        instance_id="forecast-skill",
+        plan=plan,
+        segments=segments,
+        methods=methods,
+        periods=periods,
+        crews=crews,
+        machines=machines,
+        skills=[0.0, 1.0],
+        config=StatefulConfig(risk_weight=1.0, max_seconds=30),
+        episodes=1,
+        seed=7,
+        calendar=WeatherCalendarConfig(window_days=30, outage_days=[5], seed=7),
+        created_utc=CREATED,
+    )
+    assert [case.forecast_skill for case in result.cases] == [0.0, 1.0]
+    assert result.cases[1].summary.mean_unscheduled_hours == 0
+    assert result.cases[1].summary.retained_scope_band.p50 <= 1.0

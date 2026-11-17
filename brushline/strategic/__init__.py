@@ -29,6 +29,12 @@ from brushline.strategic.dynamic_program import (
     solve_dynamic_program,
     validate_dynamic_program,
 )
+from brushline.strategic.forecast_skill import (
+    FORECAST_SKILL_SCHEMA_VERSION,
+    ForecastSkillCase,
+    ForecastSkillResult,
+    evaluate_forecast_skill,
+)
 from brushline.strategic.monitoring import (
     MONITORING_SCHEMA_VERSION,
     MonitoringConfig,
@@ -184,6 +190,7 @@ __all__ = [
     "BAU_SCHEMA_VERSION",
     "DECOMPOSITION_SCHEMA_VERSION",
     "DP_SCHEMA_VERSION",
+    "FORECAST_SKILL_SCHEMA_VERSION",
     "MONITORING_SCHEMA_VERSION",
     "PLANNING_BRIEF_SCHEMA_VERSION",
     "PORTFOLIO_SCHEMA_VERSION",
@@ -213,6 +220,8 @@ __all__ = [
     "DynamicProgram",
     "DynamicProgramError",
     "DynamicProgramResult",
+    "ForecastSkillCase",
+    "ForecastSkillResult",
     "MonitoringConfig",
     "MonitoringDecision",
     "MonitoringError",
@@ -301,6 +310,7 @@ __all__ = [
     "canonical_digest",
     "compare_bau",
     "decompose_stateful",
+    "evaluate_forecast_skill",
     "evaluate_rolling_recourse",
     "evaluate_static_plans",
     "evaluate_two_stage",

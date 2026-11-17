@@ -76,6 +76,7 @@ whenever you add a module to the project.
    two-stage
    rolling-recourse
    weather-recourse
+   forecast-skill
    shift-scheduling
    field
    field-comparison

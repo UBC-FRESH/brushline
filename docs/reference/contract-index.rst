@@ -337,6 +337,10 @@ test suite. This page is the map.
      - ``brushline.weather-recourse.v1``
      - ``evaluate_weather_recourse``
      - Calendar-naive versus calendar-aware annual recourse under assumed weather/outage calendars
+   * - Forecast-skill sensitivity
+     - ``brushline.forecast-skill.v1``
+     - ``evaluate_forecast_skill``
+     - Forecast-aware recourse across a coarse forecast-skill sweep
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

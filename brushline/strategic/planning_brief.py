@@ -402,6 +402,7 @@ def build_planning_brief(
     rolling_recourse_590: Mapping[str, Any] | None = None,
     weather_recourse: Mapping[str, Any] | None = None,
     weather_recourse_590: Mapping[str, Any] | None = None,
+    forecast_skill: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -460,6 +461,8 @@ def build_planning_brief(
         Calendar-naive versus calendar-aware annual recourse. The section is omitted when absent.
     weather_recourse_590 : mapping, optional
         590-segment weather-recourse scale test. The section is omitted when absent.
+    forecast_skill : mapping, optional
+        Forecast-skill sensitivity for calendar-aware execution. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -545,6 +548,7 @@ def build_planning_brief(
     scale_cases = (rolling_recourse_590 or {}).get("result", {}).get("cases") or []
     weather_cases = (weather_recourse or {}).get("cases") or []
     weather_scale_cases = (weather_recourse_590 or {}).get("result", {}).get("cases") or []
+    forecast_skill_cases = (forecast_skill or {}).get("result", {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -1855,6 +1859,55 @@ def build_planning_brief(
                 )
             ]
             if weather_recourse_590
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="Forecast-skill sensitivity",
+                    paragraphs=[
+                        "A coarse skill model draws a perfect annual forecast with probability "
+                        "equal to the plotted skill, and an independent synthetic forecast "
+                        "otherwise. Zero is independent; one is perfect. This is a diagnostic, "
+                        "not a meteorological forecast product.",
+                        f"Across {forecast_skill.get('episodes')} episodes, unscheduled work falls "
+                        "as forecast skill rises, but completion and risk are not monotonic. "
+                        "Mid-skill planning retains more scope and happens to complete more work; "
+                        "the perfect-forecast case is conservative because it defers whole "
+                        "actions until the observed calendar fits.",
+                    ],
+                    table=_table(
+                        [
+                            "Forecast skill",
+                            "Completed scope P50",
+                            "Retained scope P50",
+                            "Mean risk",
+                            "Cost P50",
+                            "Unscheduled h",
+                        ],
+                        [
+                            [
+                                _percent(case.get("forecast_skill"), 0),
+                                _percent(
+                                    case.get("summary", {}).get("completion_band", {}).get("p50")
+                                ),
+                                _percent(
+                                    case.get("summary", {})
+                                    .get("retained_scope_band", {})
+                                    .get("p50")
+                                ),
+                                _number(
+                                    case.get("summary", {}).get("risk_band", {}).get("mean"), 4
+                                ),
+                                _number(case.get("summary", {}).get("cost_band", {}).get("p50")),
+                                _number(case.get("summary", {}).get("mean_unscheduled_hours"), 1),
+                            ]
+                            for case in forecast_skill_cases
+                        ],
+                    ),
+                )
+            ]
+            if forecast_skill
             else []
         ),
         BriefSection(

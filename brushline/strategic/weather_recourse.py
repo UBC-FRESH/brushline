@@ -229,6 +229,7 @@ def _simulate_case(
     calendar: WeatherCalendarConfig,
     crews: list[ShiftCrew],
     machines: list[ShiftMachine],
+    forecast_skill: float = 0.0,
 ) -> WeatherCaseSummary:
     factor_rng = random.Random(seed)
     calendar_rng = random.Random(seed + 10_000)
@@ -237,10 +238,15 @@ def _simulate_case(
         [_calendar_days(rng=calendar_rng, calendar=calendar) for _ in periods]
         for _ in range(episodes)
     ]
-    forecast_calendars = [
-        [_calendar_days(rng=forecast_rng, calendar=calendar) for _ in periods]
-        for _ in range(episodes)
-    ]
+    forecast_calendars: list[list[list[int]]] = []
+    for episode in range(episodes):
+        episode_days: list[list[int]] = []
+        for offset in range(len(periods)):
+            if forecast_skill > 0 and forecast_rng.random() < forecast_skill:
+                episode_days.append(calendars[episode][offset])
+            else:
+                episode_days.append(_calendar_days(rng=forecast_rng, calendar=calendar))
+        forecast_calendars.append(episode_days)
     actions_by_year: dict[int, list[StatefulAction]] = {period.year: [] for period in periods}
     for action in plan.actions:
         actions_by_year.setdefault(action.year, []).append(action)

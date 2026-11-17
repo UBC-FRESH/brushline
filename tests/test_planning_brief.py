@@ -663,6 +663,44 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    forecast_skill = {
+        "episodes": 20,
+        "seconds": 257.25,
+        "result": {
+            "cases": [
+                {
+                    "forecast_skill": 0.0,
+                    "summary": {
+                        "completion_band": {"p50": 0.861816},
+                        "retained_scope_band": {"p50": 0.882833},
+                        "risk_band": {"mean": 0.05255},
+                        "cost_band": {"p50": 264470.01},
+                        "mean_unscheduled_hours": 64.7,
+                    },
+                },
+                {
+                    "forecast_skill": 0.5,
+                    "summary": {
+                        "completion_band": {"p50": 0.879829},
+                        "retained_scope_band": {"p50": 0.888195},
+                        "risk_band": {"mean": 0.049748},
+                        "cost_band": {"p50": 264722.81},
+                        "mean_unscheduled_hours": 41.88,
+                    },
+                },
+                {
+                    "forecast_skill": 1.0,
+                    "summary": {
+                        "completion_band": {"p50": 0.875628},
+                        "retained_scope_band": {"p50": 0.875628},
+                        "risk_band": {"mean": 0.050152},
+                        "cost_band": {"p50": 264046.69},
+                        "mean_unscheduled_hours": 0.0,
+                    },
+                },
+            ]
+        },
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -703,6 +741,7 @@ def _artifacts() -> dict[str, Any]:
         "rolling_recourse_590": rolling_recourse_590,
         "weather_recourse": weather_recourse,
         "weather_recourse_590": weather_recourse_590,
+        "forecast_skill": forecast_skill,
     }
 
 
@@ -761,6 +800,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Weather/outage-aware recourse" in brief.markdown
     assert "## 590-segment weather-recourse scale test" in brief.markdown
     assert "forecast-aware" in brief.markdown
+    assert "## Forecast-skill sensitivity" in brief.markdown
+    assert "41.9" in brief.markdown
     assert "7,377" in brief.markdown
     assert "Forecast-aware plans against an independent synthetic calendar" in brief.markdown
     assert "chance 100 paths" in brief.markdown

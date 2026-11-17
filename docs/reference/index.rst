@@ -80,6 +80,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    two-stage
    rolling-recourse
    weather-recourse
+   forecast-skill
    field-validation
    shift-scheduling
    field-comparison

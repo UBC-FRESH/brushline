@@ -94,6 +94,7 @@ def _network_artifacts() -> dict[str, Any]:
             "rolling-recourse-590",
             "weather-recourse",
             "weather-recourse-590",
+            "weather-forecast-skill",
             "access",
         )
     }
@@ -448,6 +449,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 rolling_recourse_590=artifacts["rolling-recourse-590"],
                 weather_recourse=artifacts["weather-recourse"],
                 weather_recourse_590=artifacts["weather-recourse-590"],
+                forecast_skill=artifacts["weather-forecast-skill"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),
