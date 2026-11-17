@@ -294,6 +294,12 @@ function drawSchedule(){
    const rows=((windowRemedyScale.result||{}).cases||[]).map(item=>`<tr><td>${item.window_days}</td><td>${(item.summary.completion_band.p50*100).toFixed(1)}%</td><td>${(item.summary.retained_scope_band.p50*100).toFixed(1)}%</td><td>${item.summary.risk_band.mean.toFixed(4)}</td><td>${item.summary.cost_band.p50.toFixed(0)}</td><td>${item.summary.mean_calendar_deferred_actions.toFixed(1)}</td></tr>`).join("");
    $("#schedule").innerHTML+=`<p class="schedule-note">590-segment fall-window remedy · observed-calendar awareness · ${windowRemedyScale.episodes} episodes · ${windowRemedyScale.crews} crews · fixed exact ${windowRemedyScale.fixed_seconds.toFixed(1)}s · sweep ${windowRemedyScale.seconds.toFixed(1)}s</p><table><tr><th>Window days</th><th>Completed scope P50</th><th>Retained scope P50</th><th>Mean risk</th><th>Cost P50</th><th>Calendar deferrals</th></tr>${rows}</table>`;
   }
+  const capacityRemedy=state.network["capacity-remedy"];
+  if(capacityRemedy){
+   const assumptions=capacityRemedy.assumptions||{};
+   const rows=((capacityRemedy.result||{}).cases||[]).map(item=>`<tr><td>${esc(item.name)}</td><td>${item.window_days}</td><td>${item.extra_crews}</td><td>${(item.summary.completion_band.p50*100).toFixed(1)}%</td><td>${item.summary.risk_band.mean.toFixed(4)}</td><td>${item.summary.cost_band.p50.toFixed(0)}</td><td>${item.summary.mean_resource_cost.toFixed(0)}</td><td>${(item.summary.total_cost_band?.p50 ?? item.summary.cost_band.p50).toFixed(0)}</td></tr>`).join("");
+   $("#schedule").innerHTML+=`<p class="schedule-note">Added-crew versus window remedy · ${capacityRemedy.episodes} episodes · crew-day ${assumptions.crew_day_cost} · machine-day ${assumptions.machine_day_cost} · supervision ${(assumptions.supervision_fraction*100).toFixed(0)}% · overhead ${(assumptions.overhead_fraction*100).toFixed(0)}% · seasonal ${assumptions.seasonal_overhead_per_crew}/crew-year</p><table><tr><th>Case</th><th>Window days</th><th>Extra crews</th><th>Completed P50</th><th>Mean risk</th><th>Action cost P50</th><th>Added resource P50</th><th>Total cost P50</th></tr>${rows}</table>`;
+  }
   return;
  }
  $("#schedule-heading").textContent="Corridor treatment schedule";

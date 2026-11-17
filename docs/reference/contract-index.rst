@@ -345,6 +345,10 @@ test suite. This page is the map.
      - ``brushline.window-remedy.v1``
      - ``evaluate_window_remedy``
      - Observed-calendar awareness across 75-, 90-, and 105-day fall windows
+   * - Capacity remedy
+     - ``brushline.capacity-remedy.v1``
+     - ``evaluate_capacity_remedy``
+     - Added crew and machine versus longer fall windows with explicit resource costs
    * - Stateful strategic plan
      - ``brushline.stateful-strategic.v1``
      - ``build_stateful_plan``

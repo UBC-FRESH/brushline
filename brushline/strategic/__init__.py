@@ -10,7 +10,10 @@ from brushline.strategic.bau import (
     compare_bau,
 )
 from brushline.strategic.capacity_remedy import (
+    CAPACITY_REMEDY_SCHEMA_VERSION,
     WINDOW_REMEDY_SCHEMA_VERSION,
+    CapacityRemedyCase,
+    CapacityRemedyResult,
     WindowRemedyCase,
     WindowRemedyResult,
     evaluate_window_remedy,
@@ -194,6 +197,7 @@ from brushline.strategic.weather_recourse import (
 
 __all__ = [
     "BAU_SCHEMA_VERSION",
+    "CAPACITY_REMEDY_SCHEMA_VERSION",
     "DECOMPOSITION_SCHEMA_VERSION",
     "DP_SCHEMA_VERSION",
     "FORECAST_SKILL_SCHEMA_VERSION",
@@ -220,6 +224,8 @@ __all__ = [
     "BauPlan",
     "BriefSection",
     "BriefTable",
+    "CapacityRemedyCase",
+    "CapacityRemedyResult",
     "ClusterResult",
     "DPState",
     "DecomposedPlan",
@@ -319,6 +325,7 @@ __all__ = [
     "canonical_digest",
     "compare_bau",
     "decompose_stateful",
+    "evaluate_capacity_remedy",
     "evaluate_forecast_skill",
     "evaluate_rolling_recourse",
     "evaluate_static_plans",

@@ -82,6 +82,7 @@ is not a suggestion: the code validates it, and a malformed artefact fails with 
    weather-recourse
    forecast-skill
    window-remedy
+   capacity-remedy
    field-validation
    shift-scheduling
    field-comparison

@@ -106,6 +106,7 @@ def test_studio_endpoints_and_pov_variants() -> None:
         assert network_plan["weather-forecast-skill"]["result"]["cases"]
         assert network_plan["weather-window-remedy"]["result"]["cases"]
         assert network_plan["weather-window-remedy-590"]["result"]["cases"]
+        assert network_plan["capacity-remedy"]["result"]["cases"]
         brief = client.get("/api/studio/network/brief?instance_id=bc-hydro-network")
         assert brief.status_code == 200
         assert brief.headers["content-type"].startswith("text/html")

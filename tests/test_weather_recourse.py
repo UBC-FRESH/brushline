@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from brushline.strategic.capacity_remedy import evaluate_window_remedy
+from brushline.strategic.capacity_remedy import (
+    evaluate_capacity_remedy,
+    evaluate_window_remedy,
+)
 from brushline.strategic.forecast_skill import evaluate_forecast_skill
 from brushline.strategic.stateful import (
     StatefulConfig,
@@ -137,3 +140,38 @@ def test_window_remedy() -> None:
     assert [case.window_days for case in result.cases] == [30, 45]
     assert result.cases[0].summary.mean_unscheduled_hours == 0
     assert result.cases[1].summary.mean_unscheduled_hours == 0
+
+
+def test_added_crew_remedy() -> None:
+    plan, segments, methods, periods = _problem()
+    crews = [ShiftCrew(crew_id="crew-a", methods=["mowing", "manual"], shift_hours=8)]
+    machines = [ShiftMachine(machine_id="machine-a", methods=["mowing"], shift_hours=8)]
+    extra_crews = [ShiftCrew(crew_id="relief-crew", methods=["mowing", "manual"], shift_hours=8)]
+    extra_machines = [ShiftMachine(machine_id="relief-machine", methods=["mowing"], shift_hours=8)]
+    result = evaluate_capacity_remedy(
+        instance_id="capacity-remedy",
+        plan=plan,
+        segments=segments,
+        methods=methods,
+        periods=periods,
+        crews=crews,
+        machines=machines,
+        extra_crews=extra_crews,
+        extra_machines=extra_machines,
+        windows=[30, 45],
+        config=StatefulConfig(risk_weight=1.0, max_seconds=30),
+        episodes=1,
+        seed=7,
+        calendar=WeatherCalendarConfig(window_days=30, outage_days=[5], seed=7),
+        created_utc=CREATED,
+    )
+    assert [case.name for case in result.cases] == [
+        "baseline",
+        "extra-crew",
+        "window-45",
+    ]
+    baseline, extra, window = result.cases
+    assert baseline.summary.mean_resource_cost == 0
+    assert extra.summary.mean_resource_cost > 0
+    assert extra.summary.total_cost_band is not None
+    assert window.summary.mean_resource_cost == 0

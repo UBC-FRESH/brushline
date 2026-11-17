@@ -82,6 +82,10 @@ class WeatherCaseSummary(BaseModel):
     mean_deferred_hours: float = Field(ge=0)
     mean_unscheduled_hours: float = Field(ge=0)
     mean_risk_loss: float = Field(ge=0)
+    mean_extra_crew_days: float = Field(default=0, ge=0)
+    mean_extra_machine_days: float = Field(default=0, ge=0)
+    mean_resource_cost: float = Field(default=0, ge=0)
+    total_cost_band: RecourseBand | None = None
 
 
 class WeatherRecourseResult(BaseModel):
@@ -230,6 +234,13 @@ def _simulate_case(
     crews: list[ShiftCrew],
     machines: list[ShiftMachine],
     forecast_skill: float = 0.0,
+    extra_crew_ids: set[str] | None = None,
+    extra_machine_ids: set[str] | None = None,
+    crew_day_cost: float = 0.0,
+    machine_day_cost: float = 0.0,
+    supervision_fraction: float = 0.0,
+    overhead_fraction: float = 0.0,
+    seasonal_overhead_per_crew: float = 0.0,
 ) -> WeatherCaseSummary:
     factor_rng = random.Random(seed)
     calendar_rng = random.Random(seed + 10_000)
@@ -265,6 +276,10 @@ def _simulate_case(
     deferred_hours_values: list[float] = []
     unscheduled_values: list[float] = []
     risk_losses: list[float] = []
+    extra_crew_day_values: list[float] = []
+    extra_machine_day_values: list[float] = []
+    resource_cost_values: list[float] = []
+    total_cost_values: list[float] = []
     budget_violations = 0
     capacity_violations = 0
     for episode in range(episodes):
@@ -289,6 +304,9 @@ def _simulate_case(
         annual_deferred_hours = 0.0
         annual_unscheduled = 0.0
         annual_risk_loss = 0.0
+        annual_extra_crew_days = 0
+        annual_extra_machine_days = 0
+        annual_resource_cost = 0.0
         annual_budget_violation = False
         annual_capacity_violation = False
         for offset, period in enumerate(periods):
@@ -400,6 +418,30 @@ def _simulate_case(
                 )
                 for action in kept
             }
+            extra_crew_days = len(
+                {
+                    (assignment.crew_id, assignment.day)
+                    for assignment in shift_plan.assignments
+                    if extra_crew_ids and assignment.crew_id in extra_crew_ids
+                }
+            )
+            extra_machine_days = len(
+                {
+                    (assignment.machine_id, assignment.day)
+                    for assignment in shift_plan.assignments
+                    if extra_machine_ids
+                    and assignment.machine_id is not None
+                    and assignment.machine_id in extra_machine_ids
+                }
+            )
+            resource_cost = (
+                extra_crew_days * crew_day_cost + extra_machine_days * machine_day_cost
+            ) * (1.0 + supervision_fraction + overhead_fraction)
+            if extra_crew_ids:
+                resource_cost += seasonal_overhead_per_crew * len(extra_crew_ids)
+            annual_extra_crew_days += extra_crew_days
+            annual_extra_machine_days += extra_machine_days
+            annual_resource_cost += resource_cost
             annual_deferred += len(calendar_deferred)
             annual_calendar_deferred += len(calendar_deferred)
             annual_deferred_hours += sum(
@@ -464,6 +506,10 @@ def _simulate_case(
         deferred_hours_values.append(annual_deferred_hours)
         unscheduled_values.append(annual_unscheduled)
         risk_losses.append(annual_risk_loss)
+        extra_crew_day_values.append(annual_extra_crew_days)
+        extra_machine_day_values.append(annual_extra_machine_days)
+        resource_cost_values.append(annual_resource_cost)
+        total_cost_values.append(total_cost + annual_resource_cost)
         budget_violations += annual_budget_violation
         capacity_violations += annual_capacity_violation
     return WeatherCaseSummary(
@@ -481,6 +527,10 @@ def _simulate_case(
         mean_deferred_hours=round(float(np.mean(deferred_hours_values)), 2),
         mean_unscheduled_hours=round(float(np.mean(unscheduled_values)), 2),
         mean_risk_loss=round(float(np.mean(risk_losses)), 6),
+        mean_extra_crew_days=round(float(np.mean(extra_crew_day_values)), 2),
+        mean_extra_machine_days=round(float(np.mean(extra_machine_day_values)), 2),
+        mean_resource_cost=round(float(np.mean(resource_cost_values)), 2),
+        total_cost_band=_band(total_cost_values, 2),
     )
 
 

@@ -149,6 +149,7 @@
 - [Weather/outage-aware recourse](reference/weather-recourse.html): calendar-naive, forecast-aware, and observed-calendar-aware annual recourse under an assumed 75-day fall window with outage days and independent weather loss, including a replicated 590-segment scale test.
 - [Forecast-skill sensitivity](reference/forecast-skill.html): coarse 0-100% forecast-skill sweep showing unscheduled work falls monotonically while completion and risk do not.
 - [Fall-window capacity remedy](reference/window-remedy.html): 75-, 90-, and 105-day windows recover calendar-aware scope while holding the crew mix fixed. Includes a replicated 590-segment scale test.
+- [Added-crew versus window remedy](reference/capacity-remedy.html): costed comparison of one relief crew and machine against longer fall windows.
 
 - [Plan and bid exchange](reference/plan-exchange.html): shared plan cost build-up, owner/contractor views, bid comparison, fair range, and approval.
 

@@ -405,6 +405,7 @@ def build_planning_brief(
     forecast_skill: Mapping[str, Any] | None = None,
     window_remedy: Mapping[str, Any] | None = None,
     window_remedy_590: Mapping[str, Any] | None = None,
+    capacity_remedy: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -470,6 +471,8 @@ def build_planning_brief(
         absent.
     window_remedy_590 : mapping, optional
         590-segment fall-window remedy. The section is omitted when absent.
+    capacity_remedy : mapping, optional
+        Added-crew versus longer-window comparison. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -558,6 +561,7 @@ def build_planning_brief(
     forecast_skill_cases = (forecast_skill or {}).get("result", {}).get("cases") or []
     window_cases = (window_remedy or {}).get("result", {}).get("cases") or []
     window_scale_cases = (window_remedy_590 or {}).get("result", {}).get("cases") or []
+    capacity_remedy_cases = (capacity_remedy or {}).get("result", {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -2022,6 +2026,57 @@ def build_planning_brief(
                 )
             ]
             if window_remedy_590
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="Added-crew versus window remedy",
+                    paragraphs=[
+                        "One relief mowing crew and machine were added for all five years and "
+                        "compared with the 90- and 105-day windows. Added-resource cost uses "
+                        "1,200 CAD per crew-day, 900 CAD per machine-day, 8% supervision, 10% "
+                        "overhead, and 2,500 CAD seasonal overhead per relief crew-year.",
+                        "The added crew recovers almost all calendar-aware scope, but its total "
+                        "cost is about 823,000 CAD versus 294,000 CAD for the 105-day window. "
+                        "Under these assumptions, extending the window is substantially cheaper "
+                        "than adding a crew and machine. Seasonal overhead for the window itself "
+                        "is not modelled.",
+                    ],
+                    table=_table(
+                        [
+                            "Case",
+                            "Window days",
+                            "Extra crews",
+                            "Completed P50",
+                            "Mean risk",
+                            "Action cost P50",
+                            "Added resource P50",
+                            "Total cost P50",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                case.get("window_days"),
+                                case.get("extra_crews"),
+                                _percent(
+                                    case.get("summary", {}).get("completion_band", {}).get("p50")
+                                ),
+                                _number(
+                                    case.get("summary", {}).get("risk_band", {}).get("mean"), 4
+                                ),
+                                _number(case.get("summary", {}).get("cost_band", {}).get("p50")),
+                                _number(case.get("summary", {}).get("mean_resource_cost")),
+                                _number(
+                                    case.get("summary", {}).get("total_cost_band", {}).get("p50")
+                                ),
+                            ]
+                            for case in capacity_remedy_cases
+                        ],
+                    ),
+                )
+            ]
+            if capacity_remedy
             else []
         ),
         BriefSection(

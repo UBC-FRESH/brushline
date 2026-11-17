@@ -1,5 +1,5 @@
-Window remedy API
-=================
+Capacity remedy API
+===================
 
 .. automodule:: brushline.strategic.capacity_remedy
    :members:
