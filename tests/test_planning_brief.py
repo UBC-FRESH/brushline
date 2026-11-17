@@ -845,6 +845,65 @@ def _artifacts() -> dict[str, Any]:
             ]
         },
     }
+    capacity_remedy_590 = {
+        "episodes": 20,
+        "crews": 30,
+        "extra_crews": 10,
+        "fixed_seconds": 49.68,
+        "seconds": 344.43,
+        "result": {
+            "cases": [
+                {
+                    "name": "baseline",
+                    "window_days": 75,
+                    "extra_crews": 0,
+                    "summary": {
+                        "completion_band": {"p50": 0.844778},
+                        "risk_band": {"mean": 0.066701},
+                        "cost_band": {"p50": 2536613.78},
+                        "mean_resource_cost": 0.0,
+                        "total_cost_band": {"p50": 2536613.78},
+                    },
+                },
+                {
+                    "name": "extra-crew",
+                    "window_days": 75,
+                    "extra_crews": 10,
+                    "summary": {
+                        "completion_band": {"p50": 0.982633},
+                        "risk_band": {"mean": 0.032486},
+                        "cost_band": {"p50": 2931648.74},
+                        "mean_resource_cost": 5357420.9,
+                        "total_cost_band": {"p50": 8278357.29},
+                    },
+                },
+                {
+                    "name": "window-90",
+                    "window_days": 90,
+                    "extra_crews": 0,
+                    "summary": {
+                        "completion_band": {"p50": 0.958933},
+                        "risk_band": {"mean": 0.036818},
+                        "cost_band": {"p50": 2844468.97},
+                        "mean_resource_cost": 0.0,
+                        "total_cost_band": {"p50": 2844468.97},
+                    },
+                },
+                {
+                    "name": "window-105",
+                    "window_days": 105,
+                    "extra_crews": 0,
+                    "summary": {
+                        "completion_band": {"p50": 0.980811},
+                        "risk_band": {"mean": 0.032781},
+                        "cost_band": {"p50": 2931648.74},
+                        "mean_resource_cost": 0.0,
+                        "total_cost_band": {"p50": 2931648.74},
+                    },
+                },
+            ]
+        },
+    }
     access = {
         "results": [{"allowed": True}, {"allowed": True}],
         "total_route_m": 86235,
@@ -889,6 +948,7 @@ def _artifacts() -> dict[str, Any]:
         "window_remedy": window_remedy,
         "window_remedy_590": window_remedy_590,
         "capacity_remedy": capacity_remedy,
+        "capacity_remedy_590": capacity_remedy_590,
     }
 
 
@@ -951,6 +1011,8 @@ def test_planning_brief_markdown_and_html() -> None:
     assert "## Fall-window capacity remedy" in brief.markdown
     assert "## 590-segment fall-window capacity remedy" in brief.markdown
     assert "## Added-crew versus window remedy" in brief.markdown
+    assert "## 590-segment added-crew versus window remedy" in brief.markdown
+    assert "8,278,357" in brief.markdown
     assert "823,084" in brief.markdown
     assert "98.1%" in brief.markdown
     assert "41.9" in brief.markdown

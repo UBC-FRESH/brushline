@@ -406,6 +406,7 @@ def build_planning_brief(
     window_remedy: Mapping[str, Any] | None = None,
     window_remedy_590: Mapping[str, Any] | None = None,
     capacity_remedy: Mapping[str, Any] | None = None,
+    capacity_remedy_590: Mapping[str, Any] | None = None,
     generated_utc: datetime | None = None,
     command: str = "python tools/build_bc_network_demo.py",
     commit: str = "unknown",
@@ -473,6 +474,8 @@ def build_planning_brief(
         590-segment fall-window remedy. The section is omitted when absent.
     capacity_remedy : mapping, optional
         Added-crew versus longer-window comparison. The section is omitted when absent.
+    capacity_remedy_590 : mapping, optional
+        590-segment capacity-remedy comparison. The section is omitted when absent.
     generated_utc : datetime, optional
         Generation time; defaults to the current UTC time.
     command : str, optional
@@ -562,6 +565,7 @@ def build_planning_brief(
     window_cases = (window_remedy or {}).get("result", {}).get("cases") or []
     window_scale_cases = (window_remedy_590 or {}).get("result", {}).get("cases") or []
     capacity_remedy_cases = (capacity_remedy or {}).get("result", {}).get("cases") or []
+    capacity_scale_cases = (capacity_remedy_590 or {}).get("result", {}).get("cases") or []
     sources = list(network.get("sources") or [])
     source_rows = [[source.get("name"), source.get("licence")] for source in sources]
     caveats = [
@@ -2077,6 +2081,60 @@ def build_planning_brief(
                 )
             ]
             if capacity_remedy
+            else []
+        ),
+        *(
+            [
+                BriefSection(
+                    heading="590-segment added-crew versus window remedy",
+                    paragraphs=[
+                        f"Replicated 590-segment test with {capacity_remedy_590.get('crews')} "
+                        f"base crews and {capacity_remedy_590.get('extra_crews')} relief mowing "
+                        "crews and machines. The fixed plan is exact; annual re-solves use Fresh "
+                        "Solutions. Added-resource cost uses the same crew-day, machine-day, "
+                        "supervision, overhead, and seasonal assumptions as the 59-segment case.",
+                        f"Runtime: fixed exact "
+                        f"{_number(capacity_remedy_590.get('fixed_seconds'), 1)} s; remedy sweep "
+                        f"{_number(capacity_remedy_590.get('seconds'), 1)} s. The extra crew "
+                        "reaches 98.3% completion and 0.0325 mean risk, but total cost is about "
+                        "8.28M CAD versus 2.93M CAD for the 105-day window. The extra-crew action "
+                        "cost already equals the window total, so any positive resource rate makes "
+                        "the crew option more expensive.",
+                    ],
+                    table=_table(
+                        [
+                            "Case",
+                            "Window days",
+                            "Extra crews",
+                            "Completed P50",
+                            "Mean risk",
+                            "Action cost P50",
+                            "Added resource P50",
+                            "Total cost P50",
+                        ],
+                        [
+                            [
+                                case.get("name"),
+                                case.get("window_days"),
+                                case.get("extra_crews"),
+                                _percent(
+                                    case.get("summary", {}).get("completion_band", {}).get("p50")
+                                ),
+                                _number(
+                                    case.get("summary", {}).get("risk_band", {}).get("mean"), 4
+                                ),
+                                _number(case.get("summary", {}).get("cost_band", {}).get("p50")),
+                                _number(case.get("summary", {}).get("mean_resource_cost")),
+                                _number(
+                                    case.get("summary", {}).get("total_cost_band", {}).get("p50")
+                                ),
+                            ]
+                            for case in capacity_scale_cases
+                        ],
+                    ),
+                )
+            ]
+            if capacity_remedy_590
             else []
         ),
         BriefSection(

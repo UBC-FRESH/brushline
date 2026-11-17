@@ -58,6 +58,8 @@ def _network_artifacts() -> dict[str, Any]:
             return BC_SCALING_DIR / "weather-recourse-590.json"
         if key == "weather-window-remedy-590":
             return BC_SCALING_DIR / "weather-window-remedy-590.json"
+        if key == "capacity-remedy-590":
+            return BC_SCALING_DIR / "capacity-remedy-590.json"
         return BC_NETWORK_DIR / f"{key}.json"
 
     return {
@@ -100,6 +102,7 @@ def _network_artifacts() -> dict[str, Any]:
             "weather-window-remedy",
             "weather-window-remedy-590",
             "capacity-remedy",
+            "capacity-remedy-590",
             "access",
         )
     }
@@ -458,6 +461,7 @@ def create_app(artifact_root: str | Path | None = None) -> FastAPI:
                 window_remedy=artifacts["weather-window-remedy"],
                 window_remedy_590=artifacts["weather-window-remedy-590"],
                 capacity_remedy=artifacts["capacity-remedy"],
+                capacity_remedy_590=artifacts["capacity-remedy-590"],
                 generated_utc=datetime.now(UTC),
                 command="python tools/build_bc_network_demo.py",
                 commit=_current_commit(),

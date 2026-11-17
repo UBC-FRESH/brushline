@@ -26,6 +26,22 @@ calendar-aware execution defers unschedulable work?
 The added crew recovers almost all scope but costs about 823,000 CAD total versus 294,000 CAD for
 the 105-day window. Under these assumptions the window is substantially cheaper.
 
+## 590-segment scale test
+
+A replicated 590-segment instance uses 30 base crews, 10 relief mowing crews, and 10 relief
+machines. The fixed plan is exact; annual re-solves use Fresh Solutions.
+
+| Case | Window | Extra crews | Completed P50 | Mean risk | Action cost P50 | Added resource P50 | Total cost P50 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Baseline | 75 | 0 | 84.5% | 0.0667 | 2,536,614 | 0 | 2,536,614 |
+| Extra crew | 75 | 10 | 98.3% | 0.0325 | 2,931,649 | 5,357,421 | 8,278,357 |
+| Window 90 | 90 | 0 | 95.9% | 0.0368 | 2,844,469 | 0 | 2,844,469 |
+| Window 105 | 105 | 0 | 98.1% | 0.0328 | 2,931,649 | 0 | 2,931,649 |
+
+Runtime: fixed exact 49.7 s; remedy sweep 344.4 s. The extra-crew action cost already equals the
+105-day window total, so any positive resource rate makes the crew option more expensive. At 59
+segments the break-even resource rate is only 0.058% of the assumed day rates.
+
 ## Interpretation
 
 The added crew buys calendar capacity at a high day-rate cost; the 105-day window reaches similar

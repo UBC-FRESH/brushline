@@ -65,6 +65,61 @@ versus **294,000 CAD** for the 105-day window. Under these assumptions, extendin
 substantially cheaper than adding a crew and machine. Seasonal overhead for the window itself is
 not modelled.
 
+## 590-segment scale test
+
+A replicated 590-segment instance uses 30 base crews, 10 relief mowing crews, and 10 relief
+machines. The fixed plan is exact; annual re-solves use Fresh Solutions.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Case
+     - Window
+     - Extra crews
+     - Completed P50
+     - Mean risk
+     - Action cost P50
+     - Added resource P50
+     - Total cost P50
+   * - Baseline
+     - 75
+     - 0
+     - 84.5%
+     - 0.0667
+     - 2,536,614
+     - 0
+     - 2,536,614
+   * - Extra crew
+     - 75
+     - 10
+     - 98.3%
+     - 0.0325
+     - 2,931,649
+     - 5,357,421
+     - 8,278,357
+   * - Window
+     - 90
+     - 0
+     - 95.9%
+     - 0.0368
+     - 2,844,469
+     - 0
+     - 2,844,469
+   * - Window
+     - 105
+     - 0
+     - 98.1%
+     - 0.0328
+     - 2,931,649
+     - 0
+     - 2,931,649
+
+Runtime: fixed exact 49.7 s; remedy sweep 344.4 s for 20 episodes.
+
+The extra-crew action cost already equals the 105-day window total, so **any positive resource rate**
+makes the crew option more expensive. At 59 segments, the break-even resource rate is only 0.058% of
+the assumed day rates. The window remedy dominates under these assumptions.
+
 ## Limits
 
 - 59 segments only; not a 590-segment cost comparison.
